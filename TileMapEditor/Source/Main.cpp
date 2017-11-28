@@ -1,24 +1,10 @@
-#include <SFML/Graphics.hpp>
+#include "Editor.h"
 
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(1280, 720), "Time to tile!");
-    sf::CircleShape shape(100.f);
-    shape.setFillColor(sf::Color::Green);
 
-    while (window.isOpen())
-    {
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-                window.close();
-        }
+    Editor editor;
 
-        window.clear();
-        window.draw(shape);
-        window.display();
-    }
-
-    return 0;
+    return editor.run(window);
 }
