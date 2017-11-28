@@ -17,8 +17,3 @@ void BoxyBox::setColor(sf::Color color)
 {
     rect.setFillColor(color);
 }
-
-void BoxyBox::draw(sf::RenderTarget & target, sf::RenderStates states) const
-{
-    target.draw(rect, states);
-}

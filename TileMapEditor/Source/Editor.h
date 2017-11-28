@@ -1,8 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "TileManager.h"
 #include "TileMenuHandler.h"
-
+#include "Renderer.h"
 class Editor
 {
 public:
@@ -11,7 +10,7 @@ public:
 
     int run(sf::RenderWindow & window);
 private:
-    TileManager tileManager;
     TileMenuHandler tileMenuHandler;
+    Renderer renderer;
 
 };

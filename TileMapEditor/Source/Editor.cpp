@@ -19,19 +19,17 @@ int Editor::run(sf::RenderWindow & window)
 
 
         //update
-        tileMenuHandler.update();
+        tileMenuHandler.update(window);
 
 
 
-
+        renderer.update();
         //draw
-        tileManager.prepareTiles();
 
-        window.clear();
-        window.draw(tileMenuHandler);
-        window.draw(tileManager);
+        window.draw(renderer);
         window.display();
-
+        window.clear();
+        renderer.clearAllQueues();
     }
 
     return 0;

@@ -1,7 +1,7 @@
 #pragma once
 #include "SFML\Graphics.hpp"
 
-class BoxyBox : public sf::Drawable
+class BoxyBox
 {
 public:
     BoxyBox(float x, float y, float width, float height, float borderSize = 5);
@@ -12,8 +12,9 @@ public:
     //void setColor(sf::Color color, sf::Color color2);
     void setColor(sf::Color color);
 
+    sf::RectangleShape getRect() { return rect; };
+
 private:
-    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
     sf::RectangleShape rect;
 };

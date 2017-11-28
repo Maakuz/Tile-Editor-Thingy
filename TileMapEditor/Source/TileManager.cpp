@@ -1,7 +1,7 @@
 #include "TileManager.h"
 #include "SFML\Graphics.hpp"
 #include "Constants.h"
-#include "TileQueue.h"
+#include "Queues\TileQueue.h"
 
 TileManager::TileManager()
 {
@@ -47,8 +47,6 @@ void TileManager::prepareTiles()
 
         spriteQueue.push_back(sprite);
     }
-
-    TileQueue::get().clear();
 }
 
 void TileManager::draw(sf::RenderTarget & target, sf::RenderStates states) const
