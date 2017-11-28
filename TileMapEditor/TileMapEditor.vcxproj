@@ -150,14 +150,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\Editor.cpp" />
+    <ClCompile Include="Source\Interactables\BoxyBox.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\TileManager.cpp" />
+    <ClCompile Include="Source\TileMenuHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Constants.h" />
     <ClInclude Include="Source\Editor.h" />
+    <ClInclude Include="Source\Interactables\BoxyBox.h" />
     <ClInclude Include="Source\Structs.h" />
     <ClInclude Include="Source\TileManager.h" />
+    <ClInclude Include="Source\TileMenuHandler.h" />
     <ClInclude Include="Source\TileQueue.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
