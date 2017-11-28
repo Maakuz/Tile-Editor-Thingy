@@ -1,6 +1,5 @@
 #pragma once
 #include <vector>
-#include <unordered_map>
 #include "SFML\Graphics.hpp"
 #include "Structs.h"
 
@@ -10,17 +9,16 @@ public:
     TileManager();
     virtual ~TileManager() {};
 
-    void loadTextures();
 
-    void queueTile(Tile tile);
-    void clearQueue();
+    void prepareTiles();
 
-    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 private:
-    std::vector<sf::Texture> textures;
-    sf::Sprite test;
-    sf::CircleShape test2;
+    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+    void loadTextures();
 
-    std::unordered_map<int, std::vector<Tile>> tileQueue;
+    std::vector<sf::Texture> textures;
+    std::vector<std::vector<sf::IntRect>> tileRects;
+
+    std::vector<sf::Sprite> spriteQueue;
 };
