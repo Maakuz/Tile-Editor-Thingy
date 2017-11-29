@@ -89,4 +89,7 @@ void TileMenuHandler::handleFileMenu(sf::String button)
 
     if (button == Global::Elements::Menu::Clickables::openFile)
         fileManager.load(layerManager);
+
+    if (button == Global::Elements::Menu::Clickables::exportLayers)
+        fileManager.exportTextures(layerManager);
 }

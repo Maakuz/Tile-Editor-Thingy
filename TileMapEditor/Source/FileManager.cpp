@@ -32,3 +32,15 @@ void FileManager::load(LayerManager & layerManager)
     printf("Loaded?!\n");
 
 }
+
+void FileManager::exportTextures(const LayerManager & layerManager)
+{
+    for (int i = 0; i < LAYER_AMOUNT; i++)
+    {
+        std::string fileName;
+        fileName = "wat" + std::to_string(i) + ".png";
+        layerManager.getLayerAsImage(i).saveToFile(fileName);
+    }
+
+    printf("exprot comprot\n");
+}

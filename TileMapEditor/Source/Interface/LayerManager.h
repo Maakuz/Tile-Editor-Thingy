@@ -19,6 +19,8 @@ public:
 
     Tile getTileAt(sf::Vector2i pos);
 
+    sf::Image getLayerAsImage(int layer) const;
+
 private:
     void handleLayerMenu(sf::String clickedItem);
 

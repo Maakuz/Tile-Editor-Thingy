@@ -2,6 +2,7 @@
 #include "SFML\Graphics.hpp"
 #include "Constants.h"
 #include "Queues\TileQueue.h"
+#include "Resources.h"
 
 TileManager::TileManager()
 {
@@ -10,28 +11,11 @@ TileManager::TileManager()
 
 void TileManager::loadTextures() // TODO: MAKE THIS FOR LOADING DURING RUNTIME //
 {
-    sf::Texture tileTexture;
-    tileTexture.loadFromFile(TEXTURE_PATH("grass.png"));
+    Resources::get().addTexture("grass.png");
 
-    textures.push_back(tileTexture);
+    sf::Texture tileTexture = Resources::get().getTexture(0);
 
-    int x = tileTexture.getSize().x / DEFAULT_TILE_SIZE;
-    int y = tileTexture.getSize().y / DEFAULT_TILE_SIZE;
-
-    //initialize with the size it needs
-    tileRects.push_back(std::vector<sf::IntRect>(x * y));
-
-    for (int i = 0; i < y; i++)
-    {
-        for (int j = 0; j < x; j++)
-        {
-            tileRects[0][j + (i * x)] = sf::IntRect(
-                j * DEFAULT_TILE_SIZE,
-                i * DEFAULT_TILE_SIZE,
-                DEFAULT_TILE_SIZE,
-                DEFAULT_TILE_SIZE);
-        }
-    }
+    
 }
 
 void TileManager::prepareTiles()
@@ -41,9 +25,9 @@ void TileManager::prepareTiles()
     for (Tile tile : TileQueue::get().getQueue())
     {
         sf::Sprite sprite;
-        sprite.setTexture(textures[tile.textureID]);
+        sprite.setTexture(Resources::get().getTexture(tile.textureID));
         sprite.setPosition(tile.x, tile.y);
-        sprite.setTextureRect(tileRects[tile.textureID][tile.tileID]);
+        sprite.setTextureRect(Resources::get().getTileRect(tile.textureID, tile.tileID));
 
         spriteQueue.push_back(sprite);
     }

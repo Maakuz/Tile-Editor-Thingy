@@ -34,6 +34,9 @@ namespace Global
 
                 const sf::String infoBox("Info box");
 
+                const sf::String exportLayers("Export...");
+
+
 
             }
 

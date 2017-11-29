@@ -17,8 +17,6 @@ private:
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
     void loadTextures();
 
-    std::vector<sf::Texture> textures;
-    std::vector<std::vector<sf::IntRect>> tileRects;
 
     std::vector<sf::Sprite> spriteQueue;
 };

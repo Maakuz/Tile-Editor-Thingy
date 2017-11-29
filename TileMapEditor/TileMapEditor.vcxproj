@@ -173,6 +173,7 @@
     <ClInclude Include="Source\Queues\BackgroundQueue.h" />
     <ClInclude Include="Source\Queues\OverlayQueue.h" />
     <ClInclude Include="Source\Renderer.h" />
+    <ClInclude Include="Source\Resources.h" />
     <ClInclude Include="Source\Structs.h" />
     <ClInclude Include="Source\Interface\TileManager.h" />
     <ClInclude Include="Source\Interface\TileMenuHandler.h" />

@@ -35,6 +35,7 @@ GUIHandler::GUIHandler(sf::RenderWindow & window)
     bar->addMenuItem("View", Global::Elements::Menu::Clickables::infoBox);
 
     bar->addMenu("Tools");
+    bar->addMenuItem("Tools", Global::Elements::Menu::Clickables::exportLayers);
 
     bar->connect("MenuItemClicked", &GUIHandler::handleMenuBarClick, this);
 

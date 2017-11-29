@@ -12,6 +12,7 @@ public:
 
     void load(LayerManager & layerManager);
 
+    void exportTextures(const LayerManager & layerManager);
 private:
 
 };

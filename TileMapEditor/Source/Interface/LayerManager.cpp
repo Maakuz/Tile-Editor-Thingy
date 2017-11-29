@@ -1,6 +1,7 @@
 #include "LayerManager.h"
 #include "Constants.h"
 #include "Queues\TileQueue.h"
+#include "Resources.h"
 #include "SFML\Window\Mouse.hpp"
 #include "GUI.h"
 #include <algorithm>
@@ -67,7 +68,8 @@ void LayerManager::queueTiles()
         {
             for (size_t k = 0; k < visibleX; k++)
             {
-                TileQueue::get().queue(layers[i][j][k]);
+                if (layers[i][j][k].tileID != 0)
+                    TileQueue::get().queue(layers[i][j][k]);
             }
         }
     }
@@ -76,6 +78,29 @@ void LayerManager::queueTiles()
 Tile LayerManager::getTileAt(sf::Vector2i pos)
 {
     return Tile();
+}
+
+sf::Image LayerManager::getLayerAsImage(int layer) const
+{
+    sf::Image image;
+    image.create(layers[0][0].size() * DEFAULT_TILE_SIZE, layers[0].size() * DEFAULT_TILE_SIZE, sf::Color::Transparent);
+
+    for (size_t i = 0; i < layers[layer].size(); i++)
+    {
+        for (size_t j = 0; j < layers[layer][i].size(); j++)
+        {
+           if (layers[layer][i][j].tileID != 0)
+               image.copy(Resources::get().getTexture(layers[layer][i][j].textureID).copyToImage(),
+                    layers[layer][i][j].x - workAreaStart.x,
+                    layers[layer][i][j].y - workAreaStart.y,
+                    Resources::get().getTileRect(layers[layer][i][j].textureID, layers[layer][i][j].tileID),
+                    true);
+        }
+    }
+
+   
+
+    return image;
 }
 
 void LayerManager::handleLayerMenu(sf::String clickedItem)
