@@ -1,4 +1,14 @@
 #pragma once
+#define WIN_WIDTH 1280
+#define WIN_HEIGHT 720
 
 #define DEFAULT_TILE_SIZE 32
 #define TEXTURE_PATH(x) "Resources/" x
+
+#define TILEMENU_X_AREA 5
+#define TILEMENU_Y_AREA 20
+#define TILEMENU_BORDER_SIZE 8
+#define TILEMENU_WIDTH (DEFAULT_TILE_SIZE * TILEMENU_X_AREA) + (TILEMENU_BORDER_SIZE * 2)
+
+
+#define MENU_BAR_HEIGHT 20

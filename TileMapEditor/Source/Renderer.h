@@ -1,6 +1,6 @@
 #pragma once
 #include "SFML\Graphics.hpp"
-#include "TileManager.h"
+#include <Interface\TileManager.h>
 
 class Renderer : public sf::Drawable
 {
