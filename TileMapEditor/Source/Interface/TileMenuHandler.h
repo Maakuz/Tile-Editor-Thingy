@@ -24,7 +24,10 @@ public:
 private:
     void createTileButtons();
     void handleFileMenu(sf::String button);
-    void handleBlockSelection();
+    void handleBlockSelection(sf::Vector2i start, sf::Vector2i stop);
+    void handleLayerSelection(sf::Vector2i start, sf::Vector2i stop);
+    void createActiveBounds(std::vector<ActiveTile> tiles);
+    void readyStartAndStopPosition(sf::Vector2i & start, sf::Vector2i & stop);
 
     FileManager fileManager;
     LayerManager layerManager;
@@ -35,9 +38,9 @@ private:
     sf::Vector2i offset;
 
     sf::Vector2i pressedPos;
-    sf::Vector2i releasedPos;
 
     std::vector<Button> buttons;
 
-    bool blockDrawing;
+    bool selectingBlocks;
+    bool rightClicking;
 };

@@ -17,7 +17,7 @@ public:
     void update(int activeTexture, std::vector<ActiveTile> activeTiles, sf::Vector2i mousePos);
     void queueTiles();
 
-    Tile getTileAt(sf::Vector2i pos);
+    std::vector<Tile> getTilesAt(sf::Vector2i start, sf::Vector2i stop);
 
     sf::Image getLayerAsImage(int layer) const;
 

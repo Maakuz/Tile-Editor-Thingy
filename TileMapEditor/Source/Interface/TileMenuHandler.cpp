@@ -20,7 +20,8 @@ TileMenuHandler::TileMenuHandler() :
     createTileButtons();
 
     Global::gui->get<tgui::MenuBar>(Global::Elements::Menu::bar)->connect("MenuItemClicked", &TileMenuHandler::handleFileMenu, this);
-    blockDrawing = false;
+    selectingBlocks = false;
+    rightClicking = false;
 }
 
 void TileMenuHandler::handleEvent(sf::Event event)
@@ -28,12 +29,19 @@ void TileMenuHandler::handleEvent(sf::Event event)
     switch (event.type)
     {
     case sf::Event::MouseButtonPressed:
-        if (event.mouseButton.button == sf::Mouse::Left)
+        if (event.mouseButton.button == sf::Mouse::Left && !rightClicking)
         {
-            pressedPos = { event.mouseButton.x - offset.x, event.mouseButton.y - offset.y };
+            pressedPos = { event.mouseButton.x, event.mouseButton.y };
 
             if (tileBox.contains(pressedPos.x, pressedPos.y))
-                blockDrawing = true;
+                selectingBlocks = true;
+        }
+        
+        if (event.mouseButton.button == sf::Mouse::Right && !selectingBlocks)
+        {
+            pressedPos = { event.mouseButton.x, event.mouseButton.y };
+
+            rightClicking = true;
         }
         break;
 
@@ -42,10 +50,16 @@ void TileMenuHandler::handleEvent(sf::Event event)
 
         if (event.mouseButton.button == sf::Mouse::Left)
         {
-            releasedPos = { event.mouseButton.x - offset.x, event.mouseButton.y - offset.y };
+            if (selectingBlocks)
+            {
+                selectingBlocks = false;
+            }
+        }
 
-            handleBlockSelection();
-            blockDrawing = false;
+        if (event.mouseButton.button == sf::Mouse::Right)
+        {
+            if (rightClicking)
+                rightClicking = false;
         }
         break;
     }
@@ -53,8 +67,21 @@ void TileMenuHandler::handleEvent(sf::Event event)
 
 void TileMenuHandler::update(sf::Vector2i mousePos)
 {
-    if (!blockDrawing)
-        layerManager.update(activeTileTexture, activeTiles, mousePos);
+    if (!selectingBlocks)
+    {
+        if (rightClicking)
+        {
+            handleLayerSelection(pressedPos - offset, mousePos - offset);
+        }
+
+        else
+            layerManager.update(activeTileTexture, activeTiles, mousePos);
+    }
+
+    else
+    {
+        handleBlockSelection(pressedPos - offset, mousePos - offset);
+    }
 }
 
 void TileMenuHandler::queueItems()
@@ -80,7 +107,12 @@ void TileMenuHandler::queueItems()
 
     for each (ActiveTile i in activeTiles)
     {
-        OverlayQueue::get().queue(buttons[i.id]);
+        std::vector<sf::RectangleShape> rects = buttons[i.id];
+
+        for each (sf::RectangleShape rect in rects)
+        {
+            OverlayQueue::get().queue(rect);
+        }
     }
 }
 
@@ -92,10 +124,11 @@ void TileMenuHandler::createTileButtons()
     {
         for (int j = 0; j < TILEMENU_X_AREA; j++)
         {
-            buttons[j + TILEMENU_X_AREA * i].setPosition(j * DEFAULT_TILE_SIZE + offset.x, i * DEFAULT_TILE_SIZE + offset.y);
             buttons[j + TILEMENU_X_AREA * i].setOutlineThickness(-2);
-            buttons[j + TILEMENU_X_AREA * i].setSize({ DEFAULT_TILE_SIZE, DEFAULT_TILE_SIZE });
+            buttons[j + TILEMENU_X_AREA * i].setSize(DEFAULT_TILE_SIZE, DEFAULT_TILE_SIZE);
+            buttons[j + TILEMENU_X_AREA * i].setPosition(j * DEFAULT_TILE_SIZE + offset.x, i * DEFAULT_TILE_SIZE + offset.y);
             buttons[j + TILEMENU_X_AREA * i].setFillColor(sf::Color::Transparent);
+            buttons[j + TILEMENU_X_AREA * i].setOutlineColor(sf::Color::White);
         }
     }
 }
@@ -112,36 +145,25 @@ void TileMenuHandler::handleFileMenu(sf::String button)
         fileManager.exportTextures(layerManager);
 }
 
-void TileMenuHandler::handleBlockSelection()
+void TileMenuHandler::handleBlockSelection(sf::Vector2i start, sf::Vector2i stop)
 {
     bool cleared = false;
 
-    
-    pressedPos /= DEFAULT_TILE_SIZE;
-    releasedPos /= DEFAULT_TILE_SIZE;
+    readyStartAndStopPosition(start, stop);
 
-
-    if (pressedPos.x > releasedPos.x)
-        std::swap(pressedPos.x, releasedPos.x);
-
-    if (pressedPos.y > releasedPos.y)
-        std::swap(pressedPos.y, releasedPos.y);
-
-
-    for (int k = pressedPos.y; k <= releasedPos.y; k++)
+    for (int k = start.y; k <= stop.y; k++)
     {
-        for (int j = pressedPos.x; j <= releasedPos.x; j++)
+        for (int j = start.x; j <= stop.x; j++)
         {
             for (size_t i = 0; i < buttons.size(); i++)
             {
-
                 if (buttons[i].isInside(j * DEFAULT_TILE_SIZE + offset.x, k * DEFAULT_TILE_SIZE + offset.y))
                 {
                     if (!cleared)
                     {
                         for (ActiveTile i : activeTiles)
                         {
-                            buttons[i.id].setOutlineColor(sf::Color::Transparent);
+                            buttons[i.id].setVisibleSide(Button::SIDES_VISIBLE::NONE);
                         }
                         activeTiles.clear();
 
@@ -150,13 +172,118 @@ void TileMenuHandler::handleBlockSelection()
 
                     ActiveTile activeTile;
                     activeTile.id = i;
-                    activeTile.x = j - pressedPos.x;
-                    activeTile.y = k - pressedPos.y;
+                    activeTile.x = j - start.x;
+                    activeTile.y = k - start.y;
 
                     activeTiles.push_back(activeTile);
-                    buttons[i].setOutlineColor(sf::Color::White);
+
                 }
             }
         }
     }
+
+    createActiveBounds(activeTiles);
+}
+
+void TileMenuHandler::handleLayerSelection(sf::Vector2i start, sf::Vector2i stop)
+{
+    readyStartAndStopPosition(start, stop);
+
+    std::vector<Tile> newSelectedTiles = layerManager.getTilesAt(start, stop);
+}
+
+void TileMenuHandler::createActiveBounds(std::vector<ActiveTile> tiles)
+{
+    //To figure out if this is a corner or nay
+    for (ActiveTile i : tiles)
+    {
+        bool leftNeighborExist = false;
+        bool rightNeighborExist = false;
+        bool topNeighborExist = false;
+        bool bottomNeighborExist = false;
+
+        for (ActiveTile neighbor : tiles)
+        {
+            if (i.x < neighbor.x)
+                rightNeighborExist = true;
+
+            if (i.x > neighbor.x)
+                leftNeighborExist = true;
+
+            if (i.y < neighbor.y)
+                bottomNeighborExist = true;
+
+            if (i.y > neighbor.y)
+                topNeighborExist = true;
+        }
+
+        if (leftNeighborExist && rightNeighborExist && topNeighborExist && bottomNeighborExist)
+            buttons[i.id].setVisibleSide(Button::SIDES_VISIBLE::NONE);
+
+
+
+        else if (leftNeighborExist && rightNeighborExist && topNeighborExist)
+            buttons[i.id].setVisibleSide(Button::SIDES_VISIBLE::BOTTOM);
+
+        else if (leftNeighborExist && rightNeighborExist && bottomNeighborExist)
+            buttons[i.id].setVisibleSide(Button::SIDES_VISIBLE::TOP);
+
+        else if (leftNeighborExist && topNeighborExist && bottomNeighborExist)
+            buttons[i.id].setVisibleSide(Button::SIDES_VISIBLE::RIGHT);
+
+        else if (rightNeighborExist && topNeighborExist && bottomNeighborExist)
+            buttons[i.id].setVisibleSide(Button::SIDES_VISIBLE::LEFT);
+
+
+
+        else if (rightNeighborExist && leftNeighborExist)
+            buttons[i.id].setVisibleSide(Button::SIDES_VISIBLE::TOP_BOTTOM);
+
+        else if (topNeighborExist && bottomNeighborExist)
+            buttons[i.id].setVisibleSide(Button::SIDES_VISIBLE::RIGHT_LEFT);
+
+
+
+        else if (topNeighborExist && rightNeighborExist)
+            buttons[i.id].setVisibleSide(Button::SIDES_VISIBLE::BOTTOM_LEFT);
+
+        else if (topNeighborExist && leftNeighborExist)
+            buttons[i.id].setVisibleSide(Button::SIDES_VISIBLE::BOTTOM_RIGHT);
+
+        else if (bottomNeighborExist && rightNeighborExist)
+            buttons[i.id].setVisibleSide(Button::SIDES_VISIBLE::TOP_LEFT);
+
+        else if (bottomNeighborExist && leftNeighborExist)
+            buttons[i.id].setVisibleSide(Button::SIDES_VISIBLE::TOP_RIGHT);
+
+
+        else if (bottomNeighborExist)
+            buttons[i.id].setVisibleSide(Button::SIDES_VISIBLE::TOP_LEFT_RIGHT);
+
+        else if (rightNeighborExist)
+            buttons[i.id].setVisibleSide(Button::SIDES_VISIBLE::TOP_LEFT_BOTTOM);
+
+        else if (topNeighborExist)
+            buttons[i.id].setVisibleSide(Button::SIDES_VISIBLE::RIGHT_LEFT_BOTTOM);
+
+        else if (leftNeighborExist)
+            buttons[i.id].setVisibleSide(Button::SIDES_VISIBLE::TOP_RIGHT_BOTTOM);
+
+        else
+            buttons[i.id].setVisibleSide(Button::SIDES_VISIBLE::ENTIRE);
+    }
+}
+
+void TileMenuHandler::readyStartAndStopPosition(sf::Vector2i & start, sf::Vector2i & stop)
+{
+    start /= DEFAULT_TILE_SIZE;
+    stop /= DEFAULT_TILE_SIZE;
+
+
+    if (start.x > stop.x)
+        std::swap(start.x, stop.x);
+
+    if (start.y > stop.y)
+        std::swap(start.y, stop.y);
+
 }

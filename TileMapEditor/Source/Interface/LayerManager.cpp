@@ -81,9 +81,11 @@ void LayerManager::queueTiles()
     }
 }
 
-Tile LayerManager::getTileAt(sf::Vector2i pos)
+std::vector<Tile> LayerManager::getTilesAt(sf::Vector2i start, sf::Vector2i stop)
 {
-    return Tile(); //TODO: finish it or remove
+    std::vector<Tile> tiles;
+    // TODO: IMPLEMENT //
+    return tiles;
 }
 
 sf::Image LayerManager::getLayerAsImage(int layer) const
