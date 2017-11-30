@@ -11,8 +11,8 @@ bool Button::isInside(sf::Vector2i pos) const
 
 bool Button::isInside(float x, float y) const
 {
-    if (x > getPosition().x &&
-        y > getPosition().y &&
+    if (x >= getPosition().x &&
+        y >= getPosition().y &&
         x < getPosition().x + getSize().x &&
         y < getPosition().y + getSize().y)
         return true;

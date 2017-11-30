@@ -35,7 +35,7 @@ LayerManager::LayerManager()
 
 }
 
-void LayerManager::update(int activeTexture, int activeTileID, sf::Vector2i mousePos)
+void LayerManager::update(int activeTexture, std::vector<ActiveTile> activeTiles, sf::Vector2i mousePos)
 {
     if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
     {
@@ -49,7 +49,7 @@ void LayerManager::update(int activeTexture, int activeTileID, sf::Vector2i mous
             if (x < layers[0][0].size() && y < layers[0].size())
             {
                 layers[activeLayer][y][x].textureID = activeTexture;
-                layers[activeLayer][y][x].tileID = activeTileID;
+                layers[activeLayer][y][x].tileID = activeTiles[0].id;
             }
         }
     }
@@ -77,7 +77,7 @@ void LayerManager::queueTiles()
 
 Tile LayerManager::getTileAt(sf::Vector2i pos)
 {
-    return Tile();
+    return Tile(); //TODO: finish it or remove
 }
 
 sf::Image LayerManager::getLayerAsImage(int layer) const

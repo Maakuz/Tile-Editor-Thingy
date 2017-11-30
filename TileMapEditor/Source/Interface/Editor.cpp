@@ -22,16 +22,20 @@ int Editor::run(sf::RenderWindow & window)
                 window.close();
 
             gui.handleEvents(event);
+
+            if (!gui.isActive())
+                tileMenuHandler.handleEvent(event);
         }
 
 
         //update
+        sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+
+        
         gui.update();
 
         if (!gui.isActive())
-        {
-            tileMenuHandler.update(window);
-        }
+            tileMenuHandler.update(mousePos);
 
         tileMenuHandler.queueItems();
         renderer.update();

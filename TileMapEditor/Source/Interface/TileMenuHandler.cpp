@@ -14,33 +14,47 @@ TileMenuHandler::TileMenuHandler() :
     tileBox.setColor(sf::Color(0, 100, 200));
     tileBox.setBorderColor(sf::Color(100, 100, 100));
     activeTileTexture = 0;
-    activeTile = 0;
     offset.x = TILEMENU_BORDER_SIZE;
     offset.y = TILEMENU_BORDER_SIZE + MENU_BAR_HEIGHT;
     
     createTileButtons();
 
     Global::gui->get<tgui::MenuBar>(Global::Elements::Menu::bar)->connect("MenuItemClicked", &TileMenuHandler::handleFileMenu, this);
-
+    blockDrawing = false;
 }
 
-void TileMenuHandler::update(const sf::RenderWindow & window)
+void TileMenuHandler::handleEvent(sf::Event event)
 {
-    sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-
-    layerManager.update(activeTileTexture, activeTile, mousePos);
-
-
-    for (size_t i = 0; i < buttons.size(); i++)
+    switch (event.type)
     {
-        if (buttons[i].isInside(mousePos) && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+    case sf::Event::MouseButtonPressed:
+        if (event.mouseButton.button == sf::Mouse::Left)
         {
-            buttons[activeTile].setOutlineColor(sf::Color::Transparent);
-            buttons[i].setOutlineColor(sf::Color::White);
-            activeTile = i;
-        }
-    }
+            pressedPos = { event.mouseButton.x - offset.x, event.mouseButton.y - offset.y };
 
+            if (tileBox.contains(pressedPos.x, pressedPos.y))
+                blockDrawing = true;
+        }
+        break;
+
+
+    case sf::Event::MouseButtonReleased:
+
+        if (event.mouseButton.button == sf::Mouse::Left)
+        {
+            releasedPos = { event.mouseButton.x - offset.x, event.mouseButton.y - offset.y };
+
+            handleBlockSelection();
+            blockDrawing = false;
+        }
+        break;
+    }
+}
+
+void TileMenuHandler::update(sf::Vector2i mousePos)
+{
+    if (!blockDrawing)
+        layerManager.update(activeTileTexture, activeTiles, mousePos);
 }
 
 void TileMenuHandler::queueItems()
@@ -63,7 +77,11 @@ void TileMenuHandler::queueItems()
     }
 
     BackgroundQueue::get().queue(tileBox.getRect());
-    OverlayQueue::get().queue(buttons[activeTile]);
+
+    for each (ActiveTile i in activeTiles)
+    {
+        OverlayQueue::get().queue(buttons[i.id]);
+    }
 }
 
 void TileMenuHandler::createTileButtons()
@@ -92,4 +110,53 @@ void TileMenuHandler::handleFileMenu(sf::String button)
 
     if (button == Global::Elements::Menu::Clickables::exportLayers)
         fileManager.exportTextures(layerManager);
+}
+
+void TileMenuHandler::handleBlockSelection()
+{
+    bool cleared = false;
+
+    
+    pressedPos /= DEFAULT_TILE_SIZE;
+    releasedPos /= DEFAULT_TILE_SIZE;
+
+
+    if (pressedPos.x > releasedPos.x)
+        std::swap(pressedPos.x, releasedPos.x);
+
+    if (pressedPos.y > releasedPos.y)
+        std::swap(pressedPos.y, releasedPos.y);
+
+
+    for (int k = pressedPos.y; k <= releasedPos.y; k++)
+    {
+        for (int j = pressedPos.x; j <= releasedPos.x; j++)
+        {
+            for (size_t i = 0; i < buttons.size(); i++)
+            {
+
+                if (buttons[i].isInside(j * DEFAULT_TILE_SIZE + offset.x, k * DEFAULT_TILE_SIZE + offset.y))
+                {
+                    if (!cleared)
+                    {
+                        for (ActiveTile i : activeTiles)
+                        {
+                            buttons[i.id].setOutlineColor(sf::Color::Transparent);
+                        }
+                        activeTiles.clear();
+
+                        cleared = true;
+                    }
+
+                    ActiveTile activeTile;
+                    activeTile.id = i;
+                    activeTile.x = j;
+                    activeTile.y = k;
+
+                    activeTiles.push_back(activeTile);
+                    buttons[i].setOutlineColor(sf::Color::White);
+                }
+            }
+        }
+    }
 }

@@ -13,6 +13,7 @@ public:
     void setColor(sf::Color color);
 
     sf::RectangleShape getRect() { return rect; };
+    bool contains(float x, float y) const;
 
 private:
 

@@ -11,11 +11,12 @@ public:
     TileMenuHandler();
     virtual ~TileMenuHandler() {};
 
-    void update(const sf::RenderWindow & window);
+    void handleEvent(sf::Event event);
+    void update(sf::Vector2i mousePos);
 
     void queueItems();
 
-    int getActiveTile() { return activeTile; };
+    std::vector<ActiveTile> getActiveTile() { return activeTiles; };
     int getActiveTexture() { return activeTileTexture; };
 
 
@@ -23,15 +24,20 @@ public:
 private:
     void createTileButtons();
     void handleFileMenu(sf::String button);
-
+    void handleBlockSelection();
 
     FileManager fileManager;
     LayerManager layerManager;
     BoxyBox tileBox;
     int activeTileTexture;
-    int activeTile;
+    std::vector<ActiveTile> activeTiles;
 
-    sf::Vector2f offset;
+    sf::Vector2i offset;
+
+    sf::Vector2i pressedPos;
+    sf::Vector2i releasedPos;
 
     std::vector<Button> buttons;
+
+    bool blockDrawing;
 };

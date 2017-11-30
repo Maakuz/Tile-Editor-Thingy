@@ -14,7 +14,7 @@ public:
     friend std::ostream & operator<<(std::ostream & out, const LayerManager & layerManager);
     friend std::istream & operator>>(std::istream & in, LayerManager & layerManager);
 
-    void update(int activeTexture, int activeTileID, sf::Vector2i mousePos);
+    void update(int activeTexture, std::vector<ActiveTile> activeTiles, sf::Vector2i mousePos);
     void queueTiles();
 
     Tile getTileAt(sf::Vector2i pos);
