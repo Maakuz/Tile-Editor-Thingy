@@ -150,8 +150,8 @@ void TileMenuHandler::handleBlockSelection()
 
                     ActiveTile activeTile;
                     activeTile.id = i;
-                    activeTile.x = j;
-                    activeTile.y = k;
+                    activeTile.x = j - pressedPos.x;
+                    activeTile.y = k - pressedPos.y;
 
                     activeTiles.push_back(activeTile);
                     buttons[i].setOutlineColor(sf::Color::White);

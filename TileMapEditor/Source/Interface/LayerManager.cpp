@@ -46,10 +46,16 @@ void LayerManager::update(int activeTexture, std::vector<ActiveTile> activeTiles
             int x = (mousePos.x - workAreaStart.x) / DEFAULT_TILE_SIZE;
             int y = (mousePos.y - workAreaStart.y) / DEFAULT_TILE_SIZE;
 
-            if (x < layers[0][0].size() && y < layers[0].size())
+            for (size_t i = 0; i < activeTiles.size(); i++)
             {
-                layers[activeLayer][y][x].textureID = activeTexture;
-                layers[activeLayer][y][x].tileID = activeTiles[0].id;
+                int newX = x + activeTiles[i].x;
+                int newY = y + activeTiles[i].y;
+
+                if (newX < layers[0][0].size() && newY < layers[0].size())
+                {
+                    layers[activeLayer][newY][newX].textureID = activeTexture;
+                    layers[activeLayer][newY][newX].tileID = activeTiles[i].id;
+                }
             }
         }
     }
