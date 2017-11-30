@@ -126,7 +126,7 @@ void TileMenuHandler::createTileButtons()
         {
             buttons[j + TILEMENU_X_AREA * i].setOutlineThickness(-2);
             buttons[j + TILEMENU_X_AREA * i].setSize(DEFAULT_TILE_SIZE, DEFAULT_TILE_SIZE);
-            buttons[j + TILEMENU_X_AREA * i].setPosition(j * DEFAULT_TILE_SIZE + offset.x, i * DEFAULT_TILE_SIZE + offset.y);
+            buttons[j + TILEMENU_X_AREA * i].setPosition(float(j * DEFAULT_TILE_SIZE + offset.x), float(i * DEFAULT_TILE_SIZE + offset.y));
             buttons[j + TILEMENU_X_AREA * i].setFillColor(sf::Color::Transparent);
             buttons[j + TILEMENU_X_AREA * i].setOutlineColor(sf::Color::White);
         }
@@ -157,7 +157,7 @@ void TileMenuHandler::handleBlockSelection(sf::Vector2i start, sf::Vector2i stop
         {
             for (size_t i = 0; i < buttons.size(); i++)
             {
-                if (buttons[i].isInside(j * DEFAULT_TILE_SIZE + offset.x, k * DEFAULT_TILE_SIZE + offset.y))
+                if (buttons[i].isInside(float(j * DEFAULT_TILE_SIZE + offset.x), float(k * DEFAULT_TILE_SIZE + offset.y)))
                 {
                     if (!cleared)
                     {
@@ -171,7 +171,7 @@ void TileMenuHandler::handleBlockSelection(sf::Vector2i start, sf::Vector2i stop
                     }
 
                     ActiveTile activeTile;
-                    activeTile.id = i;
+                    activeTile.id = (int)i;
                     activeTile.x = j - start.x;
                     activeTile.y = k - start.y;
 

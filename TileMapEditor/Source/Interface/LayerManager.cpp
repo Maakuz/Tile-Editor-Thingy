@@ -91,7 +91,7 @@ std::vector<Tile> LayerManager::getTilesAt(sf::Vector2i start, sf::Vector2i stop
 sf::Image LayerManager::getLayerAsImage(int layer) const
 {
     sf::Image image;
-    image.create(layers[0][0].size() * DEFAULT_TILE_SIZE, layers[0].size() * DEFAULT_TILE_SIZE, sf::Color::Transparent);
+    image.create((int)layers[0][0].size() * DEFAULT_TILE_SIZE, (int)layers[0].size() * DEFAULT_TILE_SIZE, sf::Color::Transparent);
 
     for (size_t i = 0; i < layers[layer].size(); i++)
     {

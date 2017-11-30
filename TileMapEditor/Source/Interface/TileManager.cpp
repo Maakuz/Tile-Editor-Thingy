@@ -26,7 +26,7 @@ void TileManager::prepareTiles()
     {
         sf::Sprite sprite;
         sprite.setTexture(Resources::get().getTexture(tile.textureID));
-        sprite.setPosition(tile.x, tile.y);
+        sprite.setPosition((float)tile.x, (float)tile.y);
         sprite.setTextureRect(Resources::get().getTileRect(tile.textureID, tile.tileID));
 
         spriteQueue.push_back(sprite);

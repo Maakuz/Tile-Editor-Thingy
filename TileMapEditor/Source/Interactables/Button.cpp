@@ -39,7 +39,7 @@ void Button::setSize(float width, float height)
     rect[LEFT].setSize({ rect[ENTIRE].getOutlineThickness(), height });
 }
 
-void Button::setOutlineThickness(int thickness)
+void Button::setOutlineThickness(float thickness)
 {
     for (int i = 0; i < RECT_AMOUNT; i++)
     {

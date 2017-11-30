@@ -40,7 +40,7 @@ public:
 
 
     //Can be negative
-    void setOutlineThickness(int thickness);
+    void setOutlineThickness(float thickness);
 
     void setFillColor(sf::Color color);
     void setOutlineColor(sf::Color color);
