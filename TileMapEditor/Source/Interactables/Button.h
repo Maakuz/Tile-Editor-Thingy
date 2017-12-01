@@ -2,27 +2,34 @@
 #include "SFML\Graphics.hpp"
 #include <vector>
 
+
+
 class Button
 {
 public:
-    enum SIDES_VISIBLE
+    
+    //What
+    struct SIDES
     {
-        ENTIRE = 0,
-        TOP = 1,
-        RIGHT = 2,
-        BOTTOM = 3,
-        LEFT = 4,
-        TOP_LEFT = 5,
-        TOP_RIGHT = 6,
-        BOTTOM_RIGHT = 7,
-        BOTTOM_LEFT = 8,
-        TOP_LEFT_RIGHT = 9,
-        RIGHT_LEFT_BOTTOM = 10,
-        TOP_RIGHT_BOTTOM = 11,
-        TOP_LEFT_BOTTOM = 12,
-        TOP_BOTTOM = 13,
-        RIGHT_LEFT = 14,
-        NONE = 15
+        enum SIDES_VISIBLE
+        {
+            ENTIRE = 0,
+            TOP = 1,
+            RIGHT = 2,
+            BOTTOM = 3,
+            LEFT = 4,
+            TOP_LEFT = 5,
+            TOP_RIGHT = 6,
+            BOTTOM_RIGHT = 7,
+            BOTTOM_LEFT = 8,
+            TOP_LEFT_RIGHT = 9,
+            RIGHT_LEFT_BOTTOM = 10,
+            TOP_RIGHT_BOTTOM = 11,
+            TOP_LEFT_BOTTOM = 12,
+            TOP_BOTTOM = 13,
+            RIGHT_LEFT = 14,
+            NONE = 15
+        };
     };
 
     Button();
@@ -45,7 +52,7 @@ public:
     void setFillColor(sf::Color color);
     void setOutlineColor(sf::Color color);
 
-    void setVisibleSide(SIDES_VISIBLE side);
+    void setVisibleSide(SIDES::SIDES_VISIBLE side);
 
     operator sf::RectangleShape();
     operator std::vector<sf::RectangleShape>();
@@ -56,5 +63,5 @@ private:
     bool active;
     sf::RectangleShape rect[RECT_AMOUNT];
 
-    SIDES_VISIBLE sideShown;
+    SIDES::SIDES_VISIBLE sideShown;
 };

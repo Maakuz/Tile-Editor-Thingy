@@ -33,6 +33,7 @@ GUIHandler::GUIHandler(sf::RenderWindow & window)
 
     bar->addMenu("View");
     bar->addMenuItem("View", Global::Elements::Menu::Clickables::infoBox);
+    bar->addMenuItem("View", Global::Elements::Menu::Clickables::darken);
 
     bar->addMenu("Tools");
     bar->addMenuItem("Tools", Global::Elements::Menu::Clickables::exportLayers);

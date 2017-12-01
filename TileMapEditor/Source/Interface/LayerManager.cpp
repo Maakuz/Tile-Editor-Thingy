@@ -81,11 +81,43 @@ void LayerManager::queueTiles()
     }
 }
 
-std::vector<Tile> LayerManager::getTilesAt(sf::Vector2i start, sf::Vector2i stop)
+std::vector<ActiveTile> LayerManager::getActiveTilesAt(sf::Vector2i start, sf::Vector2i stop)
 {
     std::vector<Tile> tiles;
-    // TODO: IMPLEMENT //
-    return tiles;
+
+    start -= workAreaStart;
+    stop -= workAreaStart;
+
+    start /= DEFAULT_TILE_SIZE;
+    stop  /= DEFAULT_TILE_SIZE;
+
+    int xCondition = std::min(stop.x, (int)layers[activeLayer][0].size() - 1);
+    int yCondition = std::min(stop.y, (int)layers[activeLayer].size() - 1);
+
+    for (size_t i = start.y; i <= yCondition; i++)
+    {
+        for (size_t j = start.x; j <= xCondition; j++)
+        {
+            tiles.push_back(layers[activeLayer][i][j]);
+        }
+    }
+
+    std::vector<ActiveTile> newActive;
+
+    for (size_t i = 0; i < tiles.size(); i++)
+    {
+        ActiveTile active;
+        active.id = tiles[i].tileID;
+        active.x = (tiles[i].x - workAreaStart.x) / DEFAULT_TILE_SIZE - start.x;
+        active.y = (tiles[i].y - workAreaStart.y) / DEFAULT_TILE_SIZE - start.y;
+
+        active.box.setSize(DEFAULT_TILE_SIZE, DEFAULT_TILE_SIZE);
+        active.box.setPosition(tiles[i].x, tiles[i].y);
+
+        newActive.push_back(active);
+    }
+
+    return newActive;
 }
 
 sf::Image LayerManager::getLayerAsImage(int layer) const
@@ -120,6 +152,8 @@ void LayerManager::handleLayerMenu(sf::String clickedItem)
 
         label->setText("Active layer: 1");
         activeLayer = 0;
+
+        differentiateLayes();
     }
     
     if (clickedItem == Global::Elements::Menu::Clickables::layer2)
@@ -129,6 +163,8 @@ void LayerManager::handleLayerMenu(sf::String clickedItem)
 
         label->setText("Active layer: 2");
         activeLayer = 1;
+
+        differentiateLayes();
     }
 
     if (clickedItem == Global::Elements::Menu::Clickables::layer3)
@@ -138,6 +174,43 @@ void LayerManager::handleLayerMenu(sf::String clickedItem)
 
         label->setText("Active layer: 3");
         activeLayer = 2;
+
+        differentiateLayes();
+    }
+
+    if (clickedItem == Global::Elements::Menu::Clickables::darken)
+    {
+        differentiateLayers = !differentiateLayers;
+
+        if (!differentiateLayers)
+            for (int i = 0; i < LAYER_AMOUNT; i++)
+                for (size_t j = 0; j < layers[i].size(); j++)
+                    for (size_t k = 0; k < layers[i][j].size(); k++)
+                        layers[i][j][k].color = sf::Color::White;
+
+        else
+            differentiateLayes();
+    }
+}
+
+void LayerManager::differentiateLayes()
+{
+    if (differentiateLayers)
+    {
+        for (int i = 0; i < LAYER_AMOUNT; i++)
+        {
+            for (size_t j = 0; j < layers[i].size(); j++)
+            {
+                for (size_t k = 0; k < layers[i][j].size(); k++)
+                {
+                    int color = ((i + 1.f) / (activeLayer + 1.f)) * 255;
+                    int transparency = (float(LAYER_AMOUNT - i) / (LAYER_AMOUNT - activeLayer)) * 255;
+                    transparency = std::min(255, transparency);
+                    
+                    layers[i][j][k].color = sf::Color(color, color, color, transparency);
+                }
+            }
+        }
     }
 }
 
@@ -194,6 +267,8 @@ std::istream & operator>>(std::istream & in, LayerManager & layerManager)
     tgui::Label::Ptr label = panel->get<tgui::Label>(Global::Elements::infoBox::layerInfo);
 
     label->setText("Active layer: " + std::to_string(layerManager.activeLayer + 1));
+
+    layerManager.differentiateLayes();
 
     return in;
 }

@@ -28,6 +28,7 @@ void TileManager::prepareTiles()
         sprite.setTexture(Resources::get().getTexture(tile.textureID));
         sprite.setPosition((float)tile.x, (float)tile.y);
         sprite.setTextureRect(Resources::get().getTileRect(tile.textureID, tile.tileID));
+        sprite.setColor(tile.color);
 
         spriteQueue.push_back(sprite);
     }

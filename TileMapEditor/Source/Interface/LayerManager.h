@@ -17,16 +17,22 @@ public:
     void update(int activeTexture, std::vector<ActiveTile> activeTiles, sf::Vector2i mousePos);
     void queueTiles();
 
-    std::vector<Tile> getTilesAt(sf::Vector2i start, sf::Vector2i stop);
+    std::vector<ActiveTile> getActiveTilesAt(sf::Vector2i start, sf::Vector2i stop);
+
+    sf::Vector2i getWorkAreaStart() { return workAreaStart; };
 
     sf::Image getLayerAsImage(int layer) const;
 
 private:
     void handleLayerMenu(sf::String clickedItem);
 
+    void differentiateLayes();
+
     typedef std::vector<std::vector<Tile>> Layer;
     Layer layers[LAYER_AMOUNT];
 
     int activeLayer;
     sf::Vector2i workAreaStart;
+
+    bool differentiateLayers;
 };

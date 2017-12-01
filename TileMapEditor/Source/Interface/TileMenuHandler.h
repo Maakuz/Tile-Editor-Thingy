@@ -26,8 +26,8 @@ private:
     void handleFileMenu(sf::String button);
     void handleBlockSelection(sf::Vector2i start, sf::Vector2i stop);
     void handleLayerSelection(sf::Vector2i start, sf::Vector2i stop);
-    void createActiveBounds(std::vector<ActiveTile> tiles);
-    void readyStartAndStopPosition(sf::Vector2i & start, sf::Vector2i & stop);
+    void createActiveBounds(std::vector<ActiveTile>& tiles);
+    void swapStartAndStopPosition(sf::Vector2i & start, sf::Vector2i & stop);
 
     FileManager fileManager;
     LayerManager layerManager;

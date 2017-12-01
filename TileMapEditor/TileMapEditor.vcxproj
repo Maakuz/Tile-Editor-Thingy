@@ -179,6 +179,9 @@
     <ClInclude Include="Source\Interface\TileMenuHandler.h" />
     <ClInclude Include="Source\Queues\TileQueue.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Source\Misc\Remainder.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

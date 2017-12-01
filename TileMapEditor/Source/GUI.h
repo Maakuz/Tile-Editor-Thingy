@@ -33,6 +33,7 @@ namespace Global
                 const sf::String layer3("Layer 3");
 
                 const sf::String infoBox("Info box");
+                const sf::String darken("Layer differences");
 
                 const sf::String exportLayers("Export...");
 
