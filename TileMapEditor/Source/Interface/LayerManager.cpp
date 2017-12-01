@@ -6,7 +6,7 @@
 #include "GUI.h"
 #include <algorithm>
 
-#define DEFAULT_WORK_AREA 100
+#define DEFAULT_WORK_AREA 10
 LayerManager::LayerManager()
 {
     activeLayer = 0;
@@ -123,22 +123,18 @@ std::vector<ActiveTile> LayerManager::getActiveTilesAt(sf::Vector2i start, sf::V
 sf::Image LayerManager::getLayerAsImage(int layer) const
 {
     sf::Image image;
-    image.create((int)layers[0][0].size() * DEFAULT_TILE_SIZE, (int)layers[0].size() * DEFAULT_TILE_SIZE, sf::Color::Transparent);
+    int x = (int)layers[0][0].size();
+    int y = (int)layers[0].size();
+    image.create(x * DEFAULT_TILE_SIZE, y * DEFAULT_TILE_SIZE, sf::Color::Transparent);
 
-    for (size_t i = 0; i < layers[layer].size(); i++)
+
+    for (size_t i = 0; i < y; i++)
     {
-        for (size_t j = 0; j < layers[layer][i].size(); j++)
+        for (size_t j = 0; j < x; j++)
         {
-           if (layers[layer][i][j].tileID != 0)
-               image.copy(Resources::get().getTexture(layers[layer][i][j].textureID).copyToImage(),
-                    layers[layer][i][j].x - workAreaStart.x,
-                    layers[layer][i][j].y - workAreaStart.y,
-                    Resources::get().getTileRect(layers[layer][i][j].textureID, layers[layer][i][j].tileID),
-                    true);
+            this->processImagePart(image, layer, i, j);
         }
     }
-
-   
 
     return image;
 }
@@ -212,6 +208,16 @@ void LayerManager::differentiateLayes()
             }
         }
     }
+}
+
+void LayerManager::processImagePart(sf::Image & image, int layer, int i, int j) const
+{
+    if (layers[layer][i][j].tileID != 0)
+        image.copy(Resources::get().getTexture(layers[layer][i][j].textureID).copyToImage(),
+            layers[layer][i][j].x - workAreaStart.x,
+            layers[layer][i][j].y - workAreaStart.y,
+            Resources::get().getTileRect(layers[layer][i][j].textureID, layers[layer][i][j].tileID),
+            true);
 }
 
 std::ostream & operator<<(std::ostream & out, const LayerManager & layerManager)

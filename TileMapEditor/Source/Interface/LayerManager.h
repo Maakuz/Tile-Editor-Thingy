@@ -24,9 +24,12 @@ public:
     sf::Image getLayerAsImage(int layer) const;
 
 private:
+    void processImagePart(sf::Image & image, int layer, int i, int j) const;
+
     void handleLayerMenu(sf::String clickedItem);
 
     void differentiateLayes();
+
 
     typedef std::vector<std::vector<Tile>> Layer;
     Layer layers[LAYER_AMOUNT];
