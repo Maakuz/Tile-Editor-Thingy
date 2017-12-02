@@ -106,6 +106,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(solutionDir)TileMapEditor\Source;$(solutionDir)Externals\SFML2\include;$(solutionDir)Externals\TGUI\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -139,6 +140,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(solutionDir)TileMapEditor\Source;$(solutionDir)Externals\SFML2\include;$(solutionDir)Externals\TGUI\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -160,6 +162,7 @@
     <ClCompile Include="Source\Renderer.cpp" />
     <ClCompile Include="Source\Interface\TileManager.cpp" />
     <ClCompile Include="Source\Interface\TileMenuHandler.cpp" />
+    <ClCompile Include="Source\TileMaps.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Constants.h" />
@@ -173,7 +176,7 @@
     <ClInclude Include="Source\Queues\BackgroundQueue.h" />
     <ClInclude Include="Source\Queues\OverlayQueue.h" />
     <ClInclude Include="Source\Renderer.h" />
-    <ClInclude Include="Source\Resources.h" />
+    <ClInclude Include="Source\TileMaps.h" />
     <ClInclude Include="Source\Structs.h" />
     <ClInclude Include="Source\Interface\TileManager.h" />
     <ClInclude Include="Source\Interface\TileMenuHandler.h" />

@@ -6,6 +6,7 @@
 #include "Constants.h"
 #include "SFML\Window\Mouse.hpp"
 #include "GUI.h"
+#include "TileMaps.h"
 
 
 TileMenuHandler::TileMenuHandler() :
@@ -20,8 +21,10 @@ TileMenuHandler::TileMenuHandler() :
     createTileButtons();
 
     Global::gui->get<tgui::MenuBar>(Global::Elements::Menu::bar)->connect("MenuItemClicked", &TileMenuHandler::handleFileMenu, this);
+    Global::gui->get<tgui::Panel>(Global::Elements::infoBox::panel)->get(Global::Elements::infoBox::textureBox)->connect("itemselected", &TileMenuHandler::setActiveTexture, this);
     selectingBlocks = false;
     rightClicking = false;
+    activeTileTexture = -1;
 }
 
 void TileMenuHandler::handleEvent(sf::Event event)
@@ -77,13 +80,25 @@ void TileMenuHandler::update(sf::Vector2i mousePos)
             handleLayerSelection(pressedPos, mousePos);
         }
 
-        else
-            layerManager.update(activeTileTexture, activeTiles, mousePos);
+        else if (activeTileTexture != -1)
+            layerManager.update(activeTiles, mousePos);
     }
 
-    else
+    else if (activeTileTexture != -1)
     {
         handleBlockSelection(pressedPos - offset, mousePos - offset);
+    }
+
+    //Todo: Make a button for this
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
+    {
+        activeTiles.clear();
+        ActiveTile eraser;
+        eraser.tileID = -1;
+        eraser.x = 0;
+        eraser.y = 0;
+
+        activeTiles.push_back(eraser);
     }
 }
 
@@ -91,18 +106,25 @@ void TileMenuHandler::queueItems()
 {
     layerManager.queueTiles();
 
-
-    for (int i = 0; i < TILEMENU_Y_AREA; i++)
+    if (activeTileTexture != -1)
     {
-        for (int j = 0; j < TILEMENU_X_AREA; j++)
-        {
-            Tile activeTile;
-            activeTile.textureID = activeTileTexture;
-            activeTile.tileID = j + TILEMENU_X_AREA * i;
-            activeTile.x = j * DEFAULT_TILE_SIZE + offset.x;
-            activeTile.y = i * DEFAULT_TILE_SIZE + offset.y;
+        sf::Vector2i bounds = TileMaps::get().getSheetSize(activeTileTexture);
 
-            TileQueue::get().queue(activeTile);
+        for (int i = 0; i < TILEMENU_Y_AREA; i++)
+        {
+            for (int j = 0; j < TILEMENU_X_AREA; j++)
+            {
+                if (j + TILEMENU_X_AREA * i < bounds.x * bounds.y)
+                {
+                    Tile activeTile;
+                    activeTile.textureID = activeTileTexture;
+                    activeTile.tileID = j + TILEMENU_X_AREA * i;
+                    activeTile.x = j * DEFAULT_TILE_SIZE + offset.x;
+                    activeTile.y = i * DEFAULT_TILE_SIZE + offset.y;
+
+                    TileQueue::get().queue(activeTile);
+                }
+            }
         }
     }
 
@@ -148,6 +170,9 @@ void TileMenuHandler::handleFileMenu(sf::String button)
 
     if (button == Global::Elements::Menu::Clickables::exportLayers)
         fileManager.exportTextures(layerManager);
+
+    if (button == Global::Elements::Menu::Clickables::importTexture)
+        fileManager.importTexure();
 }
 
 void TileMenuHandler::handleBlockSelection(sf::Vector2i start, sf::Vector2i stop)
@@ -158,6 +183,8 @@ void TileMenuHandler::handleBlockSelection(sf::Vector2i start, sf::Vector2i stop
     stop /= DEFAULT_TILE_SIZE;
 
     swapStartAndStopPosition(start, stop);
+
+    sf::Vector2i bounds = TileMaps::get().getSheetSize(activeTileTexture);
 
     for (int k = start.y; k <= stop.y; k++)
     {
@@ -174,13 +201,17 @@ void TileMenuHandler::handleBlockSelection(sf::Vector2i start, sf::Vector2i stop
                         cleared = true;
                     }
 
-                    ActiveTile activeTile;
-                    activeTile.id = (int)i;
-                    activeTile.x = j - start.x;
-                    activeTile.y = k - start.y;
-                    activeTile.box.setSize(DEFAULT_TILE_SIZE, DEFAULT_TILE_SIZE);
-                    activeTile.box.setPosition(j * DEFAULT_TILE_SIZE + offset.x, k * DEFAULT_TILE_SIZE + offset.y);
-                    activeTiles.push_back(activeTile);
+                    if (i < bounds.x * bounds.y)
+                    {
+                        ActiveTile activeTile;
+                        activeTile.tileID = (int)i;
+                        activeTile.textureID = activeTileTexture;
+                        activeTile.x = j - start.x;
+                        activeTile.y = k - start.y;
+                        activeTile.box.setSize(DEFAULT_TILE_SIZE, DEFAULT_TILE_SIZE);
+                        activeTile.box.setPosition(j * DEFAULT_TILE_SIZE + offset.x, k * DEFAULT_TILE_SIZE + offset.y);
+                        activeTiles.push_back(activeTile);
+                    }
 
                 }
             }
@@ -212,7 +243,7 @@ void TileMenuHandler::createActiveBounds(std::vector<ActiveTile>& tiles) // TODO
 
         for (const ActiveTile & neighbor : tiles)
         {
-            if (abs(i.x - neighbor.x) <= 1 && abs(i.y - neighbor.y) <= 1)
+            if (abs(i.x - neighbor.x) + abs(i.y - neighbor.y) <= 1)
             {
                 if (i.x < neighbor.x)
                     rightNeighborExist = true;
@@ -294,4 +325,9 @@ void TileMenuHandler::swapStartAndStopPosition(sf::Vector2i & start, sf::Vector2
     if (start.y > stop.y)
         std::swap(start.y, stop.y);
 
+}
+
+void TileMenuHandler::setActiveTexture(sf::String name, sf::String path)
+{
+    activeTileTexture = TileMaps::get().getTextureIndex(name);
 }

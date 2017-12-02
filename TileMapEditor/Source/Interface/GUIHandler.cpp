@@ -25,6 +25,7 @@ GUIHandler::GUIHandler(sf::RenderWindow & window)
 
     bar->addMenu("Edit");
     bar->addMenuItem("Edit", Global::Elements::Menu::Clickables::undo);
+    bar->addMenuItem("Edit", Global::Elements::Menu::Clickables::importTexture);
 
     bar->addMenu("Layer");
     bar->addMenuItem("Layer", Global::Elements::Menu::Clickables::layer1);
@@ -44,17 +45,32 @@ GUIHandler::GUIHandler(sf::RenderWindow & window)
 
    
 
-    tgui::Label::Ptr pan = tgui::Label::create();
-    pan->setText("Active layer: 1");
+    tgui::Label::Ptr label = tgui::Label::create();
+    label->setText("Active layer: 1");
+
+    tgui::ComboBox::Ptr textureBox = tgui::ComboBox::create();
+    textureBox->setPosition(2, 30);
 
     tgui::Panel::Ptr panel = tgui::Panel::create();
+    panel->add(label, Global::Elements::infoBox::layerInfo);
+    panel->add(textureBox, Global::Elements::infoBox::textureBox);
+    
     panel->hide();
-    panel->add(pan, Global::Elements::infoBox::layerInfo);
     panel->setSize(200, 100);
     panel->setPosition(1000, 50);
     panel->setBackgroundColor(tgui::Color(sf::Color::White));
 
     gui.add(panel, Global::Elements::infoBox::panel);
+
+
+    tgui::ListBox::Ptr textureList = tgui::ListBox::create();
+    textureList->hide();
+    textureList->setSize(400, 200);
+    textureList->setPosition(400, 20);
+
+    gui.add(textureList, Global::Elements::textureImporter::textureList);
+
+
 }
 
 void GUIHandler::handleEvents(sf::Event event)

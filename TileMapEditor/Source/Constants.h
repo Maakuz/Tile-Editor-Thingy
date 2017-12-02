@@ -3,7 +3,8 @@
 #define WIN_HEIGHT 720
 
 #define DEFAULT_TILE_SIZE 32
-#define TEXTURE_PATH(x) "Resources/" x
+#define RESOURCE_FOLDER "Resources"
+#define TEXTURE_PATH(x) RESOURCE_FOLDER "/" x
 
 #define TILEMENU_X_AREA 5
 #define TILEMENU_Y_AREA 20

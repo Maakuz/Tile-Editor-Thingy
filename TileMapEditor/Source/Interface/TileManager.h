@@ -15,7 +15,6 @@ public:
 
 private:
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
-    void loadTextures();
 
 
     std::vector<sf::Sprite> spriteQueue;

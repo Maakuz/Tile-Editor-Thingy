@@ -1,7 +1,7 @@
 #include "LayerManager.h"
 #include "Constants.h"
 #include "Queues\TileQueue.h"
-#include "Resources.h"
+#include "TileMaps.h"
 #include "SFML\Window\Mouse.hpp"
 #include "GUI.h"
 #include <algorithm>
@@ -23,7 +23,7 @@ LayerManager::LayerManager()
             for (int k = 0; k < DEFAULT_WORK_AREA; k++)
             {
                 layers[i][j][k].textureID = 0;
-                layers[i][j][k].tileID = 0;
+                layers[i][j][k].tileID = -1;
                 layers[i][j][k].x = workAreaStart.x + (k * DEFAULT_TILE_SIZE);
                 layers[i][j][k].y = workAreaStart.y + (j * DEFAULT_TILE_SIZE);
             }
@@ -35,7 +35,7 @@ LayerManager::LayerManager()
 
 }
 
-void LayerManager::update(int activeTexture, std::vector<ActiveTile> activeTiles, sf::Vector2i mousePos)
+void LayerManager::update(const std::vector<ActiveTile> & activeTiles, sf::Vector2i mousePos)
 {
     if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
     {
@@ -53,8 +53,8 @@ void LayerManager::update(int activeTexture, std::vector<ActiveTile> activeTiles
 
                 if (newX < layers[0][0].size() && newY < layers[0].size())
                 {
-                    layers[activeLayer][newY][newX].textureID = activeTexture;
-                    layers[activeLayer][newY][newX].tileID = activeTiles[i].id;
+                    layers[activeLayer][newY][newX].textureID = activeTiles[i].textureID;
+                    layers[activeLayer][newY][newX].tileID = activeTiles[i].tileID;
                 }
             }
         }
@@ -74,7 +74,7 @@ void LayerManager::queueTiles()
         {
             for (size_t k = 0; k < visibleX; k++)
             {
-                if (layers[i][j][k].tileID != 0)
+                if (layers[i][j][k].tileID != -1)
                     TileQueue::get().queue(layers[i][j][k]);
             }
         }
@@ -98,6 +98,7 @@ std::vector<ActiveTile> LayerManager::getActiveTilesAt(sf::Vector2i start, sf::V
     {
         for (size_t j = start.x; j <= xCondition; j++)
         {
+            //if (layers[activeLayer][i][j].tileID != -1) possible but confusing
             tiles.push_back(layers[activeLayer][i][j]);
         }
     }
@@ -107,7 +108,8 @@ std::vector<ActiveTile> LayerManager::getActiveTilesAt(sf::Vector2i start, sf::V
     for (size_t i = 0; i < tiles.size(); i++)
     {
         ActiveTile active;
-        active.id = tiles[i].tileID;
+        active.tileID = tiles[i].tileID;
+        active.textureID = tiles[i].textureID;
         active.x = (tiles[i].x - workAreaStart.x) / DEFAULT_TILE_SIZE - start.x;
         active.y = (tiles[i].y - workAreaStart.y) / DEFAULT_TILE_SIZE - start.y;
 
@@ -213,10 +215,10 @@ void LayerManager::differentiateLayes()
 void LayerManager::processImagePart(sf::Image & image, int layer, int i, int j) const
 {
     if (layers[layer][i][j].tileID != 0)
-        image.copy(Resources::get().getTexture(layers[layer][i][j].textureID).copyToImage(),
+        image.copy(TileMaps::get().getTexture(layers[layer][i][j].textureID).copyToImage(),
             layers[layer][i][j].x - workAreaStart.x,
             layers[layer][i][j].y - workAreaStart.y,
-            Resources::get().getTileRect(layers[layer][i][j].textureID, layers[layer][i][j].tileID),
+            TileMaps::get().getTileRect(layers[layer][i][j].textureID, layers[layer][i][j].tileID),
             true);
 }
 

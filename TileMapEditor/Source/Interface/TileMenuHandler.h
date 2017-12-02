@@ -28,6 +28,7 @@ private:
     void handleLayerSelection(sf::Vector2i start, sf::Vector2i stop);
     void createActiveBounds(std::vector<ActiveTile>& tiles);
     void swapStartAndStopPosition(sf::Vector2i & start, sf::Vector2i & stop);
+    void setActiveTexture(sf::String name, sf::String path);
 
     FileManager fileManager;
     LayerManager layerManager;

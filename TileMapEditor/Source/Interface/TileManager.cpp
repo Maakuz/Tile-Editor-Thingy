@@ -2,20 +2,10 @@
 #include "SFML\Graphics.hpp"
 #include "Constants.h"
 #include "Queues\TileQueue.h"
-#include "Resources.h"
+#include "TileMaps.h"
 
 TileManager::TileManager()
 {
-    loadTextures();
-}
-
-void TileManager::loadTextures() // TODO: MAKE THIS FOR LOADING DURING RUNTIME //
-{
-    Resources::get().addTexture("grass.png");
-
-    sf::Texture tileTexture = Resources::get().getTexture(0);
-
-    
 }
 
 void TileManager::prepareTiles()
@@ -25,9 +15,9 @@ void TileManager::prepareTiles()
     for (Tile tile : TileQueue::get().getQueue())
     {
         sf::Sprite sprite;
-        sprite.setTexture(Resources::get().getTexture(tile.textureID));
+        sprite.setTexture(TileMaps::get().getTexture(tile.textureID));
         sprite.setPosition((float)tile.x, (float)tile.y);
-        sprite.setTextureRect(Resources::get().getTileRect(tile.textureID, tile.tileID));
+        sprite.setTextureRect(TileMaps::get().getTileRect(tile.textureID, tile.tileID));
         sprite.setColor(tile.color);
 
         spriteQueue.push_back(sprite);

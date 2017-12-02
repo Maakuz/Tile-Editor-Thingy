@@ -48,6 +48,9 @@
     <ClCompile Include="Source\FileManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\TileMaps.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Constants.h">
@@ -95,7 +98,7 @@
     <ClInclude Include="Source\FileManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Resources.h">
+    <ClInclude Include="Source\TileMaps.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

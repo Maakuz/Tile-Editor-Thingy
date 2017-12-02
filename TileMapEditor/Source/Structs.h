@@ -31,7 +31,8 @@ struct ActiveTile
     };
 
     Button box;
-    int id;
+    int tileID;
+    int textureID;
     int x;
     int y;
 };

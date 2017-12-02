@@ -11,6 +11,7 @@ namespace Global
             const sf::String panel("InfoPanel");
 
             const sf::String layerInfo("layerInfo");
+            const sf::String textureBox("selectedTexture");
         
         }
 
@@ -27,6 +28,7 @@ namespace Global
                 const sf::String exitFile("Exit");
 
                 const sf::String undo("Undo");
+                const sf::String importTexture("Import texture");
 
                 const sf::String layer1("Layer 1");
                 const sf::String layer2("Layer 2");
@@ -41,6 +43,12 @@ namespace Global
 
             }
 
+        }
+
+        namespace textureImporter
+        {
+            const sf::String panel("TexturePanel");
+            const sf::String textureList("listBox");
         }
     }
 }

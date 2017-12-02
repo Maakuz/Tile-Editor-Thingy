@@ -13,7 +13,10 @@ public:
     void load(LayerManager & layerManager);
 
     void exportTextures(const LayerManager & layerManager);
+    void importTexure();
 private:
-
+    
+    void addTexture(sf::String name, sf::String path);
+    
 };
 
