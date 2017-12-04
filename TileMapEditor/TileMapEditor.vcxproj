@@ -173,6 +173,7 @@
     <ClInclude Include="Source\Interactables\Button.h" />
     <ClInclude Include="Source\Interface\GUIHandler.h" />
     <ClInclude Include="Source\Interface\LayerManager.h" />
+    <ClInclude Include="Source\Misc\MissingTexture.h" />
     <ClInclude Include="Source\Queues\BackgroundQueue.h" />
     <ClInclude Include="Source\Queues\OverlayQueue.h" />
     <ClInclude Include="Source\Renderer.h" />

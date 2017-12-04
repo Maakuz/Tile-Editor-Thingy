@@ -23,11 +23,13 @@ public:
    
 
     int getTextureIndex(std::string name);
+    int getTexureCount() const { return textureNames.size(); };
 
     sf::IntRect & getTileRect(int textureID, int tileID);
     sf::Vector2i getSheetSize(int textureID);
 
-    void addTexture(std::string newName);
+    //Width and height is only to determinate size if texture loading fails
+    void addTexture(std::string newName, int width = 0, int height = 0);
 
 private:
     std::vector<sf::Texture> textures;

@@ -5,4 +5,4 @@ Save/load names and maybe paths
 Multitråda saker kanske om jag orkar vet inte
 undo feature
 Byt alla printfff
-spara inlästa texturer med infon de behöver!!! PRIO
+Ändra tileSize

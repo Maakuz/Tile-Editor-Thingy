@@ -101,6 +101,9 @@
     <ClInclude Include="Source\TileMaps.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Misc\MissingTexture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Source\Misc\Remainder.txt" />

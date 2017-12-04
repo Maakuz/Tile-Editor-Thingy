@@ -1,4 +1,9 @@
 #include "TileMaps.h"
+#include "Misc\MissingTexture.h"
+#include <filesystem>
+#include "GUI.h"
+
+namespace fs = std::experimental::filesystem;
 
  sf::Texture & TileMaps::getTexture(int id)
  {
@@ -27,37 +32,39 @@
      return sheetSize[textureID];
  }
 
- void TileMaps::addTexture(std::string newName)
+ void TileMaps::addTexture(std::string newName, int width, int height)
  {
-     //sf::Texture tex;
-     //tex.create(DEFAULT_TILE_SIZE, DEFAULT_TILE_SIZE);
-     //printf("%d, %d\n", tex.getSize().x, tex.getSize().y);
-     //
-
-     //sf::Uint8* pixels = new sf::Uint8[DEFAULT_TILE_SIZE * DEFAULT_TILE_SIZE * 4];
-     //for (int i = 0; i < DEFAULT_TILE_SIZE * DEFAULT_TILE_SIZE; i += 4)
-     //{
-     //    //TODO: Change to the palette mapping...
-     //    pixels[i] = 0;
-     //    pixels[i + 1] = 0;
-     //    pixels[i + 2] = 0;
-     //    pixels[i + 3] = 255;
-     //}
-
-     //tex.update(pixels);
-     //delete[] pixels;
-
      for (std::string & name : textureNames)
      {
          if (newName == name)
              throw "Texture aleady exists";
      }
-
+     
      sf::Texture tex;
-     tex.loadFromFile(TEXTURE_PATH(+newName)); // TODO: CATCH THIS SHIT & check for dupes
+     int x = width;
+     int y = height;
 
-     int x = tex.getSize().x / DEFAULT_TILE_SIZE;
-     int y = tex.getSize().y / DEFAULT_TILE_SIZE;
+     //load a temp texture if texture is missing
+     if (!fs::exists(TEXTURE_PATH(+newName)))
+     {
+         tex.create(DEFAULT_TILE_SIZE * x, DEFAULT_TILE_SIZE * y);
+
+         for (int i = 0; i < y; i++)
+         {
+             for (int j = 0; j < x; j++)
+             {
+                 tex.update(missingColor, DEFAULT_TILE_SIZE, DEFAULT_TILE_SIZE, j * DEFAULT_TILE_SIZE, i * DEFAULT_TILE_SIZE);
+             }
+         }
+     }
+
+     else
+     {
+         tex.loadFromFile(TEXTURE_PATH(+newName));
+
+         x = tex.getSize().x / DEFAULT_TILE_SIZE;
+         y = tex.getSize().y / DEFAULT_TILE_SIZE;
+     }
 
      textures.push_back(tex);
      textureNames.push_back(newName);
@@ -81,30 +88,50 @@
 
  std::ostream & operator<<(std::ostream & out, const TileMaps & tileMaps)
  {
-     
+     out << std::to_string(tileMaps.textureNames.size()) << " ";
 
-
+     for (size_t i = 0; i < tileMaps.textures.size(); i++)
+     {
+         out << tileMaps.textureNames[i] << " ";
+         out << tileMaps.sheetSize[i].x << " " << tileMaps.sheetSize[i].y << " ";
+     }
 
      return out;
  }
 
  std::istream & operator>>(std::istream & in, TileMaps & tileMaps)
  {
-     sf::Texture failed;
-     failed.create(DEFAULT_TILE_SIZE, DEFAULT_TILE_SIZE);
+     int textureCount = 0;
+     in >> textureCount;
 
-     sf::Uint8* pixels = new sf::Uint8[DEFAULT_TILE_SIZE * DEFAULT_TILE_SIZE * 4];
-     for (int i = 0; i < DEFAULT_TILE_SIZE * DEFAULT_TILE_SIZE; i += 4)
+     tileMaps.textures.clear();
+     tileMaps.textureNames.clear();
+     tileMaps.sheetSize.clear();
+     tileMaps.textureRects.clear();
+
+     auto textureInfo = Global::gui->get<tgui::Panel>(Global::Elements::infoBox::panel)->get<tgui::ComboBox>(Global::Elements::infoBox::textureBox);
+     textureInfo->removeAllItems();
+
+     for (int i = 0; i < textureCount; i++)
      {
-         //TODO: Change to the palette mapping...
-         pixels[i] = 0;
-         pixels[i + 1] = 0;
-         pixels[i + 2] = 0;
-         pixels[i + 3] = 255;
+         std::string name;
+         int x = 0;
+         int y = 0;
+
+         in >> name;
+         in >> x >> y;
+
+         tileMaps.addTexture(name, x, y);
+
+         fs::path currentDir = fs::current_path();
+         currentDir /= TEXTURE_PATH(+name);
+
+         textureInfo->addItem(name, currentDir.string());
      }
 
-     failed.update(pixels);
-     delete[] pixels;
+
+
+     
 
      return in;
  }

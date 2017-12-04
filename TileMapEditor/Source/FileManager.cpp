@@ -16,7 +16,8 @@ void FileManager::save(const LayerManager & layerManager) const
 {
     std::ofstream file("test.txt");
 
-    file << layerManager;
+    file << layerManager << "\n";
+    file << TileMaps::get() << "\n";
 
     file.close();
 
@@ -33,6 +34,7 @@ void FileManager::load(LayerManager & layerManager)
     std::ifstream file("test.txt");
 
     file >> layerManager;
+    file >> TileMaps::get();
     file.close();
 
     printf("Loaded?!\n");
@@ -56,8 +58,6 @@ void FileManager::importTexure()
     fs::path currentDir = fs::current_path();
     currentDir /= RESOURCE_FOLDER;
 
-    printf("%ws\n", currentDir.c_str());
-
     std::vector<fs::path> textures;
 
 
@@ -76,8 +76,6 @@ void FileManager::importTexure()
 
 void FileManager::addTexture(sf::String name, sf::String path)
 {
-    printf("%s\n", std::string(path).c_str());
-
     try
     {
         TileMaps::get().addTexture(name);

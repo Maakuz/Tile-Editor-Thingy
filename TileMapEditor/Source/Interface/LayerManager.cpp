@@ -214,7 +214,7 @@ void LayerManager::differentiateLayes()
 
 void LayerManager::processImagePart(sf::Image & image, int layer, int i, int j) const
 {
-    if (layers[layer][i][j].tileID != 0)
+    if (layers[layer][i][j].tileID != -1)
         image.copy(TileMaps::get().getTexture(layers[layer][i][j].textureID).copyToImage(),
             layers[layer][i][j].x - workAreaStart.x,
             layers[layer][i][j].y - workAreaStart.y,
