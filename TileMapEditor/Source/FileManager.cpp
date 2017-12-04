@@ -12,33 +12,40 @@ FileManager::FileManager()
     Global::gui->get(Global::Elements::textureImporter::textureList)->connect("DoubleClicked", &FileManager::addTexture, this);
 }
 
-void FileManager::save(const LayerManager & layerManager) const
+void FileManager::save(const LayerManager & layerManager, fs::path path) const
 {
-    std::ofstream file("test.txt");
+    path.replace_extension(FILE_EXTENSION);
 
-    file << layerManager << "\n";
-    file << TileMaps::get() << "\n";
+    std::ofstream file(path);
+    if (file.is_open())
+    {
+        file << layerManager << "\n";
+        file << TileMaps::get() << "\n";
 
-    file.close();
+        file.close();
 
-    printf("Saved!\n");
+        printf("Saved!\n");
+    }
 
-    //Things to save:
-    //layers
-    //textures
-    //Editor state
+    else
+        printf("NOT saved!\n");
+
 }
 
-void FileManager::load(LayerManager & layerManager)
+void FileManager::load(LayerManager & layerManager, fs::path path)
 {
-    std::ifstream file("test.txt");
+    std::ifstream file(path);
+    if (file.is_open())
+    {
+        file >> layerManager;
+        file >> TileMaps::get();
+        file.close();
 
-    file >> layerManager;
-    file >> TileMaps::get();
-    file.close();
+        printf("Loaded?!\n");
+    }
 
-    printf("Loaded?!\n");
-
+    else 
+        printf("NOT loaded!\n");
 }
 
 void FileManager::exportTextures(const LayerManager & layerManager)

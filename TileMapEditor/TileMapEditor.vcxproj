@@ -158,6 +158,8 @@
     <ClCompile Include="Source\Interactables\Button.cpp" />
     <ClCompile Include="Source\Interface\GUIHandler.cpp" />
     <ClCompile Include="Source\Interface\LayerManager.cpp" />
+    <ClCompile Include="Source\Interface\LoadWindow.cpp" />
+    <ClCompile Include="Source\Interface\SaveWindow.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Renderer.cpp" />
     <ClCompile Include="Source\Interface\TileManager.cpp" />
@@ -173,6 +175,8 @@
     <ClInclude Include="Source\Interactables\Button.h" />
     <ClInclude Include="Source\Interface\GUIHandler.h" />
     <ClInclude Include="Source\Interface\LayerManager.h" />
+    <ClInclude Include="Source\Interface\LoadWindow.h" />
+    <ClInclude Include="Source\Interface\SaveWindow.h" />
     <ClInclude Include="Source\Misc\MissingTexture.h" />
     <ClInclude Include="Source\Queues\BackgroundQueue.h" />
     <ClInclude Include="Source\Queues\OverlayQueue.h" />

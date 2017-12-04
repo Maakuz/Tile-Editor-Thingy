@@ -15,6 +15,32 @@ namespace Global
         
         }
 
+        namespace savebox
+        {
+            const sf::String panel("savePanel");
+            const sf::String paths("path");
+            const sf::String fileName("fileName");
+            const sf::String createFolderButton("New Folder");
+            const sf::String saveButton("Save");
+            const sf::String cancelButton("Cancel");
+
+            namespace foldercreator
+            {
+                const sf::String panel("panel");
+                const sf::String textbox("Folder name");
+                const sf::String confirmButton("Confirm");
+                const sf::String cancelButton("Cancel");
+
+            }
+        }
+
+        namespace loadbox
+        {
+            const sf::String panel("loadPanel");
+            const sf::String paths("path");
+            const sf::String loadButton("Load");
+            const sf::String cancelButton("Cancel");
+        }
 
         namespace Menu
         {

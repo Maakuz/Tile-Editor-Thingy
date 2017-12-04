@@ -3,6 +3,8 @@
 #include <Interactables\Button.h>
 #include <Interactables\BoxyBox.h>
 #include "FileManager.h"
+#include "SaveWindow.h"
+#include "LoadWindow.h"
 #include <vector>
 
 class TileMenuHandler
@@ -29,9 +31,13 @@ private:
     void createActiveBounds(std::vector<ActiveTile>& tiles);
     void swapStartAndStopPosition(sf::Vector2i & start, sf::Vector2i & stop);
     void setActiveTexture(sf::String name, sf::String path);
+    void saveFile();
+    void loadFile();
 
     FileManager fileManager;
     LayerManager layerManager;
+    SaveWindow saveWindow;
+    LoadWindow loadWindow;
     BoxyBox tileBox;
     int activeTileTexture;
     std::vector<ActiveTile> activeTiles;

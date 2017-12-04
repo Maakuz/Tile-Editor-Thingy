@@ -4,73 +4,180 @@
 #include "GUI.h"
 #include "SFML\Window\Keyboard.hpp"
 
-#define TEST(button) 
+#define BUTTON_TEXT_SIZE 16
 
 GUIHandler::GUIHandler(sf::RenderWindow & window)
 {
     gui.setWindow(window);
     Global::gui = &gui;
     active = false;
+    //MENU BAR
+    {
+        tgui::MenuBar::Ptr bar = tgui::MenuBar::create();
 
-    tgui::MenuBar::Ptr bar = tgui::MenuBar::create();
+        bar->setPosition(0, 0);
+        bar->setSize(1280, MENU_BAR_HEIGHT);
 
-    bar->setPosition(0, 0);
-    bar->setSize(1280, MENU_BAR_HEIGHT);
+        bar->addMenu("File");
+        bar->addMenuItem("File", Global::Elements::Menu::Clickables::newFile);
+        bar->addMenuItem("File", Global::Elements::Menu::Clickables::openFile);
+        bar->addMenuItem("File", Global::Elements::Menu::Clickables::saveFile);
+        bar->addMenuItem("File", Global::Elements::Menu::Clickables::exitFile);
 
-    bar->addMenu("File");
-    bar->addMenuItem("File", Global::Elements::Menu::Clickables::newFile);
-    bar->addMenuItem("File", Global::Elements::Menu::Clickables::openFile);
-    bar->addMenuItem("File", Global::Elements::Menu::Clickables::saveFile);
-    bar->addMenuItem("File", Global::Elements::Menu::Clickables::exitFile);
+        bar->addMenu("Edit");
+        bar->addMenuItem("Edit", Global::Elements::Menu::Clickables::undo);
+        bar->addMenuItem("Edit", Global::Elements::Menu::Clickables::importTexture);
 
-    bar->addMenu("Edit");
-    bar->addMenuItem("Edit", Global::Elements::Menu::Clickables::undo);
-    bar->addMenuItem("Edit", Global::Elements::Menu::Clickables::importTexture);
+        bar->addMenu("Layer");
+        bar->addMenuItem("Layer", Global::Elements::Menu::Clickables::layer1);
+        bar->addMenuItem("Layer", Global::Elements::Menu::Clickables::layer2);
+        bar->addMenuItem("Layer", Global::Elements::Menu::Clickables::layer3);
 
-    bar->addMenu("Layer");
-    bar->addMenuItem("Layer", Global::Elements::Menu::Clickables::layer1);
-    bar->addMenuItem("Layer", Global::Elements::Menu::Clickables::layer2);
-    bar->addMenuItem("Layer", Global::Elements::Menu::Clickables::layer3);
+        bar->addMenu("View");
+        bar->addMenuItem("View", Global::Elements::Menu::Clickables::infoBox);
+        bar->addMenuItem("View", Global::Elements::Menu::Clickables::darken);
 
-    bar->addMenu("View");
-    bar->addMenuItem("View", Global::Elements::Menu::Clickables::infoBox);
-    bar->addMenuItem("View", Global::Elements::Menu::Clickables::darken);
+        bar->addMenu("Tools");
+        bar->addMenuItem("Tools", Global::Elements::Menu::Clickables::exportLayers);
 
-    bar->addMenu("Tools");
-    bar->addMenuItem("Tools", Global::Elements::Menu::Clickables::exportLayers);
+        bar->connect("MenuItemClicked", &GUIHandler::handleMenuBarClick, this);
 
-    bar->connect("MenuItemClicked", &GUIHandler::handleMenuBarClick, this);
-
-    gui.add(bar, Global::Elements::Menu::bar);
-
+        gui.add(bar, Global::Elements::Menu::bar);
+    }
    
+    //INFO BOX
+    {
+        tgui::Label::Ptr label = tgui::Label::create();
+        label->setText("Active layer: 1");
 
-    tgui::Label::Ptr label = tgui::Label::create();
-    label->setText("Active layer: 1");
+        tgui::ComboBox::Ptr textureBox = tgui::ComboBox::create();
+        textureBox->setPosition(2, 30);
 
-    tgui::ComboBox::Ptr textureBox = tgui::ComboBox::create();
-    textureBox->setPosition(2, 30);
+        tgui::Panel::Ptr panel = tgui::Panel::create();
+        panel->add(label, Global::Elements::infoBox::layerInfo);
+        panel->add(textureBox, Global::Elements::infoBox::textureBox);
 
-    tgui::Panel::Ptr panel = tgui::Panel::create();
-    panel->add(label, Global::Elements::infoBox::layerInfo);
-    panel->add(textureBox, Global::Elements::infoBox::textureBox);
-    
-    panel->hide();
-    panel->setSize(200, 100);
-    panel->setPosition(1000, 50);
-    panel->setBackgroundColor(tgui::Color(sf::Color::White));
+        panel->hide();
+        panel->setSize(200, 100);
+        panel->setPosition(1000, 50);
+        panel->setBackgroundColor(tgui::Color(sf::Color::White));
 
-    gui.add(panel, Global::Elements::infoBox::panel);
+        gui.add(panel, Global::Elements::infoBox::panel);
+    }
+
+    //Texture importer list
+    {
+        tgui::ListBox::Ptr textureList = tgui::ListBox::create();
+        textureList->hide();
+        textureList->setSize(400, 200);
+        textureList->setPosition(400, 20);
+
+        gui.add(textureList, Global::Elements::textureImporter::textureList);
+    }
+
+    //SAVE PANEL
+    {
+        tgui::Panel::Ptr savePanel = tgui::Panel::create();
+        savePanel->setSize(500, 300);
+        savePanel->setPosition(200, 25);
+
+        tgui::ListBox::Ptr savePathList = tgui::ListBox::create();
+        savePathList->setPosition(10, 10);
+        savePathList->setSize(200, 200);
 
 
-    tgui::ListBox::Ptr textureList = tgui::ListBox::create();
-    textureList->hide();
-    textureList->setSize(400, 200);
-    textureList->setPosition(400, 20);
+        tgui::Button::Ptr folderButton = tgui::Button::create();
+        folderButton->setPosition(220, 10);
+        folderButton->setTextSize(BUTTON_TEXT_SIZE);
+        folderButton->setSize(90, 25);
+        folderButton->setText("New folder");
 
-    gui.add(textureList, Global::Elements::textureImporter::textureList);
+        tgui::Button::Ptr save = tgui::Button::create();
+        save->setPosition(220, 220);
+        save->setTextSize(BUTTON_TEXT_SIZE);
+        save->setSize(70, 25);
+        save->setText("Save");
 
+        tgui::Button::Ptr exitButton = tgui::Button::create();
+        exitButton->setPosition(220, 250);
+        exitButton->setTextSize(BUTTON_TEXT_SIZE);
+        exitButton->setSize(70, 25);
+        exitButton->setText("Exit");
 
+        tgui::TextBox::Ptr fileName = tgui::TextBox::create();
+        fileName->setPosition(10, 220);
+        fileName->setSize(200, 25);
+
+        savePanel->add(savePathList, Global::Elements::savebox::paths);
+        savePanel->add(folderButton, Global::Elements::savebox::createFolderButton);
+        savePanel->add(save, Global::Elements::savebox::saveButton);
+        savePanel->add(exitButton, Global::Elements::savebox::cancelButton);
+        savePanel->add(fileName, Global::Elements::savebox::fileName);
+        savePanel->hide();
+
+        //      SAVE PANEL/CREATEFOLDER
+        {
+            tgui::Panel::Ptr folderPanel = tgui::Panel::create();
+            folderPanel->setSize(220, 100);
+            folderPanel->setPosition(215, 40);
+            folderPanel->hide();
+
+            tgui::TextBox::Ptr textBox = tgui::TextBox::create();
+            textBox->setPosition(5, 5);
+            textBox->setSize(120, 25);
+
+            tgui::Button::Ptr confirm = tgui::Button::create();
+            confirm->setPosition(135, 5);
+            confirm->setTextSize(BUTTON_TEXT_SIZE);
+            confirm->setSize(70, 25);
+            confirm->setText("Confirm");
+
+            tgui::Button::Ptr cancel = tgui::Button::create();
+            cancel->setPosition(135, 35);
+            cancel->setTextSize(BUTTON_TEXT_SIZE);
+            cancel->setSize(70, 25);
+            cancel->setText("Cancel");
+
+            folderPanel->add(textBox, Global::Elements::savebox::foldercreator::textbox);
+            folderPanel->add(confirm, Global::Elements::savebox::foldercreator::confirmButton);
+            folderPanel->add(cancel, Global::Elements::savebox::foldercreator::cancelButton);
+
+            savePanel->add(folderPanel, Global::Elements::savebox::foldercreator::panel);
+
+        }
+
+        gui.add(savePanel, Global::Elements::savebox::panel);
+    }
+
+    //LOAD PANEL
+    {
+        tgui::Panel::Ptr loadPanel = tgui::Panel::create();
+        loadPanel->setSize(500, 300);
+        loadPanel->setPosition(200, 25);
+
+        tgui::ListBox::Ptr loadPathList = tgui::ListBox::create();
+        loadPathList->setPosition(10, 10);
+        loadPathList->setSize(200, 200);
+
+        tgui::Button::Ptr load = tgui::Button::create();
+        load->setPosition(220, 220);
+        load->setTextSize(BUTTON_TEXT_SIZE);
+        load->setSize(70, 25);
+        load->setText("Load");
+
+        tgui::Button::Ptr exitButton = tgui::Button::create();
+        exitButton->setPosition(220, 250);
+        exitButton->setTextSize(BUTTON_TEXT_SIZE);
+        exitButton->setSize(70, 25);
+        exitButton->setText("Exit");
+
+        loadPanel->add(loadPathList, Global::Elements::loadbox::paths);
+        loadPanel->add(load, Global::Elements::loadbox::loadButton);
+        loadPanel->add(exitButton, Global::Elements::loadbox::cancelButton);
+        loadPanel->hide();
+
+        gui.add(loadPanel, Global::Elements::loadbox::panel);
+    }
 }
 
 void GUIHandler::handleEvents(sf::Event event)

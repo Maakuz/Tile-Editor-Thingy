@@ -1,6 +1,8 @@
 #pragma once
 #include "Interface\LayerManager.h"
 
+namespace fs = std::experimental::filesystem;
+
 class FileManager
 {
 public:
@@ -8,9 +10,9 @@ public:
     virtual ~FileManager() {}
     
 
-    void save(const LayerManager & layerManager) const;
+    void save(const LayerManager & layerManager, fs::path path) const;
 
-    void load(LayerManager & layerManager);
+    void load(LayerManager & layerManager, fs::path path);
 
     void exportTextures(const LayerManager & layerManager);
     void importTexure();

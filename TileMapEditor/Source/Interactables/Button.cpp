@@ -30,6 +30,11 @@ void Button::setPosition(float x, float y) //TODO: MAKE THESE FUNCTIONS NOT SO S
     rect[SIDES::LEFT].setPosition(x - rect[SIDES::LEFT].getSize().x, y);
 }
 
+void Button::setPosition(int x, int y)
+{
+    setPosition(float(x), float(y));
+}
+
 void Button::setSize(float width, float height)
 {
     rect[SIDES::ENTIRE].setSize({ width, height });

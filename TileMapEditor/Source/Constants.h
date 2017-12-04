@@ -6,6 +6,8 @@
 #define RESOURCE_FOLDER "Resources"
 #define TEXTURE_PATH(x) RESOURCE_FOLDER "/" x
 
+#define FILE_EXTENSION ".yay"
+
 #define TILEMENU_X_AREA 5
 #define TILEMENU_Y_AREA 20
 #define TILEMENU_BORDER_SIZE 8

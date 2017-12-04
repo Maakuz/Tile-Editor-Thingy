@@ -1,8 +1,10 @@
 Todo:
 
-Texture import - this
-Save/load names and maybe paths
 Multitråda saker kanske om jag orkar vet inte
 undo feature
 Byt alla printfff
 Ändra tileSize
+Cut/paste
+Save - dubbelklicka en fil ska skriva över den tidigare
+Save - varnig ifall filen redan finns
+Foolproofa

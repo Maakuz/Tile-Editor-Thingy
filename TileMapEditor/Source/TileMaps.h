@@ -23,7 +23,7 @@ public:
    
 
     int getTextureIndex(std::string name);
-    int getTexureCount() const { return textureNames.size(); };
+    int getTexureCount() const { return (int)textureNames.size(); };
 
     sf::IntRect & getTileRect(int textureID, int tileID);
     sf::Vector2i getSheetSize(int textureID);

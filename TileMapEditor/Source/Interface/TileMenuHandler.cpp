@@ -9,6 +9,7 @@
 #include "TileMaps.h"
 
 
+
 TileMenuHandler::TileMenuHandler() :
     tileBox(TILEMENU_BORDER_SIZE, TILEMENU_BORDER_SIZE + MENU_BAR_HEIGHT, DEFAULT_TILE_SIZE * TILEMENU_X_AREA, DEFAULT_TILE_SIZE * TILEMENU_Y_AREA, TILEMENU_BORDER_SIZE)
 {
@@ -22,6 +23,10 @@ TileMenuHandler::TileMenuHandler() :
 
     Global::gui->get<tgui::MenuBar>(Global::Elements::Menu::bar)->connect("MenuItemClicked", &TileMenuHandler::handleFileMenu, this);
     Global::gui->get<tgui::Panel>(Global::Elements::infoBox::panel)->get(Global::Elements::infoBox::textureBox)->connect("itemselected", &TileMenuHandler::setActiveTexture, this);
+
+    Global::gui->get<tgui::Panel>(Global::Elements::savebox::panel)->get(Global::Elements::savebox::saveButton)->connect("clicked", &TileMenuHandler::saveFile, this);
+    Global::gui->get<tgui::Panel>(Global::Elements::loadbox::panel)->get(Global::Elements::loadbox::loadButton)->connect("clicked", &TileMenuHandler::loadFile, this);
+
     selectingBlocks = false;
     rightClicking = false;
     activeTileTexture = -1;
@@ -73,6 +78,9 @@ void TileMenuHandler::handleEvent(sf::Event event)
 
 void TileMenuHandler::update(sf::Vector2i mousePos)
 {
+    if (saveWindow.isSaving() || loadWindow.isLoading())
+        return;
+
     if (!selectingBlocks)
     {
         if (rightClicking)
@@ -160,12 +168,13 @@ void TileMenuHandler::createTileButtons()
 void TileMenuHandler::handleFileMenu(sf::String button)
 {
     if (button == Global::Elements::Menu::Clickables::saveFile)
-        fileManager.save(layerManager);
+    {
+        saveWindow.openWindow();
+    }
 
     if (button == Global::Elements::Menu::Clickables::openFile)
     {
-        fileManager.load(layerManager);
-        activeTiles.clear();
+        loadWindow.openWindow();
     }
 
     if (button == Global::Elements::Menu::Clickables::exportLayers)
@@ -330,4 +339,30 @@ void TileMenuHandler::swapStartAndStopPosition(sf::Vector2i & start, sf::Vector2
 void TileMenuHandler::setActiveTexture(sf::String name, sf::String path)
 {
     activeTileTexture = TileMaps::get().getTextureIndex(name);
+}
+
+void TileMenuHandler::saveFile()
+{
+    auto panel = Global::gui->get<tgui::Panel>(Global::Elements::savebox::panel);
+    std::string name = panel->get<tgui::TextBox>(Global::Elements::savebox::fileName)->getText();
+
+    fs::path dir = saveWindow.getPath();
+
+    fileManager.save(layerManager, dir / name);
+
+    saveWindow.closeWindow();
+}
+
+void TileMenuHandler::loadFile()
+{
+    auto panel = Global::gui->get<tgui::Panel>(Global::Elements::loadbox::panel);
+    std::string name = panel->get<tgui::ListBox>(Global::Elements::loadbox::paths)->getSelectedItem();
+
+    fs::path dir = loadWindow.getPath();
+
+    fileManager.load(layerManager, dir / name);
+
+    activeTiles.clear();
+
+    loadWindow.closeWindow();
 }

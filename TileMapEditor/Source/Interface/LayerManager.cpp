@@ -130,9 +130,9 @@ sf::Image LayerManager::getLayerAsImage(int layer) const
     image.create(x * DEFAULT_TILE_SIZE, y * DEFAULT_TILE_SIZE, sf::Color::Transparent);
 
 
-    for (size_t i = 0; i < y; i++)
+    for (int i = 0; i < y; i++)
     {
-        for (size_t j = 0; j < x; j++)
+        for (int j = 0; j < x; j++)
         {
             this->processImagePart(image, layer, i, j);
         }
@@ -201,8 +201,8 @@ void LayerManager::differentiateLayes()
             {
                 for (size_t k = 0; k < layers[i][j].size(); k++)
                 {
-                    int color = ((i + 1.f) / (activeLayer + 1.f)) * 255;
-                    int transparency = (float(LAYER_AMOUNT - i) / (LAYER_AMOUNT - activeLayer)) * 255;
+                    int color = int(((i + 1.f) / (activeLayer + 1.f)) * 255);
+                    int transparency = int((float(LAYER_AMOUNT - i) / (LAYER_AMOUNT - activeLayer)) * 255);
                     transparency = std::min(255, transparency);
                     
                     layers[i][j][k].color = sf::Color(color, color, color, transparency);

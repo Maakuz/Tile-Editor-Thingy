@@ -42,6 +42,9 @@ public:
     //It is REALLY REALLY recommended to set size before position if both are going to change
     void setPosition(float x, float y);
 
+    //It is REALLY REALLY recommended to set size before position if both are going to change
+    void setPosition(int x, int y);
+
     //RECOMMEND SETTING OUTLINE BEFORE THIS ONE THIS IS SO STUPID
     void setSize(float width, float height);
 

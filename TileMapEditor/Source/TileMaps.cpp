@@ -129,9 +129,5 @@ namespace fs = std::experimental::filesystem;
          textureInfo->addItem(name, currentDir.string());
      }
 
-
-
-     
-
      return in;
  }
