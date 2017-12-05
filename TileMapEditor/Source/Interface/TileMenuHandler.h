@@ -13,14 +13,13 @@ public:
     TileMenuHandler();
     virtual ~TileMenuHandler() {};
 
-    void handleEvent(sf::Event event);
+    void handleEvent(sf::Event event, bool guiBlock);
     void update(sf::Vector2i mousePos);
 
     void queueItems();
 
     std::vector<ActiveTile> getActiveTile() { return activeTiles; };
     int getActiveTexture() { return activeTileTexture; };
-
 
 
 private:
@@ -31,6 +30,8 @@ private:
     void createActiveBounds(std::vector<ActiveTile>& tiles);
     void swapStartAndStopPosition(sf::Vector2i & start, sf::Vector2i & stop);
     void setActiveTexture(sf::String name, sf::String path);
+    void importTexture(sf::String name, sf::String path);
+    
     void saveFile();
     void loadFile();
 
@@ -41,6 +42,7 @@ private:
     BoxyBox tileBox;
     int activeTileTexture;
     std::vector<ActiveTile> activeTiles;
+    std::vector<ActiveTile> copiedTiles;
 
     sf::Vector2i offset;
 

@@ -11,13 +11,13 @@
 
 
 TileMenuHandler::TileMenuHandler() :
-    tileBox(TILEMENU_BORDER_SIZE, TILEMENU_BORDER_SIZE + MENU_BAR_HEIGHT, DEFAULT_TILE_SIZE * TILEMENU_X_AREA, DEFAULT_TILE_SIZE * TILEMENU_Y_AREA, TILEMENU_BORDER_SIZE)
+    tileBox(TILEMENU_BORDER_SIZE, TILEMENU_BORDER_SIZE + TOTAL_BAR_HEIGHT, DEFAULT_TILE_SIZE * TILEMENU_X_AREA, DEFAULT_TILE_SIZE * TILEMENU_Y_AREA, TILEMENU_BORDER_SIZE)
 {
     tileBox.setColor(sf::Color(0, 100, 200));
     tileBox.setBorderColor(sf::Color(100, 100, 100));
     activeTileTexture = 0;
     offset.x = TILEMENU_BORDER_SIZE;
-    offset.y = TILEMENU_BORDER_SIZE + MENU_BAR_HEIGHT;
+    offset.y = TILEMENU_BORDER_SIZE + TOTAL_BAR_HEIGHT;
     
     createTileButtons();
 
@@ -26,18 +26,27 @@ TileMenuHandler::TileMenuHandler() :
 
     Global::gui->get<tgui::Panel>(Global::Elements::savebox::panel)->get(Global::Elements::savebox::saveButton)->connect("clicked", &TileMenuHandler::saveFile, this);
     Global::gui->get<tgui::Panel>(Global::Elements::loadbox::panel)->get(Global::Elements::loadbox::loadButton)->connect("clicked", &TileMenuHandler::loadFile, this);
+   
+    Global::gui->get(Global::Elements::textureImporter::textureList)->connect("DoubleClicked", &TileMenuHandler::importTexture, this);
+
+    Global::gui->get<tgui::Panel>(Global::Elements::imagemenu::panel)->get(Global::Elements::imagemenu::newButton)->connect("clicked", 
+        [&]() 
+    {
+        layerManager.startOver();
+        activeTiles.clear();
+    });
 
     selectingBlocks = false;
     rightClicking = false;
     activeTileTexture = -1;
 }
 
-void TileMenuHandler::handleEvent(sf::Event event)
+void TileMenuHandler::handleEvent(sf::Event event, bool guiBlock)
 {
     switch (event.type)
     {
     case sf::Event::MouseButtonPressed:
-        if (event.mouseButton.button == sf::Mouse::Left && !rightClicking)
+        if (event.mouseButton.button == sf::Mouse::Left && !rightClicking && !guiBlock)
         {
             pressedPos = { event.mouseButton.x, event.mouseButton.y };
 
@@ -45,7 +54,7 @@ void TileMenuHandler::handleEvent(sf::Event event)
                 selectingBlocks = true;
         }
         
-        if (event.mouseButton.button == sf::Mouse::Right && !selectingBlocks)
+        if (event.mouseButton.button == sf::Mouse::Right && !selectingBlocks && !guiBlock)
         {
             if (!tileBox.contains(event.mouseButton.x, event.mouseButton.y))
             {
@@ -72,6 +81,35 @@ void TileMenuHandler::handleEvent(sf::Event event)
             if (rightClicking)
                 rightClicking = false;
         }
+        break;
+
+    case sf::Event::KeyPressed:
+        if (event.key.code == sf::Keyboard::Z && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
+            layerManager.undo();
+
+        if (event.key.code == sf::Keyboard::Y && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
+            layerManager.redo();
+
+        if (event.key.code == sf::Keyboard::C && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
+            copiedTiles = activeTiles;
+
+        if (event.key.code == sf::Keyboard::X && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
+        {
+            copiedTiles = activeTiles;
+
+            std::vector<ActiveTile> eraseTiles = activeTiles;
+
+            for (size_t i = 0; i < eraseTiles.size(); i++)
+            {
+                eraseTiles[i].tileID = -1;
+            }
+
+            layerManager.insertTiles(eraseTiles, pressedPos);
+            activeTiles.clear();
+        }
+
+        if (event.key.code == sf::Keyboard::V && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
+            layerManager.insertTiles(copiedTiles, pressedPos);
         break;
     }
 }
@@ -167,21 +205,29 @@ void TileMenuHandler::createTileButtons()
 
 void TileMenuHandler::handleFileMenu(sf::String button)
 {
-    if (button == Global::Elements::Menu::Clickables::saveFile)
+    if (button == Global::Elements::Menu::Clickables::newFile)
     {
-        saveWindow.openWindow();
+        layerManager.startOver();
+        activeTiles.clear();
     }
 
+    if (button == Global::Elements::Menu::Clickables::saveFile)
+        saveWindow.openWindow();
+
     if (button == Global::Elements::Menu::Clickables::openFile)
-    {
         loadWindow.openWindow();
-    }
 
     if (button == Global::Elements::Menu::Clickables::exportLayers)
         fileManager.exportTextures(layerManager);
 
     if (button == Global::Elements::Menu::Clickables::importTexture)
         fileManager.importTexure();
+
+    if (button == Global::Elements::Menu::Clickables::undo)
+        layerManager.undo();
+
+    if (button == Global::Elements::Menu::Clickables::redo)
+        layerManager.redo();
 }
 
 void TileMenuHandler::handleBlockSelection(sf::Vector2i start, sf::Vector2i stop)
@@ -339,6 +385,11 @@ void TileMenuHandler::swapStartAndStopPosition(sf::Vector2i & start, sf::Vector2
 void TileMenuHandler::setActiveTexture(sf::String name, sf::String path)
 {
     activeTileTexture = TileMaps::get().getTextureIndex(name);
+}
+
+void TileMenuHandler::importTexture(sf::String name, sf::String path)
+{
+    activeTileTexture = fileManager.addTexture(name, path);
 }
 
 void TileMenuHandler::saveFile()

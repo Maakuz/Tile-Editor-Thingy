@@ -23,8 +23,7 @@ int Editor::run(sf::RenderWindow & window)
 
             gui.handleEvents(event);
 
-            if (!gui.isActive())
-                tileMenuHandler.handleEvent(event);
+            tileMenuHandler.handleEvent(event, gui.isActive());
         }
 
 
@@ -35,7 +34,9 @@ int Editor::run(sf::RenderWindow & window)
         gui.update();
 
         if (!gui.isActive())
+        {
             tileMenuHandler.update(mousePos);
+        }
 
         tileMenuHandler.queueItems();
         renderer.update();

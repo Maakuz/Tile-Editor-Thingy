@@ -9,7 +9,6 @@ namespace fs = std::experimental::filesystem;
 
 FileManager::FileManager()
 {
-    Global::gui->get(Global::Elements::textureImporter::textureList)->connect("DoubleClicked", &FileManager::addTexture, this);
 }
 
 void FileManager::save(const LayerManager & layerManager, fs::path path) const
@@ -63,7 +62,7 @@ void FileManager::exportTextures(const LayerManager & layerManager)
 void FileManager::importTexure()
 {
     fs::path currentDir = fs::current_path();
-    currentDir /= RESOURCE_FOLDER;
+    currentDir /= TILE_MAP_FOLDER;
 
     std::vector<fs::path> textures;
 
@@ -81,7 +80,7 @@ void FileManager::importTexure()
     }
 }
 
-void FileManager::addTexture(sf::String name, sf::String path)
+int FileManager::addTexture(sf::String name, sf::String path)
 {
     try
     {
@@ -96,4 +95,6 @@ void FileManager::addTexture(sf::String name, sf::String path)
     auto textureInfo = Global::gui->get<tgui::Panel>(Global::Elements::infoBox::panel)->get<tgui::ComboBox>(Global::Elements::infoBox::textureBox);
 
     textureInfo->addItem(name, path);
+
+    return TileMaps::get().getTextureIndex(name);
 }

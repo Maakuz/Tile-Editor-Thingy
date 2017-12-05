@@ -1,10 +1,14 @@
 Todo:
 
 Multitråda saker kanske om jag orkar vet inte
-undo feature
 Byt alla printfff
 Ändra tileSize
-Cut/paste
 Save - dubbelklicka en fil ska skriva över den tidigare
 Save - varnig ifall filen redan finns
 Foolproofa
+Suddigummsknapp
+Gör suddit coolare
+TileMenuHandler bloated
+Fixa new så man faktiskt får mata in preferences
+Setup alla mappar när projektet startar - LATEGAME
+om en textur failar är namnet fortfarande i systemet

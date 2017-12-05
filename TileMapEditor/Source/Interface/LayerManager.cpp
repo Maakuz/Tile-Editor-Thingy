@@ -6,30 +6,10 @@
 #include "GUI.h"
 #include <algorithm>
 
-#define DEFAULT_WORK_AREA 10
+#define DEFAULT_WORK_AREA 100
 LayerManager::LayerManager()
 {
-    activeLayer = 0;
-    workAreaStart = sf::Vector2i(TILEMENU_WIDTH, MENU_BAR_HEIGHT);
-
-    for (int i = 0; i < LAYER_AMOUNT; i++)
-    {
-        layers[i].resize(DEFAULT_WORK_AREA);
-
-        for (int j = 0; j < DEFAULT_WORK_AREA; j++)
-        {
-            layers[i][j].resize(DEFAULT_WORK_AREA);
-
-            for (int k = 0; k < DEFAULT_WORK_AREA; k++)
-            {
-                layers[i][j][k].textureID = 0;
-                layers[i][j][k].tileID = -1;
-                layers[i][j][k].x = workAreaStart.x + (k * DEFAULT_TILE_SIZE);
-                layers[i][j][k].y = workAreaStart.y + (j * DEFAULT_TILE_SIZE);
-            }
-        }
-    }
-
+    startOver();
 
     Global::gui->get<tgui::MenuBar>(Global::Elements::Menu::bar)->connect("MenuItemClicked", &LayerManager::handleLayerMenu, this);
 
@@ -37,25 +17,55 @@ LayerManager::LayerManager()
 
 void LayerManager::update(const std::vector<ActiveTile> & activeTiles, sf::Vector2i mousePos)
 {
+    if (!sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+    {
+        if (drawing)
+        {
+            drawing = false;
+           
+            if (currentState != prevStates.size() - 1)
+                prevStates.erase(prevStates.begin() + currentState + 1, prevStates.end());
+
+            if (prevStates.size() >= STATE_AMOUNTS)
+            {
+                prevStates.erase(prevStates.begin());
+                currentState--;
+            }
+
+            prevStates.push_back(layers);
+            currentState++;
+
+            //printf("State: %d\n", currentState);
+            //printf("Size: %d\n", (int)prevStates.size());
+        }
+    }
+
     if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
     {
-        if (mousePos.x > workAreaStart.x &&
-            mousePos.y > workAreaStart.y) // TODO: check if inside window
+        insertTiles(activeTiles, mousePos);
+    }
+}
+
+void LayerManager::insertTiles(const std::vector<ActiveTile>& activeTiles, sf::Vector2i mousePos)
+{
+    if (mousePos.x > workAreaStart.x &&
+        mousePos.y > workAreaStart.y) // TODO: check if inside window
+    {
+        drawing = true;
+
+        //Get what tile the mouse are over
+        int x = (mousePos.x - workAreaStart.x) / DEFAULT_TILE_SIZE;
+        int y = (mousePos.y - workAreaStart.y) / DEFAULT_TILE_SIZE;
+
+        for (size_t i = 0; i < activeTiles.size(); i++)
         {
-            //Get what tile the mouse are over
-            int x = (mousePos.x - workAreaStart.x) / DEFAULT_TILE_SIZE;
-            int y = (mousePos.y - workAreaStart.y) / DEFAULT_TILE_SIZE;
+            int newX = x + activeTiles[i].x;
+            int newY = y + activeTiles[i].y;
 
-            for (size_t i = 0; i < activeTiles.size(); i++)
+            if (newX < layers[0][0].size() && newY < layers[0].size())
             {
-                int newX = x + activeTiles[i].x;
-                int newY = y + activeTiles[i].y;
-
-                if (newX < layers[0][0].size() && newY < layers[0].size())
-                {
-                    layers[activeLayer][newY][newX].textureID = activeTiles[i].textureID;
-                    layers[activeLayer][newY][newX].tileID = activeTiles[i].tileID;
-                }
+                layers[activeLayer][newY][newX].textureID = activeTiles[i].textureID;
+                layers[activeLayer][newY][newX].tileID = activeTiles[i].tileID;
             }
         }
     }
@@ -141,6 +151,67 @@ sf::Image LayerManager::getLayerAsImage(int layer) const
     return image;
 }
 
+void LayerManager::startOver()
+{
+    activeLayer = 0;
+    drawing = false;
+    hightlightLayers = true;
+
+    currentState = 0;
+
+    workAreaStart = sf::Vector2i(TILEMENU_WIDTH, TOTAL_BAR_HEIGHT);
+
+    layers.resize(LAYER_AMOUNT);
+
+    for (int i = 0; i < LAYER_AMOUNT; i++)
+    {
+        layers[i].resize(DEFAULT_WORK_AREA);
+
+        for (int j = 0; j < DEFAULT_WORK_AREA; j++)
+        {
+            layers[i][j].resize(DEFAULT_WORK_AREA);
+
+            for (int k = 0; k < DEFAULT_WORK_AREA; k++)
+            {
+                layers[i][j][k].textureID = 0;
+                layers[i][j][k].tileID = -1;
+                layers[i][j][k].x = workAreaStart.x + (k * DEFAULT_TILE_SIZE);
+                layers[i][j][k].y = workAreaStart.y + (j * DEFAULT_TILE_SIZE);
+            }
+        }
+    }
+
+    prevStates.push_back(layers);
+}
+
+void LayerManager::undo(int steps)
+{
+    currentState -= steps;
+
+    if (currentState < 0)
+        currentState = 0;
+
+    if (!prevStates.empty())
+        layers = prevStates[currentState];
+
+    differentiateLayers();
+}
+
+void LayerManager::redo(int steps)
+{
+    if (!prevStates.empty())
+    {
+        currentState += steps;
+        if (currentState > prevStates.size() - 1)
+            currentState = (int)prevStates.size() - 1;
+
+        else
+            layers = prevStates[currentState];
+    }
+
+    differentiateLayers();
+}
+
 void LayerManager::handleLayerMenu(sf::String clickedItem)
 {
     if (clickedItem == Global::Elements::Menu::Clickables::layer1)
@@ -151,7 +222,7 @@ void LayerManager::handleLayerMenu(sf::String clickedItem)
         label->setText("Active layer: 1");
         activeLayer = 0;
 
-        differentiateLayes();
+        differentiateLayers();
     }
     
     if (clickedItem == Global::Elements::Menu::Clickables::layer2)
@@ -162,7 +233,7 @@ void LayerManager::handleLayerMenu(sf::String clickedItem)
         label->setText("Active layer: 2");
         activeLayer = 1;
 
-        differentiateLayes();
+        differentiateLayers();
     }
 
     if (clickedItem == Global::Elements::Menu::Clickables::layer3)
@@ -173,27 +244,27 @@ void LayerManager::handleLayerMenu(sf::String clickedItem)
         label->setText("Active layer: 3");
         activeLayer = 2;
 
-        differentiateLayes();
+        differentiateLayers();
     }
 
     if (clickedItem == Global::Elements::Menu::Clickables::darken)
     {
-        differentiateLayers = !differentiateLayers;
+        hightlightLayers = !hightlightLayers;
 
-        if (!differentiateLayers)
+        if (!hightlightLayers)
             for (int i = 0; i < LAYER_AMOUNT; i++)
                 for (size_t j = 0; j < layers[i].size(); j++)
                     for (size_t k = 0; k < layers[i][j].size(); k++)
                         layers[i][j][k].color = sf::Color::White;
 
         else
-            differentiateLayes();
+            differentiateLayers();
     }
 }
 
-void LayerManager::differentiateLayes()
+void LayerManager::differentiateLayers()
 {
-    if (differentiateLayers)
+    if (hightlightLayers)
     {
         for (int i = 0; i < LAYER_AMOUNT; i++)
         {
@@ -251,6 +322,9 @@ std::ostream & operator<<(std::ostream & out, const LayerManager & layerManager)
 
 std::istream & operator>>(std::istream & in, LayerManager & layerManager)
 {
+    layerManager.prevStates.clear();
+    layerManager.currentState = 0;
+
     in >> layerManager.activeLayer;
     int x = 0;
     int y = 0;
@@ -271,12 +345,15 @@ std::istream & operator>>(std::istream & in, LayerManager & layerManager)
         }
     }
 
+    layerManager.prevStates.push_back(layerManager.layers);
+
+
     tgui::Panel::Ptr panel = Global::gui->get<tgui::Panel>(Global::Elements::infoBox::panel);
     tgui::Label::Ptr label = panel->get<tgui::Label>(Global::Elements::infoBox::layerInfo);
 
     label->setText("Active layer: " + std::to_string(layerManager.activeLayer + 1));
 
-    layerManager.differentiateLayes();
+    layerManager.differentiateLayers();
 
     return in;
 }

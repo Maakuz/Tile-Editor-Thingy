@@ -1,6 +1,7 @@
 #pragma once
 #include "SFML\Window\Window.hpp"
-#include "TGUI\TGUI.hpp"
+#include "Interactables\ImgButton.h"
+#include <unordered_map>
 
 
 class GUIHandler
@@ -21,6 +22,8 @@ public:
     void crashEverything();
 private:
     void handleMenuBarClick(sf::String itemClicked);
+
+    std::unordered_map<std::string, ImgButton> imgButtons;
 
     tgui::Gui gui;
     bool active;

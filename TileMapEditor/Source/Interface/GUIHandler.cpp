@@ -5,12 +5,34 @@
 #include "SFML\Window\Keyboard.hpp"
 
 #define BUTTON_TEXT_SIZE 16
+#define DISTANCE 10
 
 GUIHandler::GUIHandler(sf::RenderWindow & window)
 {
     gui.setWindow(window);
     Global::gui = &gui;
     active = false;
+
+    //IMAGE PANEL
+    {
+        sf::Texture clickTexture;
+        clickTexture.loadFromFile(BUTTON_TEXTURE_PATH("clicked.png"));
+        sf::Texture newTexture;
+        newTexture.loadFromFile(BUTTON_TEXTURE_PATH("new.png"));
+
+        tgui::Panel::Ptr panel = tgui::Panel::create();
+        panel->setSize(WIN_WIDTH, IMAGE_BAR_HEIGHT);
+        panel->setPosition(0, MENU_BAR_HEIGHT);
+
+        ImgButton newButton(clickTexture, newTexture);
+
+        imgButtons[Global::Elements::imagemenu::newButton] = newButton;
+
+        panel->add(newButton, Global::Elements::imagemenu::newButton);
+
+        gui.add(panel, Global::Elements::imagemenu::panel);
+    }
+
     //MENU BAR
     {
         tgui::MenuBar::Ptr bar = tgui::MenuBar::create();
@@ -26,6 +48,7 @@ GUIHandler::GUIHandler(sf::RenderWindow & window)
 
         bar->addMenu("Edit");
         bar->addMenuItem("Edit", Global::Elements::Menu::Clickables::undo);
+        bar->addMenuItem("Edit", Global::Elements::Menu::Clickables::redo);
         bar->addMenuItem("Edit", Global::Elements::Menu::Clickables::importTexture);
 
         bar->addMenu("Layer");
@@ -44,7 +67,7 @@ GUIHandler::GUIHandler(sf::RenderWindow & window)
 
         gui.add(bar, Global::Elements::Menu::bar);
     }
-   
+
     //INFO BOX
     {
         tgui::Label::Ptr label = tgui::Label::create();
@@ -79,7 +102,7 @@ GUIHandler::GUIHandler(sf::RenderWindow & window)
     {
         tgui::Panel::Ptr savePanel = tgui::Panel::create();
         savePanel->setSize(500, 300);
-        savePanel->setPosition(200, 25);
+        savePanel->setPosition(200, TOTAL_BAR_HEIGHT + DISTANCE);
 
         tgui::ListBox::Ptr savePathList = tgui::ListBox::create();
         savePathList->setPosition(10, 10);
@@ -153,7 +176,7 @@ GUIHandler::GUIHandler(sf::RenderWindow & window)
     {
         tgui::Panel::Ptr loadPanel = tgui::Panel::create();
         loadPanel->setSize(500, 300);
-        loadPanel->setPosition(200, 25);
+        loadPanel->setPosition(200, TOTAL_BAR_HEIGHT + DISTANCE);
 
         tgui::ListBox::Ptr loadPathList = tgui::ListBox::create();
         loadPathList->setPosition(10, 10);
@@ -177,6 +200,18 @@ GUIHandler::GUIHandler(sf::RenderWindow & window)
         loadPanel->hide();
 
         gui.add(loadPanel, Global::Elements::loadbox::panel);
+    }
+
+
+
+
+    for (auto & b : imgButtons)
+    {
+        b.second.getButton()->connect("clicked",
+            [&]()
+        {
+            b.second.swap();
+        });
     }
 }
 

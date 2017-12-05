@@ -54,6 +54,7 @@ namespace Global
                 const sf::String exitFile("Exit");
 
                 const sf::String undo("Undo");
+                const sf::String redo("Redo");
                 const sf::String importTexture("Import texture");
 
                 const sf::String layer1("Layer 1");
@@ -68,6 +69,13 @@ namespace Global
 
 
             }
+
+        }
+
+        namespace imagemenu
+        {
+            const sf::String panel("imagePanel");
+            const sf::String newButton("imagePanel");
 
         }
 

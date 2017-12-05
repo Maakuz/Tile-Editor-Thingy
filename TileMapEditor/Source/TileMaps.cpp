@@ -45,7 +45,7 @@ namespace fs = std::experimental::filesystem;
      int y = height;
 
      //load a temp texture if texture is missing
-     if (!fs::exists(TEXTURE_PATH(+newName)))
+     if (!fs::exists(TILE_MAP_PATH(+newName)))
      {
          tex.create(DEFAULT_TILE_SIZE * x, DEFAULT_TILE_SIZE * y);
 
@@ -60,7 +60,7 @@ namespace fs = std::experimental::filesystem;
 
      else
      {
-         tex.loadFromFile(TEXTURE_PATH(+newName));
+         tex.loadFromFile(TILE_MAP_PATH(+newName));
 
          x = tex.getSize().x / DEFAULT_TILE_SIZE;
          y = tex.getSize().y / DEFAULT_TILE_SIZE;
@@ -124,7 +124,7 @@ namespace fs = std::experimental::filesystem;
          tileMaps.addTexture(name, x, y);
 
          fs::path currentDir = fs::current_path();
-         currentDir /= TEXTURE_PATH(+name);
+         currentDir /= TILE_MAP_PATH(+name);
 
          textureInfo->addItem(name, currentDir.string());
      }
