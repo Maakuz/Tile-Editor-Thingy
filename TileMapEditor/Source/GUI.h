@@ -75,7 +75,9 @@ namespace Global
         namespace imagemenu
         {
             const sf::String panel("imagePanel");
-            const sf::String newButton("imagePanel");
+            const sf::String newButton("newB");
+            const sf::String openButton("openB");
+            const sf::String saveButton("saveB");
 
         }
 

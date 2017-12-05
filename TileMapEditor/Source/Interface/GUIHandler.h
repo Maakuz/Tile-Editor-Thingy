@@ -21,7 +21,6 @@ public:
     //It does what it's supposed to.
     void crashEverything();
 private:
-    void handleMenuBarClick(sf::String itemClicked);
 
     std::unordered_map<std::string, ImgButton> imgButtons;
 

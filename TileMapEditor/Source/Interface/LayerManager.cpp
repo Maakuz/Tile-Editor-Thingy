@@ -10,9 +10,6 @@
 LayerManager::LayerManager()
 {
     startOver();
-
-    Global::gui->get<tgui::MenuBar>(Global::Elements::Menu::bar)->connect("MenuItemClicked", &LayerManager::handleLayerMenu, this);
-
 }
 
 void LayerManager::update(const std::vector<ActiveTile> & activeTiles, sf::Vector2i mousePos)
@@ -151,6 +148,27 @@ sf::Image LayerManager::getLayerAsImage(int layer) const
     return image;
 }
 
+void LayerManager::setActiveLayer(int layer)
+{
+    activeLayer = layer;
+
+    differentiateLayers();
+}
+
+void LayerManager::toggleHighlightLayers()
+{
+    hightlightLayers = !hightlightLayers;
+
+    if (!hightlightLayers)
+        for (int i = 0; i < LAYER_AMOUNT; i++)
+            for (size_t j = 0; j < layers[i].size(); j++)
+                for (size_t k = 0; k < layers[i][j].size(); k++)
+                    layers[i][j][k].color = sf::Color::White;
+
+    else
+        differentiateLayers();
+}
+
 void LayerManager::startOver()
 {
     activeLayer = 0;
@@ -158,6 +176,7 @@ void LayerManager::startOver()
     hightlightLayers = true;
 
     currentState = 0;
+    prevStates.clear();
 
     workAreaStart = sf::Vector2i(TILEMENU_WIDTH, TOTAL_BAR_HEIGHT);
 
@@ -210,56 +229,6 @@ void LayerManager::redo(int steps)
     }
 
     differentiateLayers();
-}
-
-void LayerManager::handleLayerMenu(sf::String clickedItem)
-{
-    if (clickedItem == Global::Elements::Menu::Clickables::layer1)
-    {
-        tgui::Panel::Ptr panel = Global::gui->get<tgui::Panel>(Global::Elements::infoBox::panel);
-        tgui::Label::Ptr label = panel->get<tgui::Label>(Global::Elements::infoBox::layerInfo);
-
-        label->setText("Active layer: 1");
-        activeLayer = 0;
-
-        differentiateLayers();
-    }
-    
-    if (clickedItem == Global::Elements::Menu::Clickables::layer2)
-    {
-        tgui::Panel::Ptr panel = Global::gui->get<tgui::Panel>(Global::Elements::infoBox::panel);
-        tgui::Label::Ptr label = panel->get<tgui::Label>(Global::Elements::infoBox::layerInfo);
-
-        label->setText("Active layer: 2");
-        activeLayer = 1;
-
-        differentiateLayers();
-    }
-
-    if (clickedItem == Global::Elements::Menu::Clickables::layer3)
-    {
-        tgui::Panel::Ptr panel = Global::gui->get<tgui::Panel>(Global::Elements::infoBox::panel);
-        tgui::Label::Ptr label = panel->get<tgui::Label>(Global::Elements::infoBox::layerInfo);
-
-        label->setText("Active layer: 3");
-        activeLayer = 2;
-
-        differentiateLayers();
-    }
-
-    if (clickedItem == Global::Elements::Menu::Clickables::darken)
-    {
-        hightlightLayers = !hightlightLayers;
-
-        if (!hightlightLayers)
-            for (int i = 0; i < LAYER_AMOUNT; i++)
-                for (size_t j = 0; j < layers[i].size(); j++)
-                    for (size_t k = 0; k < layers[i][j].size(); k++)
-                        layers[i][j][k].color = sf::Color::White;
-
-        else
-            differentiateLayers();
-    }
 }
 
 void LayerManager::differentiateLayers()

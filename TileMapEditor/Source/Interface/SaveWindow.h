@@ -10,7 +10,7 @@ public:
     SaveWindow();
     virtual ~SaveWindow() {};
 
-    bool isSaving() const { return saving; };
+    bool isOpen() const { return saving; };
     void openWindow();
     void closeWindow();
     fs::path getPath() const;

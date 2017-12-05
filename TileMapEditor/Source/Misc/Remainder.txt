@@ -11,4 +11,6 @@ Gör suddit coolare
 TileMenuHandler bloated
 Fixa new så man faktiskt får mata in preferences
 Setup alla mappar när projektet startar - LATEGAME
-om en textur failar är namnet fortfarande i systemet
+om en textur failar är namnet fortfarande i systemet, eventuellt så pajar en för liten textur allt
+exportern är sådär
+Blocka bar när fönster är öppna

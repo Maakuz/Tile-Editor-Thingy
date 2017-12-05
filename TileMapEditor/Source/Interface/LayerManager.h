@@ -26,6 +26,10 @@ public:
 
     sf::Image getLayerAsImage(int layer) const;
 
+    void setActiveLayer(int layer);
+
+    void toggleHighlightLayers();
+
     //Clears all layers
     void startOver();
 
@@ -34,8 +38,6 @@ public:
 
 private:
     void processImagePart(sf::Image & image, int layer, int i, int j) const;
-
-    void handleLayerMenu(sf::String clickedItem);
 
     void differentiateLayers();
 

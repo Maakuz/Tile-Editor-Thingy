@@ -21,6 +21,8 @@ TileMenuHandler::TileMenuHandler() :
     
     createTileButtons();
 
+    #pragma region Buttons
+
     Global::gui->get<tgui::MenuBar>(Global::Elements::Menu::bar)->connect("MenuItemClicked", &TileMenuHandler::handleFileMenu, this);
     Global::gui->get<tgui::Panel>(Global::Elements::infoBox::panel)->get(Global::Elements::infoBox::textureBox)->connect("itemselected", &TileMenuHandler::setActiveTexture, this);
 
@@ -32,9 +34,28 @@ TileMenuHandler::TileMenuHandler() :
     Global::gui->get<tgui::Panel>(Global::Elements::imagemenu::panel)->get(Global::Elements::imagemenu::newButton)->connect("clicked", 
         [&]() 
     {
-        layerManager.startOver();
-        activeTiles.clear();
+        if (!anyWindowsOpen())
+        {
+            layerManager.startOver();
+            activeTiles.clear();
+        }
     });
+
+    Global::gui->get<tgui::Panel>(Global::Elements::imagemenu::panel)->get(Global::Elements::imagemenu::openButton)->connect("clicked",
+        [&]()
+    {
+        if (!anyWindowsOpen())
+            loadWindow.openWindow();
+    });
+
+    Global::gui->get<tgui::Panel>(Global::Elements::imagemenu::panel)->get(Global::Elements::imagemenu::saveButton)->connect("clicked",
+        [&]()
+    {
+        if (!anyWindowsOpen())
+            saveWindow.openWindow();
+    });
+
+    #pragma endregion
 
     selectingBlocks = false;
     rightClicking = false;
@@ -84,6 +105,9 @@ void TileMenuHandler::handleEvent(sf::Event event, bool guiBlock)
         break;
 
     case sf::Event::KeyPressed:
+        if (event.key.code == sf::Keyboard::F10)
+            handleFileMenu(Global::Elements::Menu::Clickables::infoBox);
+
         if (event.key.code == sf::Keyboard::Z && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
             layerManager.undo();
 
@@ -116,7 +140,7 @@ void TileMenuHandler::handleEvent(sf::Event event, bool guiBlock)
 
 void TileMenuHandler::update(sf::Vector2i mousePos)
 {
-    if (saveWindow.isSaving() || loadWindow.isLoading())
+    if (saveWindow.isOpen() || loadWindow.isOpen())
         return;
 
     if (!selectingBlocks)
@@ -205,6 +229,9 @@ void TileMenuHandler::createTileButtons()
 
 void TileMenuHandler::handleFileMenu(sf::String button)
 {
+    if (anyWindowsOpen())
+        return;
+
     if (button == Global::Elements::Menu::Clickables::newFile)
     {
         layerManager.startOver();
@@ -228,6 +255,48 @@ void TileMenuHandler::handleFileMenu(sf::String button)
 
     if (button == Global::Elements::Menu::Clickables::redo)
         layerManager.redo();
+
+    if (button == Global::Elements::Menu::Clickables::layer1)
+    {
+        tgui::Panel::Ptr panel = Global::gui->get<tgui::Panel>(Global::Elements::infoBox::panel);
+        tgui::Label::Ptr label = panel->get<tgui::Label>(Global::Elements::infoBox::layerInfo);
+
+        label->setText("Active layer: 1");
+        layerManager.setActiveLayer(0);
+    }
+
+    if (button == Global::Elements::Menu::Clickables::layer2)
+    {
+        tgui::Panel::Ptr panel = Global::gui->get<tgui::Panel>(Global::Elements::infoBox::panel);
+        tgui::Label::Ptr label = panel->get<tgui::Label>(Global::Elements::infoBox::layerInfo);
+
+        label->setText("Active layer: 2");
+        layerManager.setActiveLayer(1);
+    }
+
+    if (button == Global::Elements::Menu::Clickables::layer3)
+    {
+        tgui::Panel::Ptr panel = Global::gui->get<tgui::Panel>(Global::Elements::infoBox::panel);
+        tgui::Label::Ptr label = panel->get<tgui::Label>(Global::Elements::infoBox::layerInfo);
+
+        label->setText("Active layer: 3");
+        layerManager.setActiveLayer(2);
+    }
+
+    if (button == Global::Elements::Menu::Clickables::darken)
+        layerManager.toggleHighlightLayers();
+
+    if (button == Global::Elements::Menu::Clickables::infoBox)
+    {
+        tgui::Panel::Ptr panel = Global::gui->get<tgui::Panel>(Global::Elements::infoBox::panel);
+
+        if (panel->isVisible())
+            panel->hide();
+
+        else
+            panel->show();
+    }
+
 }
 
 void TileMenuHandler::handleBlockSelection(sf::Vector2i start, sf::Vector2i stop)
@@ -390,6 +459,17 @@ void TileMenuHandler::setActiveTexture(sf::String name, sf::String path)
 void TileMenuHandler::importTexture(sf::String name, sf::String path)
 {
     activeTileTexture = fileManager.addTexture(name, path);
+}
+
+bool TileMenuHandler::anyWindowsOpen()
+{
+    if (loadWindow.isOpen())
+        return true;
+
+    if (saveWindow.isOpen())
+        return true;
+
+    return false;
 }
 
 void TileMenuHandler::saveFile()

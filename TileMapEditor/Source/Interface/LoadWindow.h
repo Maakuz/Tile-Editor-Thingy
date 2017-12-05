@@ -12,7 +12,7 @@ public:
     LoadWindow();
     virtual ~LoadWindow() {};
 
-    bool isLoading() const { return loading; };
+    bool isOpen() const { return loading; };
     void openWindow();
     void closeWindow();
     fs::path getPath() const { return currentDir; };

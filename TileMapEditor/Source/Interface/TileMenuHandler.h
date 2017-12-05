@@ -32,6 +32,8 @@ private:
     void setActiveTexture(sf::String name, sf::String path);
     void importTexture(sf::String name, sf::String path);
     
+    bool anyWindowsOpen();
+
     void saveFile();
     void loadFile();
 

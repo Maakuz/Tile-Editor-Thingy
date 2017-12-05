@@ -15,20 +15,44 @@ GUIHandler::GUIHandler(sf::RenderWindow & window)
 
     //IMAGE PANEL
     {
-        sf::Texture clickTexture;
-        clickTexture.loadFromFile(BUTTON_TEXTURE_PATH("clicked.png"));
-        sf::Texture newTexture;
-        newTexture.loadFromFile(BUTTON_TEXTURE_PATH("new.png"));
-
         tgui::Panel::Ptr panel = tgui::Panel::create();
         panel->setSize(WIN_WIDTH, IMAGE_BAR_HEIGHT);
         panel->setPosition(0, MENU_BAR_HEIGHT);
 
-        ImgButton newButton(clickTexture, newTexture);
+        const int offset = 4;
+        const int buttonCount = 3;
+        sf::Texture clickTexture[buttonCount];
+        sf::Texture texture[buttonCount];
+        sf::String names[buttonCount];
 
-        imgButtons[Global::Elements::imagemenu::newButton] = newButton;
+        names[0] = Global::Elements::imagemenu::newButton;
+        names[1] = Global::Elements::imagemenu::openButton;
+        names[2] = Global::Elements::imagemenu::saveButton;
 
-        panel->add(newButton, Global::Elements::imagemenu::newButton);
+        clickTexture[0].loadFromFile(BUTTON_TEXTURE_PATH("newClicked.png"));
+        texture[0].loadFromFile(BUTTON_TEXTURE_PATH("new.png"));
+
+        clickTexture[1].loadFromFile(BUTTON_TEXTURE_PATH("openClicked.png"));
+        texture[1].loadFromFile(BUTTON_TEXTURE_PATH("open.png"));
+
+        clickTexture[2].loadFromFile(BUTTON_TEXTURE_PATH("saveClicked.png"));
+        texture[2].loadFromFile(BUTTON_TEXTURE_PATH("save.png"));
+
+
+        for (int i = 0; i < buttonCount; i++)
+        {
+            ImgButton newButton(clickTexture[i], texture[i]);
+            newButton.getButton()->setPosition(offset * (i + 1) + (32 * i), offset);
+
+            imgButtons[names[i]] = newButton;
+        }
+
+
+        //Adds all buttons with corresponding names
+        for (auto & b : imgButtons)
+        {
+            panel->add(b.second, b.first);
+        }
 
         gui.add(panel, Global::Elements::imagemenu::panel);
     }
@@ -62,8 +86,6 @@ GUIHandler::GUIHandler(sf::RenderWindow & window)
 
         bar->addMenu("Tools");
         bar->addMenuItem("Tools", Global::Elements::Menu::Clickables::exportLayers);
-
-        bar->connect("MenuItemClicked", &GUIHandler::handleMenuBarClick, this);
 
         gui.add(bar, Global::Elements::Menu::bar);
     }
@@ -222,12 +244,7 @@ void GUIHandler::handleEvents(sf::Event event)
 
 void GUIHandler::update()
 {
-    static bool wasF10 = false;
-    static bool isF10 = false;
-    wasF10 = isF10;
-    isF10 = sf::Keyboard::isKeyPressed(sf::Keyboard::F10);
-    if (!wasF10 && isF10)
-        handleMenuBarClick(Global::Elements::Menu::Clickables::infoBox);
+
 }
 
 void GUIHandler::drawGui()
@@ -239,19 +256,4 @@ void GUIHandler::crashEverything()
 {
     printf("pain!");
     crashEverything();
-}
-
-void GUIHandler::handleMenuBarClick(sf::String itemClicked)
-{
-    if (itemClicked == Global::Elements::Menu::Clickables::infoBox)
-    {
-        tgui::Panel::Ptr panel = gui.get<tgui::Panel>(Global::Elements::infoBox::panel);
-
-        if (panel->isVisible())
-            panel->hide();
-
-        else
-            panel->show();
-    }
-
 }
