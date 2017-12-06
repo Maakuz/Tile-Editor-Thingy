@@ -55,6 +55,7 @@ TileMenuHandler::TileMenuHandler() :
             saveWindow.openWindow();
     });
 
+    Global::gui->get<tgui::Panel>(Global::Elements::imagemenu::panel)->get(Global::Elements::imagemenu::eraserButton)->connect("clicked", &TileMenuHandler::equipEraser, this);
     #pragma endregion
 
     selectingBlocks = false;
@@ -134,6 +135,9 @@ void TileMenuHandler::handleEvent(sf::Event event, bool guiBlock)
 
         if (event.key.code == sf::Keyboard::V && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
             layerManager.insertTiles(copiedTiles, pressedPos);
+
+        if (event.key.code == sf::Keyboard::E)
+            equipEraser();
         break;
     }
 }
@@ -157,18 +161,6 @@ void TileMenuHandler::update(sf::Vector2i mousePos)
     else if (activeTileTexture != -1)
     {
         handleBlockSelection(pressedPos - offset, mousePos - offset);
-    }
-
-    //Todo: Make a button for this
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
-    {
-        activeTiles.clear();
-        ActiveTile eraser;
-        eraser.tileID = -1;
-        eraser.x = 0;
-        eraser.y = 0;
-
-        activeTiles.push_back(eraser);
     }
 }
 
@@ -459,6 +451,18 @@ void TileMenuHandler::setActiveTexture(sf::String name, sf::String path)
 void TileMenuHandler::importTexture(sf::String name, sf::String path)
 {
     activeTileTexture = fileManager.addTexture(name, path);
+}
+
+void TileMenuHandler::equipEraser()
+{
+    activeTiles.clear();
+    ActiveTile eraser;
+    eraser.tileID = -1;
+    eraser.x = 0;
+    eraser.y = 0;
+
+    activeTiles.push_back(eraser);
+    erasing = true;
 }
 
 bool TileMenuHandler::anyWindowsOpen()

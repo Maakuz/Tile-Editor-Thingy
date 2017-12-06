@@ -20,7 +20,7 @@ GUIHandler::GUIHandler(sf::RenderWindow & window)
         panel->setPosition(0, MENU_BAR_HEIGHT);
 
         const int offset = 4;
-        const int buttonCount = 3;
+        const int buttonCount = 5;
         sf::Texture clickTexture[buttonCount];
         sf::Texture texture[buttonCount];
         sf::String names[buttonCount];
@@ -28,6 +28,8 @@ GUIHandler::GUIHandler(sf::RenderWindow & window)
         names[0] = Global::Elements::imagemenu::newButton;
         names[1] = Global::Elements::imagemenu::openButton;
         names[2] = Global::Elements::imagemenu::saveButton;
+        names[3] = Global::Elements::imagemenu::brushButton;
+        names[4] = Global::Elements::imagemenu::eraserButton;
 
         clickTexture[0].loadFromFile(BUTTON_TEXTURE_PATH("newClicked.png"));
         texture[0].loadFromFile(BUTTON_TEXTURE_PATH("new.png"));
@@ -37,6 +39,12 @@ GUIHandler::GUIHandler(sf::RenderWindow & window)
 
         clickTexture[2].loadFromFile(BUTTON_TEXTURE_PATH("saveClicked.png"));
         texture[2].loadFromFile(BUTTON_TEXTURE_PATH("save.png"));
+
+        clickTexture[3].loadFromFile(BUTTON_TEXTURE_PATH("brushClicked.png"));
+        texture[3].loadFromFile(BUTTON_TEXTURE_PATH("brush.png"));
+
+        clickTexture[4].loadFromFile(BUTTON_TEXTURE_PATH("eraserClicked.png"));
+        texture[4].loadFromFile(BUTTON_TEXTURE_PATH("eraser.png"));
 
 
         for (int i = 0; i < buttonCount; i++)
@@ -235,6 +243,51 @@ GUIHandler::GUIHandler(sf::RenderWindow & window)
             b.second.swap();
         });
     }
+
+    //cases where buttons should swap back to unpressed
+    //Load icon
+    auto label = gui.get<tgui::Panel>(Global::Elements::loadbox::panel);
+    label->get(Global::Elements::loadbox::cancelButton)->connect("clicked", [&]() 
+    {
+        if (imgButtons[Global::Elements::imagemenu::openButton])
+            imgButtons[Global::Elements::imagemenu::openButton].swap();
+    });
+
+    label->get(Global::Elements::loadbox::loadButton)->connect("clicked", [&]()
+    {
+        if (imgButtons[Global::Elements::imagemenu::openButton])
+            imgButtons[Global::Elements::imagemenu::openButton].swap();
+    });
+
+
+    //Save icon
+    label = gui.get<tgui::Panel>(Global::Elements::savebox::panel);
+    label->get(Global::Elements::savebox::cancelButton)->connect("clicked", [&]()
+    {
+        if (imgButtons[Global::Elements::imagemenu::saveButton])
+            imgButtons[Global::Elements::imagemenu::saveButton].swap();
+    });
+
+    label->get(Global::Elements::savebox::saveButton)->connect("clicked", [&]()
+    {
+        if (imgButtons[Global::Elements::imagemenu::saveButton])
+            imgButtons[Global::Elements::imagemenu::saveButton].swap();
+    });
+
+    //Eraser
+    label = gui.get<tgui::Panel>(Global::Elements::imagemenu::panel);
+    label->get(Global::Elements::imagemenu::eraserButton)->connect("clicked", [&]()
+    {
+        if (imgButtons[Global::Elements::imagemenu::brushButton])
+            imgButtons[Global::Elements::imagemenu::brushButton].swap();
+    });
+
+    //Brush
+    label->get(Global::Elements::imagemenu::brushButton)->connect("clicked", [&]()
+    {
+        if (imgButtons[Global::Elements::imagemenu::eraserButton])
+            imgButtons[Global::Elements::imagemenu::eraserButton].swap();
+    });
 }
 
 void GUIHandler::handleEvents(sf::Event event)

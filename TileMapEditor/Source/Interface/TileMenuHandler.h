@@ -31,7 +31,7 @@ private:
     void swapStartAndStopPosition(sf::Vector2i & start, sf::Vector2i & stop);
     void setActiveTexture(sf::String name, sf::String path);
     void importTexture(sf::String name, sf::String path);
-    
+    void equipEraser();
     bool anyWindowsOpen();
 
     void saveFile();
@@ -54,4 +54,5 @@ private:
 
     bool selectingBlocks;
     bool rightClicking;
+    bool erasing;
 };

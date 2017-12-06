@@ -5,6 +5,8 @@
 #include <fstream>
 #define LAYER_AMOUNT 3
 #define STATE_AMOUNTS 50
+#define DEFAULT_WORK_AREA_X 20
+#define DEFAULT_WORK_AREA_Y 20
 
 class LayerManager
 {
@@ -31,7 +33,7 @@ public:
     void toggleHighlightLayers();
 
     //Clears all layers
-    void startOver();
+    void startOver(int width = DEFAULT_WORK_AREA_X, int height = DEFAULT_WORK_AREA_Y);
 
     void undo(int steps = 1);
     void redo(int steps = 1);

@@ -6,10 +6,9 @@
 #include "GUI.h"
 #include <algorithm>
 
-#define DEFAULT_WORK_AREA 100
 LayerManager::LayerManager()
 {
-    startOver();
+    startOver(5, 2);
 }
 
 void LayerManager::update(const std::vector<ActiveTile> & activeTiles, sf::Vector2i mousePos)
@@ -169,7 +168,7 @@ void LayerManager::toggleHighlightLayers()
         differentiateLayers();
 }
 
-void LayerManager::startOver()
+void LayerManager::startOver(int width, int height)
 {
     activeLayer = 0;
     drawing = false;
@@ -184,13 +183,13 @@ void LayerManager::startOver()
 
     for (int i = 0; i < LAYER_AMOUNT; i++)
     {
-        layers[i].resize(DEFAULT_WORK_AREA);
+        layers[i].resize(height);
 
-        for (int j = 0; j < DEFAULT_WORK_AREA; j++)
+        for (int j = 0; j < height; j++)
         {
-            layers[i][j].resize(DEFAULT_WORK_AREA);
+            layers[i][j].resize(width);
 
-            for (int k = 0; k < DEFAULT_WORK_AREA; k++)
+            for (int k = 0; k < width; k++)
             {
                 layers[i][j][k].textureID = 0;
                 layers[i][j][k].tileID = -1;
@@ -277,8 +276,6 @@ std::ostream & operator<<(std::ostream & out, const LayerManager & layerManager)
                 //total cancer probably
                 out << layerManager.layers[i][j][k].textureID << " ";
                 out << layerManager.layers[i][j][k].tileID << " ";
-                out << layerManager.layers[i][j][k].x << " ";
-                out << layerManager.layers[i][j][k].y<< " ";
             }
         }
     }
@@ -308,8 +305,8 @@ std::istream & operator>>(std::istream & in, LayerManager & layerManager)
             {
                 in >> layerManager.layers[i][j][k].textureID;
                 in >> layerManager.layers[i][j][k].tileID;
-                in >> layerManager.layers[i][j][k].x;
-                in >> layerManager.layers[i][j][k].y;
+                layerManager.layers[i][j][k].x = layerManager.workAreaStart.x + (k * DEFAULT_TILE_SIZE);
+                layerManager.layers[i][j][k].y = layerManager.workAreaStart.y + (j * DEFAULT_TILE_SIZE);
             }
         }
     }

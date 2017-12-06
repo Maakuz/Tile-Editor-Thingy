@@ -15,6 +15,8 @@ public:
 
     tgui::Widget::Ptr getButton() { return button; };
 
+    //returns true if pressed
+    operator bool() const { return pressed; };
 
     operator tgui::Widget::Ptr() const { return button; };
     operator tgui::Button::Ptr() const { return button; };

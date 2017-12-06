@@ -78,6 +78,8 @@ namespace Global
             const sf::String newButton("newB");
             const sf::String openButton("openB");
             const sf::String saveButton("saveB");
+            const sf::String brushButton("brushB");
+            const sf::String eraserButton("eraserB");
 
         }
 
