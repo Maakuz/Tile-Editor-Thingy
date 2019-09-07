@@ -14,8 +14,8 @@ public:
     TileMenuHandler();
     virtual ~TileMenuHandler() {};
 
-    void handleEvent(sf::Event event, bool guiBlock);
-    void update(sf::Vector2i mousePos);
+    void handleEvent(sf::Event event, bool guiBlock, sf::Vector2i viewPortMousePos);
+    void update(sf::Vector2i mousePos, sf::Vector2i viewPortMousePos);
 
     void queueItems();
 

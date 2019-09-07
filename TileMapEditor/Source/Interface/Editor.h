@@ -17,5 +17,7 @@ private:
     GUIHandler gui;
     TileMenuHandler tileMenuHandler;
     Renderer renderer;
+    sf::View workView;
+    sf::View toolView;
 
 };

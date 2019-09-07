@@ -53,6 +53,9 @@ void LayerManager::insertTiles(const std::vector<ActiveTile>& activeTiles, sf::V
         int x = (mousePos.x - workAreaStart.x) / DEFAULT_TILE_SIZE;
         int y = (mousePos.y - workAreaStart.y) / DEFAULT_TILE_SIZE;
 
+        printf("%d, %d\n", x, y);
+
+
         for (size_t i = 0; i < activeTiles.size(); i++)
         {
             int newX = x + activeTiles[i].x;

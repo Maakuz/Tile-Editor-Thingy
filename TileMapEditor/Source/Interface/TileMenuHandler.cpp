@@ -65,7 +65,7 @@ TileMenuHandler::TileMenuHandler() :
     activeTileTexture = -1;
 }
 
-void TileMenuHandler::handleEvent(sf::Event event, bool guiBlock)
+void TileMenuHandler::handleEvent(sf::Event event, bool guiBlock, sf::Vector2i viewPortMousePos)
 {
     switch (event.type)
     {
@@ -82,7 +82,7 @@ void TileMenuHandler::handleEvent(sf::Event event, bool guiBlock)
         {
             if (!tileBox.contains(event.mouseButton.x, event.mouseButton.y))
             {
-                pressedPos = { event.mouseButton.x, event.mouseButton.y };
+                pressedPos = viewPortMousePos;
 
                 rightClicking = true;
             }
@@ -144,7 +144,7 @@ void TileMenuHandler::handleEvent(sf::Event event, bool guiBlock)
     }
 }
 
-void TileMenuHandler::update(sf::Vector2i mousePos)
+void TileMenuHandler::update(sf::Vector2i mousePos, sf::Vector2i viewPortOffset)
 {
     if (saveWindow.isOpen() || loadWindow.isOpen())
         return;
@@ -153,11 +153,11 @@ void TileMenuHandler::update(sf::Vector2i mousePos)
     {
         if (rightClicking)
         {
-            handleLayerSelection(pressedPos, mousePos);
+            handleLayerSelection(pressedPos, viewPortOffset);
         }
 
         else if (activeTileTexture != -1)
-            layerManager.update(activeTiles, mousePos);
+            layerManager.update(activeTiles, viewPortOffset);
     }
 
     else if (activeTileTexture != -1)
