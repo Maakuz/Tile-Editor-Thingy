@@ -25,6 +25,9 @@ public:
     void autosave();
 
 private:
+    void handleMouseEvents(sf::Event event, bool guiBlock, sf::Vector2i viewPortMousePos);
+    void handleKeyboardEvents(sf::Event event);
+
     void createTileButtons();
     void handleFileMenu(sf::String button);
     void handleBlockSelection(sf::Vector2i start, sf::Vector2i stop);
@@ -35,6 +38,9 @@ private:
     void importTexture(sf::String name, sf::String path);
     void equipEraser();
     bool anyWindowsOpen();
+
+    void updateInfoBox();
+
 
     void resize();
     void saveFile();

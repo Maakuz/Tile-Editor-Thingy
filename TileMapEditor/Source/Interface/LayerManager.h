@@ -3,7 +3,6 @@
 #include "SFML\Graphics.hpp"
 #include "Structs.h"
 #include <fstream>
-#define LAYER_AMOUNT 3
 #define STATE_AMOUNTS 50
 #define DEFAULT_WORK_AREA_X 20
 #define DEFAULT_WORK_AREA_Y 20
@@ -29,6 +28,7 @@ public:
     sf::Image getLayerAsImage(int layer) const;
 
     void setActiveLayer(int layer);
+    int getActiveLayer() const { return this->activeLayer; };
 
     void toggleHighlightLayers();
 

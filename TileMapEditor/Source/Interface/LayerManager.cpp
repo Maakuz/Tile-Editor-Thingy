@@ -155,7 +155,7 @@ sf::Image LayerManager::getLayerAsImage(int layer) const
     return image;
 }
 
-void LayerManager::setActiveLayer(int layer)
+void LayerManager::setActiveLayer(int layer) //This can potentially break if layer >= 3 TODO
 {
     activeLayer = layer;
 

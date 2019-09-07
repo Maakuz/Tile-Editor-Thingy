@@ -67,6 +67,13 @@ TileMenuHandler::TileMenuHandler() :
 
 void TileMenuHandler::handleEvent(sf::Event event, bool guiBlock, sf::Vector2i viewPortMousePos)
 {
+    this->handleMouseEvents(event, guiBlock, viewPortMousePos);
+
+    this->handleKeyboardEvents(event);
+}
+
+void TileMenuHandler::handleMouseEvents(sf::Event event, bool guiBlock, sf::Vector2i viewPortMousePos)
+{
     switch (event.type)
     {
     case sf::Event::MouseButtonPressed:
@@ -77,7 +84,7 @@ void TileMenuHandler::handleEvent(sf::Event event, bool guiBlock, sf::Vector2i v
             if (tileBox.contains(pressedPos.x, pressedPos.y))
                 selectingBlocks = true;
         }
-        
+
         if (event.mouseButton.button == sf::Mouse::Right && !selectingBlocks && !guiBlock)
         {
             if (!tileBox.contains(event.mouseButton.x, event.mouseButton.y))
@@ -106,7 +113,13 @@ void TileMenuHandler::handleEvent(sf::Event event, bool guiBlock, sf::Vector2i v
                 rightClicking = false;
         }
         break;
+    }
+}
 
+void TileMenuHandler::handleKeyboardEvents(sf::Event event)
+{
+    switch (event.type)
+    {
     case sf::Event::KeyPressed:
         if (event.key.code == sf::Keyboard::F10)
             handleFileMenu(Global::Elements::Menu::Clickables::infoBox);
@@ -141,9 +154,19 @@ void TileMenuHandler::handleEvent(sf::Event event, bool guiBlock, sf::Vector2i v
         if (event.key.code == sf::Keyboard::E)
             equipEraser();
 
+        //Overcomplicated but saved three lines
+        for (int i = 0; i < LAYER_AMOUNT; i++)
+        {
+            if (event.key.code == i + sf::Keyboard::Num1)
+            {
+                layerManager.setActiveLayer(i);
+                this->updateInfoBox();
+            }
+        }
+
         if (event.key.code == sf::Keyboard::F5)
             fileManager.quickSave(this->layerManager);
-            
+
         break;
     }
 }
@@ -261,31 +284,13 @@ void TileMenuHandler::handleFileMenu(sf::String button)
         resizeWindow.openWindow();
     }
 
-    if (button == Global::Elements::Menu::Clickables::layer1)
+    for (size_t i = 0; i < LAYER_AMOUNT; i++)
     {
-        tgui::Panel::Ptr panel = Global::gui->get<tgui::Panel>(Global::Elements::infoBox::panel);
-        tgui::Label::Ptr label = panel->get<tgui::Label>(Global::Elements::infoBox::layerInfo);
-
-        label->setText("Active layer: 1");
-        layerManager.setActiveLayer(0);
-    }
-
-    if (button == Global::Elements::Menu::Clickables::layer2)
-    {
-        tgui::Panel::Ptr panel = Global::gui->get<tgui::Panel>(Global::Elements::infoBox::panel);
-        tgui::Label::Ptr label = panel->get<tgui::Label>(Global::Elements::infoBox::layerInfo);
-
-        label->setText("Active layer: 2");
-        layerManager.setActiveLayer(1);
-    }
-
-    if (button == Global::Elements::Menu::Clickables::layer3)
-    {
-        tgui::Panel::Ptr panel = Global::gui->get<tgui::Panel>(Global::Elements::infoBox::panel);
-        tgui::Label::Ptr label = panel->get<tgui::Label>(Global::Elements::infoBox::layerInfo);
-
-        label->setText("Active layer: 3");
-        layerManager.setActiveLayer(2);
+        if (button == Global::Elements::Menu::Clickables::layers[i])
+        {
+            layerManager.setActiveLayer(i);
+            updateInfoBox();
+        }
     }
 
     if (button == Global::Elements::Menu::Clickables::darken)
@@ -490,6 +495,14 @@ bool TileMenuHandler::anyWindowsOpen()
         return true;
 
     return false;
+}
+
+void TileMenuHandler::updateInfoBox()
+{
+    tgui::Panel::Ptr panel = Global::gui->get<tgui::Panel>(Global::Elements::infoBox::panel);
+    tgui::Label::Ptr label = panel->get<tgui::Label>(Global::Elements::infoBox::layerInfo);
+
+    label->setText("Active layer: " + std::to_string(layerManager.getActiveLayer() + 1));
 }
 
 void TileMenuHandler::resize()

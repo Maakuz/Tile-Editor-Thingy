@@ -58,9 +58,8 @@ namespace Global
                 const sf::String resize("Resize canvas");
                 const sf::String importTexture("Import texture");
 
-                const sf::String layer1("Layer 1");
-                const sf::String layer2("Layer 2");
-                const sf::String layer3("Layer 3");
+                //TODO: set this to NROFLAYERS somehow
+                const sf::String layers[3] = { "Layer 1", "Layer 2", "Layer 3" };
 
                 const sf::String infoBox("Info box");
                 const sf::String darken("Layer differences");

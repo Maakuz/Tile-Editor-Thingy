@@ -85,9 +85,10 @@ GUIHandler::GUIHandler(sf::RenderWindow & window)
         bar->addMenuItem("Edit", Global::Elements::Menu::Clickables::resize);
 
         bar->addMenu("Layer");
-        bar->addMenuItem("Layer", Global::Elements::Menu::Clickables::layer1);
-        bar->addMenuItem("Layer", Global::Elements::Menu::Clickables::layer2);
-        bar->addMenuItem("Layer", Global::Elements::Menu::Clickables::layer3);
+        for (size_t i = 0; i < LAYER_AMOUNT; i++)
+        {
+            bar->addMenuItem("Layer", Global::Elements::Menu::Clickables::layers[i]);
+        }
 
         bar->addMenu("View");
         bar->addMenuItem("View", Global::Elements::Menu::Clickables::infoBox);
