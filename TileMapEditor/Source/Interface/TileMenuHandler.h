@@ -3,8 +3,9 @@
 #include <Interactables\Button.h>
 #include <Interactables\BoxyBox.h>
 #include "FileManager.h"
-#include "SaveWindow.h"
-#include "LoadWindow.h"
+#include "Windows/ResizeWindow.h"
+#include "Windows/SaveWindow.h"
+#include "Windows/LoadWindow.h"
 #include <vector>
 
 class TileMenuHandler
@@ -34,6 +35,7 @@ private:
     void equipEraser();
     bool anyWindowsOpen();
 
+    void resize();
     void saveFile();
     void loadFile();
 
@@ -41,6 +43,7 @@ private:
     LayerManager layerManager;
     SaveWindow saveWindow;
     LoadWindow loadWindow;
+    ResizeWindow resizeWindow;
     BoxyBox tileBox;
     int activeTileTexture;
     std::vector<ActiveTile> activeTiles;

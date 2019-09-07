@@ -8,7 +8,7 @@
 
 LayerManager::LayerManager()
 {
-    startOver(5, 2);
+    startOver();
 }
 
 void LayerManager::update(const std::vector<ActiveTile> & activeTiles, sf::Vector2i mousePos)
@@ -200,6 +200,11 @@ void LayerManager::startOver(int width, int height)
     }
 
     prevStates.push_back(layers);
+}
+
+void LayerManager::resize(int width, int height)
+{
+    printf("resizeo");
 }
 
 void LayerManager::undo(int steps)

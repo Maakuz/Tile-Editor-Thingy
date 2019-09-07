@@ -34,6 +34,7 @@ public:
 
     //Clears all layers
     void startOver(int width = DEFAULT_WORK_AREA_X, int height = DEFAULT_WORK_AREA_Y);
+    void resize(int width = DEFAULT_WORK_AREA_X, int height = DEFAULT_WORK_AREA_Y);
 
     void undo(int steps = 1);
     void redo(int steps = 1);

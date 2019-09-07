@@ -23,7 +23,7 @@
     <ProjectGuid>{ED162C44-BBCA-4046-BA49-E6B2A9DEAFDB}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>TileMapEditor</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -159,8 +159,9 @@
     <ClCompile Include="Source\Interactables\Button.cpp" />
     <ClCompile Include="Source\Interface\GUIHandler.cpp" />
     <ClCompile Include="Source\Interface\LayerManager.cpp" />
-    <ClCompile Include="Source\Interface\LoadWindow.cpp" />
-    <ClCompile Include="Source\Interface\SaveWindow.cpp" />
+    <ClCompile Include="Source\Interface\Windows\LoadWindow.cpp" />
+    <ClCompile Include="Source\Interface\Windows\ResizeWindow.cpp" />
+    <ClCompile Include="Source\Interface\Windows\SaveWindow.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Renderer.cpp" />
     <ClCompile Include="Source\Interface\TileManager.cpp" />
@@ -177,8 +178,9 @@
     <ClInclude Include="Source\Interactables\Button.h" />
     <ClInclude Include="Source\Interface\GUIHandler.h" />
     <ClInclude Include="Source\Interface\LayerManager.h" />
-    <ClInclude Include="Source\Interface\LoadWindow.h" />
-    <ClInclude Include="Source\Interface\SaveWindow.h" />
+    <ClInclude Include="Source\Interface\Windows\LoadWindow.h" />
+    <ClInclude Include="Source\Interface\Windows\ResizeWindow.h" />
+    <ClInclude Include="Source\Interface\Windows\SaveWindow.h" />
     <ClInclude Include="Source\Misc\MissingTexture.h" />
     <ClInclude Include="Source\Queues\BackgroundQueue.h" />
     <ClInclude Include="Source\Queues\OverlayQueue.h" />

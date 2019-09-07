@@ -31,6 +31,8 @@ TileMenuHandler::TileMenuHandler() :
    
     Global::gui->get(Global::Elements::textureImporter::textureList)->connect("DoubleClicked", &TileMenuHandler::importTexture, this);
 
+    Global::gui->get<tgui::Panel>(Global::Elements::resizeMenu::panel)->get(Global::Elements::resizeMenu::confirm)->connect("clicked", &TileMenuHandler::resize, this);
+
     Global::gui->get<tgui::Panel>(Global::Elements::imagemenu::panel)->get(Global::Elements::imagemenu::newButton)->connect("clicked", 
         [&]() 
     {
@@ -247,6 +249,11 @@ void TileMenuHandler::handleFileMenu(sf::String button)
 
     if (button == Global::Elements::Menu::Clickables::redo)
         layerManager.redo();
+
+    if (button == Global::Elements::Menu::Clickables::resize)
+    {
+        resizeWindow.openWindow();
+    }
 
     if (button == Global::Elements::Menu::Clickables::layer1)
     {
@@ -473,7 +480,33 @@ bool TileMenuHandler::anyWindowsOpen()
     if (saveWindow.isOpen())
         return true;
 
+    if (resizeWindow.isOpen())
+        return true;
+
     return false;
+}
+
+void TileMenuHandler::resize()
+{
+    auto panel = Global::gui->get<tgui::Panel>(Global::Elements::resizeMenu::panel);
+    std::string width = panel->get<tgui::TextBox>(Global::Elements::resizeMenu::width)->getText();
+    std::string height = panel->get<tgui::TextBox>(Global::Elements::resizeMenu::height)->getText();
+
+    //Some sort of telling what went wrong would be a TODO
+    if (width.empty() || width.size() > 6 || width.find_first_not_of("0123456789") != std::string::npos)
+        return;
+
+    //Some sort of telling what went wrong would be a TODO
+    if (height.empty() || height.size() > 6 || height.find_first_not_of("0123456789") != std::string::npos)
+        return;
+
+    int x, y;
+    x = std::stoi(width);
+    y = std::stoi(height);
+
+    layerManager.resize(x, y);
+    resizeWindow.closeWindow();
+    
 }
 
 void TileMenuHandler::saveFile()

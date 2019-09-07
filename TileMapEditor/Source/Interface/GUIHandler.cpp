@@ -82,6 +82,7 @@ GUIHandler::GUIHandler(sf::RenderWindow & window)
         bar->addMenuItem("Edit", Global::Elements::Menu::Clickables::undo);
         bar->addMenuItem("Edit", Global::Elements::Menu::Clickables::redo);
         bar->addMenuItem("Edit", Global::Elements::Menu::Clickables::importTexture);
+        bar->addMenuItem("Edit", Global::Elements::Menu::Clickables::resize);
 
         bar->addMenu("Layer");
         bar->addMenuItem("Layer", Global::Elements::Menu::Clickables::layer1);
@@ -116,6 +117,42 @@ GUIHandler::GUIHandler(sf::RenderWindow & window)
         panel->setBackgroundColor(tgui::Color(sf::Color::White));
 
         gui.add(panel, Global::Elements::infoBox::panel);
+    }
+
+    //Resize workspace
+    {
+        tgui::TextBox::Ptr width = tgui::TextBox::create();
+        width->setPosition(10, 20);
+        width->setSize(200,25);
+
+        tgui::TextBox::Ptr height = tgui::TextBox::create();
+        height->setPosition(10, 50);
+        height->setSize(200, 25);
+
+        tgui::Button::Ptr confirm = tgui::Button::create();
+        confirm->setPosition(220, 20);
+        confirm->setTextSize(BUTTON_TEXT_SIZE);
+        confirm->setSize(70, 25);
+        confirm->setText("Cofirm");
+
+        tgui::Button::Ptr cancel = tgui::Button::create();
+        cancel->setPosition(220, 50);
+        cancel->setTextSize(BUTTON_TEXT_SIZE);
+        cancel->setSize(70, 25);
+        cancel->setText("Cancel");
+
+
+        tgui::Panel::Ptr panel = tgui::Panel::create();  
+        panel->setSize(450, 85);
+        panel->setPosition(200, TOTAL_BAR_HEIGHT + DISTANCE);
+
+        panel->add(width, Global::Elements::resizeMenu::width);
+        panel->add(height, Global::Elements::resizeMenu::height);
+        panel->add(confirm, Global::Elements::resizeMenu::confirm);
+        panel->add(cancel, Global::Elements::resizeMenu::cancel);
+        panel->hide();
+
+        gui.add(panel, Global::Elements::resizeMenu::panel);
     }
 
     //Texture importer list

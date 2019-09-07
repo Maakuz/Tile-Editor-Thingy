@@ -55,6 +55,7 @@ namespace Global
 
                 const sf::String undo("Undo");
                 const sf::String redo("Redo");
+                const sf::String resize("Resize canvas");
                 const sf::String importTexture("Import texture");
 
                 const sf::String layer1("Layer 1");
@@ -69,6 +70,16 @@ namespace Global
 
 
             }
+
+        }
+
+        namespace resizeMenu
+        {
+            const sf::String panel("resizePanel");
+            const sf::String width("canvasHeight");
+            const sf::String confirm("canvasConfirm");
+            const sf::String cancel("canvasCancel");
+            const sf::String height("canvasWidth");
 
         }
 
