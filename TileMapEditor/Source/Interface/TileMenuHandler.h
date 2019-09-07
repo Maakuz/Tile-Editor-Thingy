@@ -17,7 +17,7 @@ public:
     void handleEvent(sf::Event event, bool guiBlock, sf::Vector2i viewPortMousePos);
     void update(sf::Vector2i mousePos, sf::Vector2i viewPortMousePos);
 
-    void queueItems();
+    void queueItems(sf::View viewArea);
 
     std::vector<ActiveTile> getActiveTile() { return activeTiles; };
     int getActiveTexture() { return activeTileTexture; };

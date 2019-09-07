@@ -71,12 +71,19 @@ void LayerManager::insertTiles(const std::vector<ActiveTile>& activeTiles, sf::V
 }
 
 //queue every tile
-void LayerManager::queueTiles()
+void LayerManager::queueTiles(sf::View viewArea)
 {
     //Rounded up
-    int visibleY = std::min(int((WIN_HEIGHT - workAreaStart.y + (DEFAULT_TILE_SIZE * 0.5f)) / DEFAULT_TILE_SIZE), (int)layers[0].size());
-    int visibleX = std::min(int((WIN_WIDTH - workAreaStart.x + (DEFAULT_TILE_SIZE * 0.5f)) / DEFAULT_TILE_SIZE), (int)layers[0][0].size());
+    int visibleY = int((WIN_HEIGHT - workAreaStart.y + (DEFAULT_TILE_SIZE * 0.5f)) / DEFAULT_TILE_SIZE);
+    int visibleX = int((WIN_WIDTH - workAreaStart.x + (DEFAULT_TILE_SIZE * 0.5f)) / DEFAULT_TILE_SIZE);
     
+    //accounting for view hopefully TODO: fix slowdown if too big map is used
+    visibleY += (viewArea.getCenter().y - (WIN_HEIGHT / 2)) / DEFAULT_TILE_SIZE;
+    visibleX += (viewArea.getCenter().x - (WIN_WIDTH / 2)) / DEFAULT_TILE_SIZE;
+
+    visibleY = std::min(visibleY, (int)layers[0].size());
+    visibleX = std::min(visibleX, (int)layers[0][0].size());
+
     for (size_t i = 0; i < LAYER_AMOUNT; i++)
     {
         for (size_t j = 0; j < visibleY; j++)

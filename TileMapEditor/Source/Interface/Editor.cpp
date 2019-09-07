@@ -56,7 +56,7 @@ int Editor::run(sf::RenderWindow & window)
             //printf("%f, %f\n", window.mapPixelToCoords(mousePos).x, window.mapPixelToCoords(mousePos).y);
         }
 
-        tileMenuHandler.queueItems();
+        tileMenuHandler.queueItems(this->workView);
         renderer.update();
 
 

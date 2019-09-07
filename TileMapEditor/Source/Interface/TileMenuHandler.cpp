@@ -166,10 +166,12 @@ void TileMenuHandler::update(sf::Vector2i mousePos, sf::Vector2i viewPortOffset)
     }
 }
 
-void TileMenuHandler::queueItems()
+void TileMenuHandler::queueItems(sf::View viewArea)
 {
-    layerManager.queueTiles();
+    layerManager.queueTiles(viewArea);
 
+
+    //toolbox?
     if (activeTileTexture != -1)
     {
         sf::Vector2i bounds = TileMaps::get().getSheetSize(activeTileTexture);

@@ -20,7 +20,7 @@ public:
     void update(const std::vector<ActiveTile> & activeTiles, sf::Vector2i mousePos);
     void insertTiles(const std::vector<ActiveTile> & activeTiles, sf::Vector2i mousePos);
     
-    void queueTiles();
+    void queueTiles(sf::View viewArea);
 
     std::vector<ActiveTile> getActiveTilesAt(sf::Vector2i start, sf::Vector2i stop);
 
