@@ -19,5 +19,6 @@ private:
     Renderer renderer;
     sf::View workView;
     sf::View toolView;
+    sf::Clock deltaTimer;
 
 };

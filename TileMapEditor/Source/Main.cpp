@@ -1,4 +1,5 @@
 #include <Interface\Editor.h>
+#include "Constants.h"
 
 int main()
 {
@@ -8,7 +9,7 @@ int main()
 
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-    sf::RenderWindow window(sf::VideoMode(1280, 720), "Time to tile!");
+    sf::RenderWindow window(sf::VideoMode(WIN_WIDTH, WIN_HEIGHT), "Time to tile!");
 
     window.setFramerateLimit(120);
 

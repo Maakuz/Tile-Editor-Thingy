@@ -14,7 +14,7 @@ Setup alla mappar när projektet startar - LATEGAME
 om en textur failar är namnet fortfarande i systemet, eventuellt så pajar en för liten textur allt
 exportern är sådär
 Blocka bar när fönster är öppna
-Zoom och scroll och sånt
+Zoom
 Texture importer kan int stängas ner utan att importera
 resizeable window
 om man sparat en gång och sparar igen sparar den på samma ställe, skaffa även en save as somn är som nu

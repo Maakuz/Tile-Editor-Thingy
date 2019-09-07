@@ -70,7 +70,7 @@ GUIHandler::GUIHandler(sf::RenderWindow & window)
         tgui::MenuBar::Ptr bar = tgui::MenuBar::create();
 
         bar->setPosition(0, 0);
-        bar->setSize(1280, MENU_BAR_HEIGHT);
+        bar->setSize(WIN_WIDTH, MENU_BAR_HEIGHT);
 
         bar->addMenu("File");
         bar->addMenuItem("File", Global::Elements::Menu::Clickables::newFile);

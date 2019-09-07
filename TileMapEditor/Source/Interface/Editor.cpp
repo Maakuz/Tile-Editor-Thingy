@@ -2,7 +2,7 @@
 #include "GUI.h"
 #include "Constants.h"
 
-#define SCROLL_SPEED 10
+#define SCROLL_SPEED 1
 
 Editor::Editor(sf::RenderWindow & window) :
     gui(window),
@@ -16,7 +16,6 @@ Editor::Editor(sf::RenderWindow & window) :
 
     this->toolView = sf::View(sf::FloatRect(0, 0, TILEMENU_WIDTH, WIN_HEIGHT));
     this->toolView.setViewport(sf::FloatRect(0, 0, (float)(TILEMENU_WIDTH) / WIN_WIDTH, 1));
-
 }
 
 int Editor::run(sf::RenderWindow & window)
@@ -25,6 +24,8 @@ int Editor::run(sf::RenderWindow & window)
     while (window.isOpen())
     {
         //update
+        float dt = deltaTimer.restart().asMilliseconds();
+
         window.setView(this->workView);
 
         sf::Vector2i mousePos = sf::Mouse::getPosition(window);
@@ -43,17 +44,19 @@ int Editor::run(sf::RenderWindow & window)
         }
 #pragma endregion 
 
+        float scrollSpeed = SCROLL_SPEED * dt;
+
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-            this->workView.move(SCROLL_SPEED, 0);
+            this->workView.move(scrollSpeed, 0);
         
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-            this->workView.move(-SCROLL_SPEED, 0);
+            this->workView.move(-scrollSpeed, 0);
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-            this->workView.move(0, SCROLL_SPEED);
+            this->workView.move(0, scrollSpeed);
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-            this->workView.move(0, -SCROLL_SPEED);
+            this->workView.move(0, -scrollSpeed);
 
         if (this->workView.getCenter().x < WIN_WIDTH / 2)
             this->workView.setCenter(WIN_WIDTH / 2, this->workView.getCenter().y);
