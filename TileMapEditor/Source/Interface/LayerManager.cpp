@@ -204,6 +204,47 @@ void LayerManager::startOver(int width, int height)
 
 void LayerManager::resize(int width, int height)
 {
+    int oldHeight = layers[0].size();
+    int oldWidth = layers[0][0].size();
+
+    //slow but easy on me brain
+    auto temp = layers;
+
+    for (int i = 0; i < LAYER_AMOUNT; i++)
+    {
+        layers[i].resize(height);
+
+        for (int j = 0; j < height; j++)
+            layers[i][j].resize(width);
+    }
+
+    if (width > oldWidth || height > oldHeight)
+    {
+        for (int i = 0; i < LAYER_AMOUNT; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                for (int k = 0; k < width; k++)
+                {
+                    layers[i][j][k].textureID = 0;
+                    layers[i][j][k].tileID = -1;
+                    layers[i][j][k].x = workAreaStart.x + (k * DEFAULT_TILE_SIZE);
+                    layers[i][j][k].y = workAreaStart.y + (j * DEFAULT_TILE_SIZE);
+                }
+            }
+        }
+
+        for (int i = 0; i < LAYER_AMOUNT; i++)
+        {
+            for (int j = 0; j < oldHeight; j++)
+            {
+                for (int k = 0; k < oldWidth; k++)
+                {
+                    layers[i][j][k] = temp[i][j][k];
+                }
+            }
+        }
+    }
     printf("resizeo");
 }
 
