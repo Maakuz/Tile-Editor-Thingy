@@ -2,6 +2,8 @@
 #include "GUI.h"
 #include "Constants.h"
 
+#define SCROLL_SPEED 10
+
 Editor::Editor(sf::RenderWindow & window) :
     gui(window),
     tileMenuHandler()
@@ -42,10 +44,22 @@ int Editor::run(sf::RenderWindow & window)
 #pragma endregion 
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-            this->workView.move(10, 0);
+            this->workView.move(SCROLL_SPEED, 0);
         
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-            this->workView.move(-10, 0);
+            this->workView.move(-SCROLL_SPEED, 0);
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+            this->workView.move(0, SCROLL_SPEED);
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+            this->workView.move(0, -SCROLL_SPEED);
+
+        if (this->workView.getCenter().x < WIN_WIDTH / 2)
+            this->workView.setCenter(WIN_WIDTH / 2, this->workView.getCenter().y);
+
+        if (this->workView.getCenter().y < WIN_HEIGHT / 2)
+            this->workView.setCenter(this->workView.getCenter().x, WIN_HEIGHT / 2);
 
         gui.update();
 
