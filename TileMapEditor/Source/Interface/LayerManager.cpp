@@ -207,6 +207,12 @@ void LayerManager::startOver(int width, int height)
 
 void LayerManager::resize(int width, int height)
 {
+    if (width == 0)
+        width++;
+
+    if (height == 0)
+        height++;
+
     int oldHeight = layers[0].size();
     int oldWidth = layers[0][0].size();
 
@@ -239,9 +245,9 @@ void LayerManager::resize(int width, int height)
 
         for (int i = 0; i < LAYER_AMOUNT; i++)
         {
-            for (int j = 0; j < oldHeight; j++)
+            for (int j = 0; j < std::min(height, oldHeight); j++)
             {
-                for (int k = 0; k < oldWidth; k++)
+                for (int k = 0; k < std::min(width, oldWidth); k++)
                 {
                     layers[i][j][k] = temp[i][j][k];
                 }
