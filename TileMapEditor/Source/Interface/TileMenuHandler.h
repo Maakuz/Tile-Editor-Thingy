@@ -22,6 +22,7 @@ public:
     std::vector<ActiveTile> getActiveTile() { return activeTiles; };
     int getActiveTexture() { return activeTileTexture; };
 
+    void autosave();
 
 private:
     void createTileButtons();
@@ -38,6 +39,7 @@ private:
     void resize();
     void saveFile();
     void loadFile();
+
 
     FileManager fileManager;
     LayerManager layerManager;

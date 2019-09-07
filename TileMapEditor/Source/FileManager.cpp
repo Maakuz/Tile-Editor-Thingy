@@ -1,7 +1,6 @@
 #include "FileManager.h"
 #include <fstream>
 #include "GUI.h"
-#include <filesystem>
 #include <Constants.h>
 #include "TileMaps.h"
 
@@ -9,6 +8,7 @@ namespace fs = std::experimental::filesystem;
 
 FileManager::FileManager()
 {
+    this->quickSavePath = fs::current_path() / "Saves/";
 }
 
 void FileManager::save(const LayerManager & layerManager, fs::path path) const
@@ -29,6 +29,28 @@ void FileManager::save(const LayerManager & layerManager, fs::path path) const
     else
         printf("NOT saved!\n");
 
+}
+
+void FileManager::quickSave(const LayerManager & layerManager) const
+{
+    
+    fs::path fullPath = this->quickSavePath;
+    fullPath.replace_filename(DEFAULT_QUICKSAVE_FILE_NAME);
+    fullPath.replace_extension(FILE_EXTENSION);
+
+    std::ofstream file(fullPath);
+    if (file.is_open())
+    {
+        file << layerManager << "\n";
+        file << TileMaps::get() << "\n";
+
+        file.close();
+
+        printf("Quacksaved!\n");
+    }
+
+    else
+        printf("NOT quacksaved!\n");
 }
 
 void FileManager::load(LayerManager & layerManager, fs::path path)

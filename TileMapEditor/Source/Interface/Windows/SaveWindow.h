@@ -10,7 +10,7 @@ public:
     SaveWindow();
     virtual ~SaveWindow() {};
 
-    bool isOpen() const { return saving; };
+    bool isOpen() const { return open; };
     void openWindow();
     void closeWindow();
     fs::path getPath() const;
@@ -21,7 +21,7 @@ private:
     void cancelFolderCreation();
     void createFolder();
 
-    bool saving;
+    bool open;
     bool creatingFolder;
     fs::path currentDir;
 };

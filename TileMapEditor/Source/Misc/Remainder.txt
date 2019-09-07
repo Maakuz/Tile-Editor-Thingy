@@ -1,7 +1,6 @@
 Todo:
 
 Multitråda saker kanske om jag orkar vet inte
-Byt alla printfff
 Ändra tileSize
 Save - dubbelklicka en fil ska skriva över den tidigare
 Save - varnig ifall filen redan finns
@@ -16,5 +15,4 @@ exportern är sådär
 Blocka bar när fönster är öppna
 Zoom
 Texture importer kan int stängas ner utan att importera
-resizeable window
 om man sparat en gång och sparar igen sparar den på samma ställe, skaffa även en save as somn är som nu

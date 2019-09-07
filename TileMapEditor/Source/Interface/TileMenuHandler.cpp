@@ -140,6 +140,10 @@ void TileMenuHandler::handleEvent(sf::Event event, bool guiBlock, sf::Vector2i v
 
         if (event.key.code == sf::Keyboard::E)
             equipEraser();
+
+        if (event.key.code == sf::Keyboard::F5)
+            fileManager.quickSave(this->layerManager);
+            
         break;
     }
 }
@@ -535,4 +539,9 @@ void TileMenuHandler::loadFile()
     activeTiles.clear();
 
     loadWindow.closeWindow();
+}
+
+void TileMenuHandler::autosave()
+{
+    fileManager.save(layerManager,fs::current_path() / DEFAULT_SAVE_PATH / "autoSave");
 }

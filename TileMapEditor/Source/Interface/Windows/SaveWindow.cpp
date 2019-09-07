@@ -5,7 +5,7 @@
 
 SaveWindow::SaveWindow()
 {
-    saving = false;
+    open = false;
     creatingFolder = false;
 
     auto panel = Global::gui->get<tgui::Panel>(Global::Elements::savebox::panel);
@@ -22,7 +22,7 @@ SaveWindow::SaveWindow()
 
 void SaveWindow::openWindow()
 {
-    saving = true;
+    open = true;
     auto window = Global::gui->get<tgui::Panel>(Global::Elements::savebox::panel);
     window->show();
 
@@ -33,7 +33,7 @@ void SaveWindow::openWindow()
 
 void SaveWindow::closeWindow()
 {
-    saving = false;
+    open = false;
     auto window = Global::gui->get<tgui::Panel>(Global::Elements::savebox::panel);
     window->hide();
 }

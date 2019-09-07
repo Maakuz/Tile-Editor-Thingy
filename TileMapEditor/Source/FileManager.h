@@ -1,5 +1,6 @@
 #pragma once
 #include "Interface\LayerManager.h"
+#include <filesystem>
 
 namespace fs = std::experimental::filesystem;
 
@@ -11,7 +12,7 @@ public:
     
 
     void save(const LayerManager & layerManager, fs::path path) const;
-
+    void quickSave(const LayerManager & layerManager) const;
     void load(LayerManager & layerManager, fs::path path);
 
     void exportTextures(const LayerManager & layerManager);
@@ -19,7 +20,7 @@ public:
     int addTexture(sf::String name, sf::String path);
 
 private:
-    
+    fs::path quickSavePath;
     
 };
 

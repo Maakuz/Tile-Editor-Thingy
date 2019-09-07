@@ -2,7 +2,7 @@
 #include "GUI.h"
 #include "Constants.h"
 
-#define SCROLL_SPEED 1
+#define SCROLL_SPEED 2
 
 Editor::Editor(sf::RenderWindow & window) :
     gui(window),
@@ -26,6 +26,15 @@ int Editor::run(sf::RenderWindow & window)
         //update
         float dt = deltaTimer.restart().asMilliseconds();
 
+        static long long autoSaveCounter = 0;
+        autoSaveCounter += dt;
+
+        if (autoSaveCounter > 100000)
+        {
+            autoSaveCounter = 0;
+            tileMenuHandler.autosave();
+        }
+
         window.setView(this->workView);
 
         sf::Vector2i mousePos = sf::Mouse::getPosition(window);
@@ -44,18 +53,20 @@ int Editor::run(sf::RenderWindow & window)
         }
 #pragma endregion 
 
+#pragma region scrolling
+
         float scrollSpeed = SCROLL_SPEED * dt;
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
             this->workView.move(scrollSpeed, 0);
         
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
             this->workView.move(-scrollSpeed, 0);
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
             this->workView.move(0, scrollSpeed);
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
             this->workView.move(0, -scrollSpeed);
 
         if (this->workView.getCenter().x < WIN_WIDTH / 2)
@@ -63,12 +74,13 @@ int Editor::run(sf::RenderWindow & window)
 
         if (this->workView.getCenter().y < WIN_HEIGHT / 2)
             this->workView.setCenter(this->workView.getCenter().x, WIN_HEIGHT / 2);
+#pragma endregion
 
+        //what
         gui.update();
 
         if (!gui.isActive())
         {
-
             tileMenuHandler.update(mousePos, workSpaceMousePos);
             //printf("%f, %f\n", window.mapPixelToCoords(mousePos).x, window.mapPixelToCoords(mousePos).y);
         }
