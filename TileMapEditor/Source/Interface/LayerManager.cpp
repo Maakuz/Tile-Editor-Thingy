@@ -9,6 +9,7 @@
 LayerManager::LayerManager()
 {
     startOver();
+    showHitboxes = false;
 }
 
 void LayerManager::update(const std::vector<ActiveTile> & activeTiles, sf::Vector2i mousePos)
@@ -82,7 +83,7 @@ void LayerManager::queueTiles(sf::View viewArea)
     visibleY = std::min(visibleY, (int)layers[0].size());
     visibleX = std::min(visibleX, (int)layers[0][0].size());
 
-    for (size_t i = 0; i < LAYER_AMOUNT; i++)
+    for (size_t i = 0; i < TILE_LAYER_AMOUNT; i++)
     {
         for (size_t j = 0; j < visibleY; j++)
         {
@@ -90,6 +91,21 @@ void LayerManager::queueTiles(sf::View viewArea)
             {
                 if (layers[i][j][k].tileID != -1)
                     TileQueue::get().queue(layers[i][j][k]);
+            }
+        }
+    }
+
+    if (showHitboxes)
+    {
+        for (size_t j = 0; j < visibleY; j++)
+        {
+            for (size_t k = 0; k < visibleX; k++)
+            {
+                if (layers[LAYER_AMOUNT - 1][j][k].tileID != -1)
+                {
+                    layers[LAYER_AMOUNT - 1][j][k].color = sf::Color::Black;
+                    TileQueue::get().queue(layers[LAYER_AMOUNT - 1][j][k]);
+                }
             }
         }
     }
@@ -157,17 +173,27 @@ sf::Image LayerManager::getLayerAsImage(int layer) const
 
 void LayerManager::setActiveLayer(int layer) //This can potentially break if layer >= 3 TODO
 {
+
+    if (layer >= TILE_LAYER_AMOUNT)
+    {
+        setHighlightLayers(false);
+        showHitboxes = true;
+    }
+
+    else
+        showHitboxes = false;
+
     activeLayer = layer;
 
     differentiateLayers();
 }
 
-void LayerManager::toggleHighlightLayers()
+void LayerManager::setHighlightLayers(bool val)
 {
-    hightlightLayers = !hightlightLayers;
+    hightlightLayers = val;
 
     if (!hightlightLayers)
-        for (int i = 0; i < LAYER_AMOUNT; i++)
+        for (int i = 0; i < TILE_LAYER_AMOUNT; i++)
             for (size_t j = 0; j < layers[i].size(); j++)
                 for (size_t k = 0; k < layers[i][j].size(); k++)
                     layers[i][j][k].color = sf::Color::White;
@@ -203,6 +229,9 @@ void LayerManager::startOver(int width, int height)
                 layers[i][j][k].tileID = -1;
                 layers[i][j][k].x = workAreaStart.x + (k * DEFAULT_TILE_SIZE);
                 layers[i][j][k].y = workAreaStart.y + (j * DEFAULT_TILE_SIZE);
+
+                if (i >= TILE_LAYER_AMOUNT)
+                    layers[i][j][k].tileID = HITBOX_ID_START;
             }
         }
     }
@@ -244,6 +273,9 @@ void LayerManager::resize(int width, int height)
                     layers[i][j][k].tileID = -1;
                     layers[i][j][k].x = workAreaStart.x + (k * DEFAULT_TILE_SIZE);
                     layers[i][j][k].y = workAreaStart.y + (j * DEFAULT_TILE_SIZE);
+
+                    if (i >= TILE_LAYER_AMOUNT)
+                        layers[i][j][k].tileID = HITBOX_ID_START;
                 }
             }
         }
@@ -294,14 +326,14 @@ void LayerManager::differentiateLayers()
 {
     if (hightlightLayers)
     {
-        for (int i = 0; i < LAYER_AMOUNT; i++)
+        for (int i = 0; i < TILE_LAYER_AMOUNT; i++)
         {
             for (size_t j = 0; j < layers[i].size(); j++)
             {
                 for (size_t k = 0; k < layers[i][j].size(); k++)
                 {
-                    int color = int(((i + 1.f) / (activeLayer + 1.f)) * 255);
-                    int transparency = int((float(LAYER_AMOUNT - i) / (LAYER_AMOUNT - activeLayer)) * 255);
+                    int color = int(((i + 1.f) / (std::min(activeLayer, TILE_LAYER_AMOUNT - 1) + 1.f)) * 255);
+                    int transparency = int((float(TILE_LAYER_AMOUNT - i) / (TILE_LAYER_AMOUNT - std::min(activeLayer, TILE_LAYER_AMOUNT - 1))) * 255);
                     transparency = std::min(255, transparency);
                     
                     layers[i][j][k].color = sf::Color(color, color, color, transparency);
@@ -338,6 +370,7 @@ std::ostream & operator<<(std::ostream & out, const LayerManager & layerManager)
                 out << layerManager.layers[i][j][k].tileID << " ";
             }
         }
+        out << "\n";
     }
 
     out << "\n";

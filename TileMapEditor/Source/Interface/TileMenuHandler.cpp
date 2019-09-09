@@ -155,7 +155,7 @@ void TileMenuHandler::handleKeyboardEvents(sf::Event event)
             equipEraser();
 
         //Overcomplicated but saved three lines
-        for (int i = 0; i < LAYER_AMOUNT; i++)
+        for (int i = 0; i < TILE_LAYER_AMOUNT; i++)
         {
             if (event.key.code == i + sf::Keyboard::Num1)
             {
@@ -183,14 +183,12 @@ void TileMenuHandler::update(sf::Vector2i mousePos, sf::Vector2i viewPortOffset)
             handleLayerSelection(pressedPos, viewPortOffset);
         }
 
-        else if (activeTileTexture != -1)
+        else
             layerManager.update(activeTiles, viewPortOffset);
     }
 
-    else if (activeTileTexture != -1)
-    {
+    else
         handleBlockSelection(pressedPos - offset, mousePos - offset);
-    }
 }
 
 void TileMenuHandler::queueItems(sf::View viewArea)
@@ -198,8 +196,26 @@ void TileMenuHandler::queueItems(sf::View viewArea)
     layerManager.queueTiles(viewArea);
 
 
-    //toolbox?
-    if (activeTileTexture != -1)
+    //toolbox
+    if (layerManager.getActiveLayer() == LAYER_AMOUNT - 1)
+    {
+        Tile activeTile;
+        activeTile.textureID = -1;
+        activeTile.tileID = HITBOX_ID_START;
+        activeTile.x = offset.x;
+        activeTile.y = offset.y;
+
+        TileQueue::get().queue(activeTile);
+ 
+        activeTile.textureID = -1;
+        activeTile.tileID = HITBOX_ID_START + 1;
+        activeTile.x = 1 * DEFAULT_TILE_SIZE + offset.x;
+        activeTile.y = offset.y;
+
+        TileQueue::get().queue(activeTile);
+    }
+
+    else if (activeTileTexture != -1)
     {
         sf::Vector2i bounds = TileMaps::get().getSheetSize(activeTileTexture);
 
@@ -284,7 +300,7 @@ void TileMenuHandler::handleFileMenu(sf::String button)
         resizeWindow.openWindow();
     }
 
-    for (size_t i = 0; i < LAYER_AMOUNT; i++)
+    for (size_t i = 0; i < TILE_LAYER_AMOUNT; i++)
     {
         if (button == Global::Elements::Menu::Clickables::layers[i])
         {
@@ -293,8 +309,14 @@ void TileMenuHandler::handleFileMenu(sf::String button)
         }
     }
 
+    if (button == Global::Elements::Menu::Clickables::hitboxLayers)
+    {
+        layerManager.setActiveLayer(LAYER_AMOUNT - 1);
+        updateInfoBox();
+    }
+
     if (button == Global::Elements::Menu::Clickables::darken)
-        layerManager.toggleHighlightLayers();
+        layerManager.setHighlightLayers(!layerManager.getHighlightLayers());
 
     if (button == Global::Elements::Menu::Clickables::infoBox)
     {
@@ -318,7 +340,13 @@ void TileMenuHandler::handleBlockSelection(sf::Vector2i start, sf::Vector2i stop
 
     swapStartAndStopPosition(start, stop);
 
-    sf::Vector2i bounds = TileMaps::get().getSheetSize(activeTileTexture);
+    int bound = 0;
+
+    if (activeTileTexture != -1)
+        bound = TileMaps::get().getSheetSize(activeTileTexture).x * TileMaps::get().getSheetSize(activeTileTexture).y;
+
+    else if (layerManager.getActiveLayer() == LAYER_AMOUNT -1)
+        bound = LAYER_AMOUNT - TILE_LAYER_AMOUNT + 1;
 
     for (int k = start.y; k <= stop.y; k++)
     {
@@ -335,7 +363,7 @@ void TileMenuHandler::handleBlockSelection(sf::Vector2i start, sf::Vector2i stop
                         cleared = true;
                     }
 
-                    if (i < bounds.x * bounds.y)
+                    if (i < bound)
                     {
                         ActiveTile activeTile;
                         activeTile.tileID = (int)i;
@@ -344,6 +372,13 @@ void TileMenuHandler::handleBlockSelection(sf::Vector2i start, sf::Vector2i stop
                         activeTile.y = k - start.y;
                         activeTile.box.setSize(DEFAULT_TILE_SIZE, DEFAULT_TILE_SIZE);
                         activeTile.box.setPosition(j * DEFAULT_TILE_SIZE + offset.x, k * DEFAULT_TILE_SIZE + offset.y);
+
+                        if (layerManager.getActiveLayer() == LAYER_AMOUNT - 1)
+                        {
+                            activeTile.tileID = i + HITBOX_ID_START;
+                            activeTile.textureID = 0;
+                        }
+
                         activeTiles.push_back(activeTile);
                     }
 
@@ -534,6 +569,11 @@ void TileMenuHandler::saveFile()
     std::string name = panel->get<tgui::TextBox>(Global::Elements::savebox::fileName)->getText();
 
     fs::path dir = saveWindow.getPath();
+
+    if (name.empty())
+    {
+        name = "defaultSaveName";
+    }
 
     fileManager.save(layerManager, dir / name);
 

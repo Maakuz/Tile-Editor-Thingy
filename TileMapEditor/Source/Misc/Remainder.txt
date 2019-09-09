@@ -2,7 +2,7 @@ Todo:
 
 Multitråda saker kanske om jag orkar vet inte
 Ändra tileSize
-Save - dubbelklicka en fil ska skriva över den tidigare
+Save - dubbelklicka en fil ska skriva över den tidigare - FAKTISKT RÄTT HÖG PRI NU
 Save - varnig ifall filen redan finns
 Foolproofa
 Suddigummsknapp

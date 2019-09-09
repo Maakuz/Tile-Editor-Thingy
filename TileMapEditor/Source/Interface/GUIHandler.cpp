@@ -85,10 +85,12 @@ GUIHandler::GUIHandler(sf::RenderWindow & window)
         bar->addMenuItem("Edit", Global::Elements::Menu::Clickables::resize);
 
         bar->addMenu("Layer");
-        for (size_t i = 0; i < LAYER_AMOUNT; i++)
+        for (size_t i = 0; i < TILE_LAYER_AMOUNT; i++)
         {
             bar->addMenuItem("Layer", Global::Elements::Menu::Clickables::layers[i]);
         }
+
+        bar->addMenuItem("Layer", Global::Elements::Menu::Clickables::hitboxLayers);
 
         bar->addMenu("View");
         bar->addMenuItem("View", Global::Elements::Menu::Clickables::infoBox);

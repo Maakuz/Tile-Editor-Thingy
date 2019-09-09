@@ -30,7 +30,8 @@ public:
     void setActiveLayer(int layer);
     int getActiveLayer() const { return this->activeLayer; };
 
-    void toggleHighlightLayers();
+    void setHighlightLayers(bool val);
+    bool getHighlightLayers() const { return this->hightlightLayers; };
 
     //Clears all layers
     void startOver(int width = DEFAULT_WORK_AREA_X, int height = DEFAULT_WORK_AREA_Y);
@@ -54,5 +55,6 @@ private:
     sf::Vector2i workAreaStart;
 
     bool hightlightLayers;
+    bool showHitboxes;
     bool drawing;
 };

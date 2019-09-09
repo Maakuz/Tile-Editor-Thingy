@@ -7,7 +7,12 @@ int main()
 //    printf("_MSVC_LANG : C++%d \n", (_MSVC_LANG / 100) % 2000);
 //#endif
 
-    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#ifdef _DEBUG
+    int flag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
+    flag |= _CRTDBG_LEAK_CHECK_DF; // Turn on leak-checking bit
+    _CrtSetDbgFlag(flag);
+    _CrtSetBreakAlloc(689); // Comment or un-comment on need basis
+#endif
 
     sf::RenderWindow window(sf::VideoMode(WIN_WIDTH, WIN_HEIGHT), "Time to tile!");
 

@@ -56,7 +56,7 @@ private:
     int activeTileTexture;
     std::vector<ActiveTile> activeTiles;
     std::vector<ActiveTile> copiedTiles;
-
+    
     sf::Vector2i offset;
 
     sf::Vector2i pressedPos;

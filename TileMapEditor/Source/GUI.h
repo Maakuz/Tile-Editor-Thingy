@@ -60,6 +60,7 @@ namespace Global
 
                 //TODO: set this to NROFLAYERS somehow
                 const sf::String layers[3] = { "Layer 1", "Layer 2", "Layer 3" };
+                const sf::String hitboxLayers = "Hitbox layer";
 
                 const sf::String infoBox("Info box");
                 const sf::String darken("Layer differences");
