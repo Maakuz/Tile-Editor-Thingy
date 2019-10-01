@@ -323,10 +323,10 @@ void TileMenuHandler::handleFileMenu(sf::String button)
         tgui::Panel::Ptr panel = Global::gui->get<tgui::Panel>(Global::Elements::infoBox::panel);
 
         if (panel->isVisible())
-            panel->hide();
+            panel->setVisible(false);
 
         else
-            panel->show();
+            panel->setVisible(true);
     }
 
 }

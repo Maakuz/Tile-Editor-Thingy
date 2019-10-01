@@ -4,7 +4,7 @@
 #include <Constants.h>
 #include "TileMaps.h"
 
-namespace fs = std::experimental::filesystem;
+namespace fs = std::filesystem;
 
 FileManager::FileManager()
 {
@@ -93,7 +93,7 @@ void FileManager::importTexure()
         textures.push_back(p);
 
     auto textureList = Global::gui->get<tgui::ListBox>(Global::Elements::textureImporter::textureList);
-    textureList->show();
+    textureList->setVisible(true);
     textureList->removeAllItems();
     
     for (fs::path & p : textures)
@@ -113,7 +113,7 @@ int FileManager::addTexture(sf::String name, sf::String path)
         printf("%s\n", e);
     }
 
-    Global::gui->get(Global::Elements::textureImporter::textureList)->hide();
+    Global::gui->get(Global::Elements::textureImporter::textureList)->setVisible(false);
     auto textureInfo = Global::gui->get<tgui::Panel>(Global::Elements::infoBox::panel)->get<tgui::ComboBox>(Global::Elements::infoBox::textureBox);
 
     textureInfo->addItem(name, path);

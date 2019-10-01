@@ -1,5 +1,5 @@
 #pragma once
-#include "TGUI\TGUI.hpp"
+#include "TGUI/TGUI.hpp"
 namespace Global
 {
     extern tgui::Gui * gui;

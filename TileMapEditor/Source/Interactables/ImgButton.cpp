@@ -6,7 +6,7 @@ ImgButton::ImgButton(sf::Texture pressedTex, sf::Texture unpressedTex)
     this->unpressedTex = unpressedTex;
     pressed = false;
     button = tgui::Button::create();
-    button->getRenderer()->setNormalTexture(this->unpressedTex);
+    button->getRenderer()->setTexture(this->unpressedTex);
     button->getRenderer()->setBorders(tgui::Borders());
     button->setSize(pressedTex.getSize().x, pressedTex.getSize().y);
 }
@@ -23,8 +23,8 @@ void ImgButton::swap()
 {
     pressed = !pressed;
     if (pressed)
-        button->getRenderer()->setNormalTexture(pressedTex);
+        button->getRenderer()->setTexture(pressedTex);
 
     else
-        button->getRenderer()->setNormalTexture(unpressedTex);
+        button->getRenderer()->setTexture(unpressedTex);
 }

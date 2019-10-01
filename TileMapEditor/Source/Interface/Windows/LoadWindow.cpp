@@ -16,7 +16,7 @@ void LoadWindow::openWindow()
 {
     loading = true;
     auto window = Global::gui->get<tgui::Panel>(Global::Elements::loadbox::panel);
-    window->show();
+    window->setVisible(true);
 
     currentDir = fs::current_path();
 
@@ -27,7 +27,7 @@ void LoadWindow::closeWindow()
 {
     loading = false;
     auto window = Global::gui->get<tgui::Panel>(Global::Elements::loadbox::panel);
-    window->hide();
+    window->setVisible(false);
 }
 
 void LoadWindow::printPaths()

@@ -9,7 +9,7 @@
 
 GUIHandler::GUIHandler(sf::RenderWindow & window)
 {
-    gui.setWindow(window);
+    gui.setTarget(window);
     Global::gui = &gui;
     active = false;
 
@@ -114,10 +114,10 @@ GUIHandler::GUIHandler(sf::RenderWindow & window)
         panel->add(label, Global::Elements::infoBox::layerInfo);
         panel->add(textureBox, Global::Elements::infoBox::textureBox);
 
-        panel->hide();
+        panel->setVisible(false);
         panel->setSize(200, 100);
         panel->setPosition(1000, 50);
-        panel->setBackgroundColor(tgui::Color(sf::Color::White));
+        //panel->setBackgroundColor(tgui::Color(sf::Color::White)); dream is dead?
 
         gui.add(panel, Global::Elements::infoBox::panel);
     }
@@ -153,7 +153,7 @@ GUIHandler::GUIHandler(sf::RenderWindow & window)
         panel->add(height, Global::Elements::resizeMenu::height);
         panel->add(confirm, Global::Elements::resizeMenu::confirm);
         panel->add(cancel, Global::Elements::resizeMenu::cancel);
-        panel->hide();
+        panel->setVisible(false);
 
         gui.add(panel, Global::Elements::resizeMenu::panel);
     }
@@ -161,7 +161,7 @@ GUIHandler::GUIHandler(sf::RenderWindow & window)
     //Texture importer list
     {
         tgui::ListBox::Ptr textureList = tgui::ListBox::create();
-        textureList->hide();
+        textureList->setVisible(false);
         textureList->setSize(400, 200);
         textureList->setPosition(400, 20);
 
@@ -206,14 +206,14 @@ GUIHandler::GUIHandler(sf::RenderWindow & window)
         savePanel->add(save, Global::Elements::savebox::saveButton);
         savePanel->add(exitButton, Global::Elements::savebox::cancelButton);
         savePanel->add(fileName, Global::Elements::savebox::fileName);
-        savePanel->hide();
+        savePanel->setVisible(false);
 
         //      SAVE PANEL/CREATEFOLDER
         {
             tgui::Panel::Ptr folderPanel = tgui::Panel::create();
             folderPanel->setSize(220, 100);
             folderPanel->setPosition(215, 40);
-            folderPanel->hide();
+            folderPanel->setVisible(false);
 
             tgui::TextBox::Ptr textBox = tgui::TextBox::create();
             textBox->setPosition(5, 5);
@@ -267,7 +267,7 @@ GUIHandler::GUIHandler(sf::RenderWindow & window)
         loadPanel->add(loadPathList, Global::Elements::loadbox::paths);
         loadPanel->add(load, Global::Elements::loadbox::loadButton);
         loadPanel->add(exitButton, Global::Elements::loadbox::cancelButton);
-        loadPanel->hide();
+        loadPanel->setVisible(false);
 
         gui.add(loadPanel, Global::Elements::loadbox::panel);
     }

@@ -24,7 +24,7 @@ void SaveWindow::openWindow()
 {
     open = true;
     auto window = Global::gui->get<tgui::Panel>(Global::Elements::savebox::panel);
-    window->show();
+    window->setVisible(true);
 
     currentDir = fs::current_path();
 
@@ -35,7 +35,7 @@ void SaveWindow::closeWindow()
 {
     open = false;
     auto window = Global::gui->get<tgui::Panel>(Global::Elements::savebox::panel);
-    window->hide();
+    window->setVisible(false);
 }
 
 fs::path SaveWindow::getPath() const
@@ -85,7 +85,7 @@ void SaveWindow::showFolderCreationWindow()
     auto window = Global::gui->get<tgui::Panel>(Global::Elements::savebox::panel);
     auto panel = window->get<tgui::Panel>(Global::Elements::savebox::foldercreator::panel);
 
-    panel->show();
+    panel->setVisible(true);
 }
 
 void SaveWindow::cancelFolderCreation()
@@ -94,7 +94,7 @@ void SaveWindow::cancelFolderCreation()
     auto window = Global::gui->get<tgui::Panel>(Global::Elements::savebox::panel);
     auto panel = window->get<tgui::Panel>(Global::Elements::savebox::foldercreator::panel);
 
-    panel->hide();
+    panel->setVisible(false);
 }
 
 void SaveWindow::createFolder()

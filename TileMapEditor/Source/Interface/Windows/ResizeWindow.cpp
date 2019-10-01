@@ -15,12 +15,12 @@ void ResizeWindow::openWindow()
 {
     this->open = true;
     auto window = Global::gui->get<tgui::Panel>(Global::Elements::resizeMenu::panel);
-    window->show();
+    window->setVisible(true);
 }
 
 void ResizeWindow::closeWindow()
 {
     this->open = false;
     auto window = Global::gui->get<tgui::Panel>(Global::Elements::resizeMenu::panel);
-    window->hide();
+    window->setVisible(false);
 }
