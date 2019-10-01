@@ -4,7 +4,7 @@
 #include "Queues\TileQueue.h"
 #include "TileMaps.h"
 
-#define HITBOX_COLOR sf::Color(0,0,0,150)
+sf::Color HITBOX_COLORS[2] = { sf::Color(0, 0, 0, 150), sf::Color(255, 255, 0, 150) };
 
 TileManager::TileManager()
 {
@@ -40,7 +40,7 @@ void TileManager::prepareTiles()
             sf::RectangleShape* rect = new sf::RectangleShape;
             rect->setPosition((float)tile.x, (float)tile.y);
             rect->setSize(sf::Vector2f(DEFAULT_TILE_SIZE, DEFAULT_TILE_SIZE));
-            rect->setFillColor(HITBOX_COLOR);
+            rect->setFillColor(HITBOX_COLORS[tile.tileID - HITBOX_ID_START - 1]);
             spriteQueue.push_back(rect);
         }
 

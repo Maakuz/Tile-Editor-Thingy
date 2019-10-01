@@ -213,6 +213,13 @@ void TileMenuHandler::queueItems(sf::View viewArea)
         activeTile.y = offset.y;
 
         TileQueue::get().queue(activeTile);
+
+        activeTile.textureID = -1;
+        activeTile.tileID = HITBOX_ID_START + 2;
+        activeTile.x = 2 * DEFAULT_TILE_SIZE + offset.x;
+        activeTile.y = offset.y;
+
+        TileQueue::get().queue(activeTile);
     }
 
     else if (activeTileTexture != -1)
@@ -346,7 +353,7 @@ void TileMenuHandler::handleBlockSelection(sf::Vector2i start, sf::Vector2i stop
         bound = TileMaps::get().getSheetSize(activeTileTexture).x * TileMaps::get().getSheetSize(activeTileTexture).y;
 
     else if (layerManager.getActiveLayer() == LAYER_AMOUNT -1)
-        bound = LAYER_AMOUNT - TILE_LAYER_AMOUNT + 1;
+        bound = NR_OF_HITBOXES + 1;
 
     for (int k = start.y; k <= stop.y; k++)
     {
