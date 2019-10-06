@@ -199,27 +199,15 @@ void TileMenuHandler::queueItems(sf::View viewArea)
     //toolbox
     if (layerManager.getActiveLayer() == LAYER_AMOUNT - 1)
     {
-        Tile activeTile;
-        activeTile.textureID = -1;
-        activeTile.tileID = HITBOX_ID_START;
-        activeTile.x = offset.x;
-        activeTile.y = offset.y;
-
-        TileQueue::get().queue(activeTile);
- 
-        activeTile.textureID = -1;
-        activeTile.tileID = HITBOX_ID_START + 1;
-        activeTile.x = 1 * DEFAULT_TILE_SIZE + offset.x;
-        activeTile.y = offset.y;
-
-        TileQueue::get().queue(activeTile);
-
-        activeTile.textureID = -1;
-        activeTile.tileID = HITBOX_ID_START + 2;
-        activeTile.x = 2 * DEFAULT_TILE_SIZE + offset.x;
-        activeTile.y = offset.y;
-
-        TileQueue::get().queue(activeTile);
+        for (int i = 0; i < NR_OF_HITBOXES + 1; i++)
+        {
+            Tile activeTile;
+            activeTile.textureID = -1;
+            activeTile.tileID = HITBOX_ID_START + i;
+            activeTile.x = i * DEFAULT_TILE_SIZE + offset.x;
+            activeTile.y = offset.y;
+            TileQueue::get().queue(activeTile);
+        }
     }
 
     else if (activeTileTexture != -1)

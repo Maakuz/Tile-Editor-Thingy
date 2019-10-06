@@ -25,7 +25,7 @@
 #define LAYER_AMOUNT 4
 
 #define HITBOX_ID_START 500
-#define NR_OF_HITBOXES 2
+#define NR_OF_HITBOXES 3
 
 #define IMAGE_BAR_HEIGHT 40
 #define MENU_BAR_HEIGHT 20

@@ -4,7 +4,7 @@
 #include "Queues\TileQueue.h"
 #include "TileMaps.h"
 
-sf::Color HITBOX_COLORS[2] = { sf::Color(0, 0, 0, 150), sf::Color(255, 255, 0, 150) };
+sf::Color HITBOX_COLORS[NR_OF_HITBOXES] = { sf::Color(0, 0, 0, 150), sf::Color(255, 255, 0, 150), sf::Color(255, 0, 0, 150) };
 
 TileManager::TileManager()
 {
