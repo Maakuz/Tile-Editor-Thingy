@@ -1,5 +1,6 @@
 #include <Interface\Editor.h>
 #include "Constants.h"
+#include "Imgui/SFML-imgui/imgui-SFML.h"
 
 int main()
 {
@@ -11,14 +12,17 @@ int main()
     int flag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
     flag |= _CRTDBG_LEAK_CHECK_DF; // Turn on leak-checking bit
     _CrtSetDbgFlag(flag);
-    _CrtSetBreakAlloc(689); // Comment or un-comment on need basis
+    //_CrtSetBreakAlloc(689); // Comment or un-comment on need basis
 #endif
 
     sf::RenderWindow window(sf::VideoMode(WIN_WIDTH, WIN_HEIGHT), "Time to tile!");
 
     window.setFramerateLimit(120);
+    ImGui::SFML::Init(window);
 
     Editor editor(window);
 
-    return editor.run(window);
+    int ret = editor.run(window);
+    ImGui::SFML::Shutdown();
+    return ret;
 }

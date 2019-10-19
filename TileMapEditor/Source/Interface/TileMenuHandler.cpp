@@ -6,63 +6,32 @@
 #include "Constants.h"
 #include "SFML\Window\Mouse.hpp"
 #include "GUI.h"
+#include "Imgui/imgui.h"
 #include "TileMaps.h"
 
 
 
 TileMenuHandler::TileMenuHandler() :
-    tileBox(TILEMENU_BORDER_SIZE, TILEMENU_BORDER_SIZE + TOTAL_BAR_HEIGHT, DEFAULT_TILE_SIZE * TILEMENU_X_AREA, DEFAULT_TILE_SIZE * TILEMENU_Y_AREA, TILEMENU_BORDER_SIZE)
+    tileBox(TILEMENU_BORDER_SIZE, TILEMENU_BORDER_SIZE + TOTAL_BAR_HEIGHT, DEFAULT_TILE_SIZE* TILEMENU_X_AREA, DEFAULT_TILE_SIZE* TILEMENU_Y_AREA, TILEMENU_BORDER_SIZE)
 {
     tileBox.setColor(sf::Color(0, 100, 200));
     tileBox.setBorderColor(sf::Color(100, 100, 100));
     activeTileTexture = 0;
     offset.x = TILEMENU_BORDER_SIZE;
     offset.y = TILEMENU_BORDER_SIZE + TOTAL_BAR_HEIGHT;
-    
-    createTileButtons();
-
-    #pragma region Buttons
-
-    Global::gui->get<tgui::MenuBar>(Global::Elements::Menu::bar)->connect("MenuItemClicked", &TileMenuHandler::handleFileMenu, this);
-    Global::gui->get<tgui::Panel>(Global::Elements::infoBox::panel)->get(Global::Elements::infoBox::textureBox)->connect("itemselected", &TileMenuHandler::setActiveTexture, this);
-
-    Global::gui->get<tgui::Panel>(Global::Elements::savebox::panel)->get(Global::Elements::savebox::saveButton)->connect("clicked", &TileMenuHandler::saveFile, this);
-    Global::gui->get<tgui::Panel>(Global::Elements::loadbox::panel)->get(Global::Elements::loadbox::loadButton)->connect("clicked", &TileMenuHandler::loadFile, this);
-   
-    Global::gui->get(Global::Elements::textureImporter::textureList)->connect("DoubleClicked", &TileMenuHandler::importTexture, this);
-
-    Global::gui->get<tgui::Panel>(Global::Elements::resizeMenu::panel)->get(Global::Elements::resizeMenu::confirm)->connect("clicked", &TileMenuHandler::resize, this);
-
-    Global::gui->get<tgui::Panel>(Global::Elements::imagemenu::panel)->get(Global::Elements::imagemenu::newButton)->connect("clicked", 
-        [&]() 
-    {
-        if (!anyWindowsOpen())
-        {
-            layerManager.startOver();
-            activeTiles.clear();
-        }
-    });
-
-    Global::gui->get<tgui::Panel>(Global::Elements::imagemenu::panel)->get(Global::Elements::imagemenu::openButton)->connect("clicked",
-        [&]()
-    {
-        if (!anyWindowsOpen())
-            loadWindow.openWindow();
-    });
-
-    Global::gui->get<tgui::Panel>(Global::Elements::imagemenu::panel)->get(Global::Elements::imagemenu::saveButton)->connect("clicked",
-        [&]()
-    {
-        if (!anyWindowsOpen())
-            saveWindow.openWindow();
-    });
-
-    Global::gui->get<tgui::Panel>(Global::Elements::imagemenu::panel)->get(Global::Elements::imagemenu::eraserButton)->connect("clicked", &TileMenuHandler::equipEraser, this);
-    #pragma endregion
 
     selectingBlocks = false;
     rightClicking = false;
     activeTileTexture = -1;
+
+    createTileButtons();
+
+    Global::gui->get<tgui::Panel>(Global::Elements::infoBox::panel)->get(Global::Elements::infoBox::textureBox)->connect("itemselected", &TileMenuHandler::setActiveTexture, this);
+
+    Global::gui->get(Global::Elements::textureImporter::textureList)->connect("DoubleClicked", &TileMenuHandler::importTexture, this);
+
+    Global::gui->get<tgui::Panel>(Global::Elements::resizeMenu::panel)->get(Global::Elements::resizeMenu::confirm)->connect("clicked", &TileMenuHandler::resize, this);
+
 }
 
 void TileMenuHandler::handleEvent(sf::Event event, bool guiBlock, sf::Vector2i viewPortMousePos)
@@ -121,8 +90,6 @@ void TileMenuHandler::handleKeyboardEvents(sf::Event event)
     switch (event.type)
     {
     case sf::Event::KeyPressed:
-        if (event.key.code == sf::Keyboard::F10)
-            handleFileMenu(Global::Elements::Menu::Clickables::infoBox);
 
         if (event.key.code == sf::Keyboard::Z && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
             layerManager.undo();
@@ -171,9 +138,17 @@ void TileMenuHandler::handleKeyboardEvents(sf::Event event)
     }
 }
 
-void TileMenuHandler::update(sf::Vector2i mousePos, sf::Vector2i viewPortOffset)
+void TileMenuHandler::update(sf::Vector2i mousePos, sf::Vector2i viewPortOffset, bool guiActive)
 {
-    if (saveWindow.isOpen() || loadWindow.isOpen())
+    this->handleMenuBar();
+    this->handleHelpWindow();
+    if (saveWindow.update())
+        saveFile();
+
+    if (loadWindow.update())
+        loadFile();
+
+    if (guiActive)
         return;
 
     if (!selectingBlocks)
@@ -261,69 +236,143 @@ void TileMenuHandler::createTileButtons()
     }
 }
 
-void TileMenuHandler::handleFileMenu(sf::String button)
+void TileMenuHandler::handleMenuBar()
 {
-    if (anyWindowsOpen())
-        return;
-
-    if (button == Global::Elements::Menu::Clickables::newFile)
+    if (ImGui::BeginMainMenuBar())
     {
-        layerManager.startOver();
-        activeTiles.clear();
-    }
-
-    if (button == Global::Elements::Menu::Clickables::saveFile)
-        saveWindow.openWindow();
-
-    if (button == Global::Elements::Menu::Clickables::openFile)
-        loadWindow.openWindow();
-
-    if (button == Global::Elements::Menu::Clickables::exportLayers)
-        fileManager.exportTextures(layerManager);
-
-    if (button == Global::Elements::Menu::Clickables::importTexture)
-        fileManager.importTexure();
-
-    if (button == Global::Elements::Menu::Clickables::undo)
-        layerManager.undo();
-
-    if (button == Global::Elements::Menu::Clickables::redo)
-        layerManager.redo();
-
-    if (button == Global::Elements::Menu::Clickables::resize)
-    {
-        resizeWindow.openWindow();
-    }
-
-    for (size_t i = 0; i < TILE_LAYER_AMOUNT; i++)
-    {
-        if (button == Global::Elements::Menu::Clickables::layers[i])
+        if (ImGui::BeginMenu("File"))
         {
-            layerManager.setActiveLayer(i);
-            updateInfoBox();
+            if (ImGui::MenuItem("New"))
+            {
+                layerManager.startOver();
+                activeTiles.clear();
+            }
+
+            if (ImGui::MenuItem("Save"))
+            {
+                saveWindow.openWindow();
+            }
+
+            if (ImGui::MenuItem("Open"))
+            {
+                loadWindow.openWindow();
+            }
+
+            ImGui::EndMenu();
         }
+
+        if (ImGui::BeginMenu("Edit"))
+        {
+            if (ImGui::MenuItem("Undo"))
+            {
+                layerManager.undo();
+            }
+
+            if (ImGui::MenuItem("Redo"))
+            {
+                layerManager.redo();
+            }
+
+            if (ImGui::MenuItem("Import"))
+            {
+                fileManager.importTexure();
+            }
+
+            if (ImGui::MenuItem("Resize"))
+            {
+                resizeWindow.openWindow();
+            }
+
+            ImGui::EndMenu();
+        }
+
+        if (ImGui::BeginMenu("Layer"))
+        {
+            if (ImGui::MenuItem("Layer1"))
+            {
+                layerManager.setActiveLayer(0);
+                this->updateInfoBox();
+            }
+
+            if (ImGui::MenuItem("Layer2"))
+            {
+                layerManager.setActiveLayer(1);
+                this->updateInfoBox();
+            }
+
+            if (ImGui::MenuItem("Layer3"))
+            {
+                layerManager.setActiveLayer(2);
+                this->updateInfoBox();
+            }
+
+            if (ImGui::MenuItem("Hitbox layer"))
+            {
+                layerManager.setActiveLayer(HITBOX_LAYER);
+                this->updateInfoBox();
+            }
+
+
+
+            ImGui::EndMenu();
+        }
+
+        if (ImGui::BeginMenu("View"))
+        {
+            if (ImGui::MenuItem("Info box"))
+            {
+                tgui::Panel::Ptr panel = Global::gui->get<tgui::Panel>(Global::Elements::infoBox::panel);
+
+                if (panel->isVisible())
+                    panel->setVisible(false);
+
+                else
+                    panel->setVisible(true);
+            }
+
+            if (ImGui::MenuItem("Layer diff"))
+            {
+                layerManager.setHighlightLayers(!layerManager.getHighlightLayers());
+            }
+
+            ImGui::EndMenu();
+        }
+
+        if (ImGui::BeginMenu("Tools"))
+        {
+            if (ImGui::MenuItem("Layer diff"))
+                fileManager.exportTextures(layerManager);
+
+            ImGui::EndMenu();
+        }
+
+        ImGui::EndMainMenuBar();
     }
 
-    if (button == Global::Elements::Menu::Clickables::hitboxLayers)
+
+
+}
+
+void TileMenuHandler::handleHelpWindow()
+{
+    static bool importTexture = false;
+    ImGui::Begin("Halp");
+    if (ImGui::BeginTabBar("tabbu"))
     {
-        layerManager.setActiveLayer(LAYER_AMOUNT - 1);
-        updateInfoBox();
+        if (ImGui::BeginTabItem("Textures"))
+        {
+            if (ImGui::Button("Import tilemap"))
+                importTexture = true;
+
+            ImGui::EndTabItem();
+        }
+
+
+        ImGui::EndTabBar();
     }
 
-    if (button == Global::Elements::Menu::Clickables::darken)
-        layerManager.setHighlightLayers(!layerManager.getHighlightLayers());
 
-    if (button == Global::Elements::Menu::Clickables::infoBox)
-    {
-        tgui::Panel::Ptr panel = Global::gui->get<tgui::Panel>(Global::Elements::infoBox::panel);
-
-        if (panel->isVisible())
-            panel->setVisible(false);
-
-        else
-            panel->setVisible(true);
-    }
-
+    ImGui::End();
 }
 
 void TileMenuHandler::handleBlockSelection(sf::Vector2i start, sf::Vector2i stop)
@@ -560,8 +609,7 @@ void TileMenuHandler::resize()
 
 void TileMenuHandler::saveFile()
 {
-    auto panel = Global::gui->get<tgui::Panel>(Global::Elements::savebox::panel);
-    std::string name = panel->get<tgui::TextBox>(Global::Elements::savebox::fileName)->getText();
+    std::string name = saveWindow.getFileName();
 
     fs::path dir = saveWindow.getPath();
 
@@ -577,8 +625,7 @@ void TileMenuHandler::saveFile()
 
 void TileMenuHandler::loadFile()
 {
-    auto panel = Global::gui->get<tgui::Panel>(Global::Elements::loadbox::panel);
-    std::string name = panel->get<tgui::ListBox>(Global::Elements::loadbox::paths)->getSelectedItem();
+    std::string name = loadWindow.getFilename();
 
     fs::path dir = loadWindow.getPath();
 

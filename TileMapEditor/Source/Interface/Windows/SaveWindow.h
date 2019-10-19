@@ -1,6 +1,6 @@
 #pragma once
-#include "SFML\System\String.hpp"
 #include <filesystem>
+#include <string>
 
 namespace fs = std::filesystem;
 
@@ -13,15 +13,15 @@ public:
     bool isOpen() const { return open; };
     void openWindow();
     void closeWindow();
+    bool update();
     fs::path getPath() const;
+    std::string getFileName() const { return fileName; };
 private:
-    void printPaths();
-    void iteratePaths(sf::String name, sf::String path);
-    void showFolderCreationWindow();
-    void cancelFolderCreation();
-    void createFolder();
+    void iteratePaths(std::string name, std::string path);
+    void createFolder(std::string folderName);
 
     bool open;
-    bool creatingFolder;
+    bool readyToSave;
     fs::path currentDir;
+    std::string fileName;
 };

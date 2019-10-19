@@ -1,57 +1,81 @@
 #include "LoadWindow.h"
-#include "GUI.h"
+#include "Imgui/imgui.h"
 #include "Constants.h"
 
 LoadWindow::LoadWindow()
 {
-    loading = false;
-
-    auto panel = Global::gui->get<tgui::Panel>(Global::Elements::loadbox::panel);
-
-    panel->get(Global::Elements::loadbox::paths)->connect("DoubleClicked", &LoadWindow::iteratePaths, this);
-    panel->get(Global::Elements::loadbox::cancelButton)->connect("Clicked", &LoadWindow::closeWindow, this);
+    open = false;
+    readyToLoad = false;
 }
 
 void LoadWindow::openWindow()
 {
-    loading = true;
-    auto window = Global::gui->get<tgui::Panel>(Global::Elements::loadbox::panel);
-    window->setVisible(true);
+    open = true;
 
     currentDir = fs::current_path();
-
-    printPaths();
 }
 
 void LoadWindow::closeWindow()
 {
-    loading = false;
-    auto window = Global::gui->get<tgui::Panel>(Global::Elements::loadbox::panel);
-    window->setVisible(false);
+    open = false;
+    readyToLoad = false;
 }
 
-void LoadWindow::printPaths()
+bool LoadWindow::update()
 {
-    auto window = Global::gui->get<tgui::Panel>(Global::Elements::loadbox::panel);
-
-    auto fileList = window->get<tgui::ListBox>(Global::Elements::loadbox::paths);
-    fileList->removeAllItems();
-
-    for (auto & p : fs::directory_iterator(currentDir))
+    if (open)
     {
-        if (p.path().extension() == FILE_EXTENSION)
-            fileList->addItem(p.path().filename().string(), p.path().string());
+        ImGui::Begin("Save", &open);
+        if (ImGui::BeginChild("Files", sf::Vector2f(200, 200)))
+        {
+            for (auto& p : fs::directory_iterator(currentDir))
+            {
+                bool file = false;
+                bool directory = false;
 
-        else if (p.path().extension() == "")
-            fileList->addItem(p.path().filename().string(), p.path().string());
+                if (p.path().extension() == FILE_EXTENSION)
+                    file = true;
+
+                else if (p.path().extension() == "")
+                    directory = true;
+
+                if (file || directory)
+                {
+                    std::string name = p.path().filename().string();
+                    if (directory)
+                        name += "/";
+                    if (ImGui::Selectable(name.c_str()))
+                    {
+                        if (directory)
+                            iteratePaths(p.path().filename().string(), p.path().string());
+
+                        if (file)
+                        {
+                            fileName = p.path().filename().string();
+                            readyToLoad = true;
+                        }
+                    }
+                }
+
+            }
+
+            if (ImGui::Selectable("../"))
+            {
+                iteratePaths("..", currentDir.parent_path().string());
+            }
+
+            ImGui::EndChild();
+        }
+
+        
+
+        ImGui::End();
     }
 
-    fileList->addItem("..", currentDir.parent_path().string());
-
-    printf("%s\n", currentDir.string().c_str());
+    return readyToLoad;
 }
 
-void LoadWindow::iteratePaths(sf::String name, sf::String path)
+void LoadWindow::iteratePaths(std::string name, std::string path)
 {
     if (!(currentDir.root_path() == currentDir && name == ".."))
     {
@@ -59,6 +83,4 @@ void LoadWindow::iteratePaths(sf::String name, sf::String path)
         if (currentDir.extension() != "")
             currentDir = currentDir.parent_path();
     }
-
-    printPaths();
 }

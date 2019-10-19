@@ -13,6 +13,7 @@ public:
 
     int run(sf::RenderWindow & window);
 private:
+    void scrollScreen(float dt);
 
     GUIHandler gui;
     TileMenuHandler tileMenuHandler;

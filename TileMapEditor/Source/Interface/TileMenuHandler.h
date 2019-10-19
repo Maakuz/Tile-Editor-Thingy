@@ -14,8 +14,8 @@ public:
     TileMenuHandler();
     virtual ~TileMenuHandler() {};
 
-    void handleEvent(sf::Event event, bool guiBlock, sf::Vector2i viewPortMousePos);
-    void update(sf::Vector2i mousePos, sf::Vector2i viewPortMousePos);
+    void handleEvent(sf::Event event, bool guiActive, sf::Vector2i viewPortMousePos);
+    void update(sf::Vector2i mousePos, sf::Vector2i viewPortMousePos, bool guiActive);
 
     void queueItems(sf::View viewArea);
 
@@ -29,7 +29,8 @@ private:
     void handleKeyboardEvents(sf::Event event);
 
     void createTileButtons();
-    void handleFileMenu(sf::String button);
+    void handleMenuBar();
+    void handleHelpWindow();
     void handleBlockSelection(sf::Vector2i start, sf::Vector2i stop);
     void handleLayerSelection(sf::Vector2i start, sf::Vector2i stop);
     void createActiveBounds(std::vector<ActiveTile>& tiles);

@@ -1,7 +1,7 @@
 #pragma once
 #include "SFML\Window\Window.hpp"
-#include "Interactables\ImgButton.h"
 #include <unordered_map>
+#include "GUI.h"
 
 
 class GUIHandler
@@ -20,10 +20,8 @@ public:
 
     //It does what it's supposed to.
     void crashEverything();
+
 private:
-
-    std::unordered_map<std::string, ImgButton> imgButtons;
-
     tgui::Gui gui;
     bool active;
 };

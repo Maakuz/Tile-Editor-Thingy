@@ -1,4 +1,6 @@
 #include "Editor.h"
+#include "Imgui/SFML-imgui/imgui-SFML.h"
+#include "Imgui/imgui.h"
 #include "GUI.h"
 #include "Constants.h"
 
@@ -8,9 +10,6 @@ Editor::Editor(sf::RenderWindow & window) :
     gui(window),
     tileMenuHandler()
 {
-    //Oneliner aw yis
-    Global::gui->get<tgui::MenuBar>(Global::Elements::Menu::bar)->connect("MenuItemClicked", [&](sf::String item) { if (item == Global::Elements::Menu::Clickables::exitFile) window.close(); });
-   
     this->workView = sf::View(sf::FloatRect(0, 0, WIN_WIDTH, WIN_HEIGHT));
 
 
@@ -24,7 +23,8 @@ int Editor::run(sf::RenderWindow & window)
     while (window.isOpen())
     {
         //update
-        float dt = deltaTimer.restart().asMilliseconds();
+        sf::Time deltaTime = deltaTimer.restart();
+        float dt = deltaTime.asMilliseconds();
 
         static long long autoSaveCounter = 0;
         autoSaveCounter += dt;
@@ -39,8 +39,9 @@ int Editor::run(sf::RenderWindow & window)
 
         sf::Vector2i mousePos = sf::Mouse::getPosition(window);
         sf::Vector2i workSpaceMousePos = (sf::Vector2i)window.mapPixelToCoords(mousePos);
-
-#pragma region event_loop
+        bool guiActive = ImGui::IsAnyItemHovered() || ImGui::IsAnyWindowHovered();
+        
+        //Event loop
         sf::Event event;
         while (window.pollEvent(event))
         {
@@ -48,42 +49,21 @@ int Editor::run(sf::RenderWindow & window)
                 window.close();
 
             gui.handleEvents(event);
+            
+            ImGui::SFML::ProcessEvent(event);
 
-            tileMenuHandler.handleEvent(event, gui.isActive(), workSpaceMousePos);
+            printf("%d\n", guiActive);
+            tileMenuHandler.handleEvent(event, guiActive, workSpaceMousePos);
         }
-#pragma endregion 
 
-#pragma region scrolling
+        scrollScreen(dt);
 
-        float scrollSpeed = SCROLL_SPEED * dt;
-
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-            this->workView.move(scrollSpeed, 0);
-        
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-            this->workView.move(-scrollSpeed, 0);
-
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-            this->workView.move(0, scrollSpeed);
-
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-            this->workView.move(0, -scrollSpeed);
-
-        if (this->workView.getCenter().x < WIN_WIDTH / 2)
-            this->workView.setCenter(WIN_WIDTH / 2, this->workView.getCenter().y);
-
-        if (this->workView.getCenter().y < WIN_HEIGHT / 2)
-            this->workView.setCenter(this->workView.getCenter().x, WIN_HEIGHT / 2);
-#pragma endregion
-
-        //what
+        ImGui::SFML::Update(window, deltaTime);
         gui.update();
 
-        if (!gui.isActive())
-        {
-            tileMenuHandler.update(mousePos, workSpaceMousePos);
+
+            tileMenuHandler.update(mousePos, workSpaceMousePos, guiActive);
             //printf("%f, %f\n", window.mapPixelToCoords(mousePos).x, window.mapPixelToCoords(mousePos).y);
-        }
 
         tileMenuHandler.queueItems(this->workView);
         renderer.update();
@@ -96,6 +76,7 @@ int Editor::run(sf::RenderWindow & window)
         window.setView(this->toolView);
         window.draw(renderer);
         gui.drawGui();
+        ImGui::SFML::Render(window);
        
         window.display();
         window.clear(sf::Color(25, 100, 200));
@@ -103,4 +84,27 @@ int Editor::run(sf::RenderWindow & window)
     }
 
     return 0;
+}
+
+void Editor::scrollScreen(float dt)
+{
+    float scrollSpeed = SCROLL_SPEED * dt;
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+        this->workView.move(scrollSpeed, 0);
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+        this->workView.move(-scrollSpeed, 0);
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+        this->workView.move(0, scrollSpeed);
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+        this->workView.move(0, -scrollSpeed);
+
+    if (this->workView.getCenter().x < WIN_WIDTH / 2)
+        this->workView.setCenter(WIN_WIDTH / 2, this->workView.getCenter().y);
+
+    if (this->workView.getCenter().y < WIN_HEIGHT / 2)
+        this->workView.setCenter(this->workView.getCenter().x, WIN_HEIGHT / 2);
 }

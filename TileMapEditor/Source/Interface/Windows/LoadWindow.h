@@ -1,5 +1,5 @@
 #pragma once
-#include "SFML\System\String.hpp"
+#include <string>
 #include <filesystem>
 
 namespace fs = std::filesystem;
@@ -12,15 +12,18 @@ public:
     LoadWindow();
     virtual ~LoadWindow() {};
 
-    bool isOpen() const { return loading; };
+    bool isOpen() const { return open; };
     void openWindow();
     void closeWindow();
+    bool update();
     fs::path getPath() const { return currentDir; };
+    std::string getFilename() const { return fileName; };
 
 private:
-    void printPaths();
-    void iteratePaths(sf::String name, sf::String path);
+    void iteratePaths(std::string name, std::string path);
 
-    bool loading;
+    bool open;
+    bool readyToLoad;
     fs::path currentDir;
+    std::string fileName;
 };
