@@ -2,7 +2,7 @@
 #define WIN_WIDTH 1920
 #define WIN_HEIGHT 1080
 
-#define DEFAULT_TILE_SIZE 32
+#define DEFAULT_TILE_SIZE 64
 
 #define RESOURCE_FOLDER "Resources"
 
@@ -26,6 +26,7 @@
 
 #define HITBOX_ID_START 500
 #define NR_OF_HITBOXES 3
+#define HITBOX_LAYER 4
 
 #define IMAGE_BAR_HEIGHT 40
 #define MENU_BAR_HEIGHT 20
