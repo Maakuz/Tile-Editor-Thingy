@@ -14,6 +14,7 @@ Editor::Editor(sf::RenderWindow & window) :
 
     this->toolView = sf::View(sf::FloatRect(0, 0, TILEMENU_WIDTH, WIN_HEIGHT));
     this->toolView.setViewport(sf::FloatRect(0, 0, (float)(TILEMENU_WIDTH) / WIN_WIDTH, 1));
+    this->zoom = 1;
 }
 
 int Editor::run(sf::RenderWindow & window)
@@ -34,6 +35,7 @@ int Editor::run(sf::RenderWindow & window)
             tileMenuHandler.autosave();
         }
 
+        this->workView.setSize(WIN_WIDTH * zoom, WIN_HEIGHT * zoom);
         window.setView(this->workView);
 
         sf::Vector2i mousePos = sf::Mouse::getPosition(window);
@@ -46,13 +48,17 @@ int Editor::run(sf::RenderWindow & window)
         {
             if (event.type == sf::Event::Closed)
                 window.close();
+
+            if (event.type == sf::Event::MouseWheelMoved)
+                this->zoom -= (event.mouseWheelScroll.wheel / 10.f);
+
+            if (zoom < 1)
+                zoom = 1;
             
             ImGui::SFML::ProcessEvent(event);
 
-            //printf("%d\n", guiActive);
             tileMenuHandler.handleEvent(event, guiActive, workSpaceMousePos);
         }
-
         scrollScreen(dt);
 
         ImGui::SFML::Update(window, deltaTime);
@@ -70,7 +76,7 @@ int Editor::run(sf::RenderWindow & window)
         window.draw(renderer);
 
         if (tileMenuHandler.isRenderingLights())
-            lightRenderer.renderLights(window, sf::BlendMultiply);
+            lightRenderer.renderLights(window, zoom, sf::BlendMultiply);
 
         window.setView(this->toolView);
         window.draw(renderer);
@@ -100,9 +106,10 @@ void Editor::scrollScreen(float dt)
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
         this->workView.move(0, -scrollSpeed);
 
-    if (this->workView.getCenter().x < WIN_WIDTH / 2)
-        this->workView.setCenter(WIN_WIDTH / 2, this->workView.getCenter().y);
+    //prefer not to speak or do this
+    if (this->workView.getCenter().x - this->workView.getSize().x / 2 - TILEMENU_WIDTH + (TILEMENU_WIDTH * zoom) < 0)
+        this->workView.setCenter(((this->workView.getSize().x / 2) + TILEMENU_WIDTH) - (TILEMENU_WIDTH * zoom), this->workView.getCenter().y);
 
-    if (this->workView.getCenter().y < WIN_HEIGHT / 2)
-        this->workView.setCenter(this->workView.getCenter().x, WIN_HEIGHT / 2);
+    if (this->workView.getCenter().y - this->workView.getSize().y / 2 - MENU_BAR_HEIGHT + (MENU_BAR_HEIGHT * zoom) < 0)
+        this->workView.setCenter(this->workView.getCenter().x, this->workView.getSize().y / 2 + MENU_BAR_HEIGHT - (MENU_BAR_HEIGHT * zoom));
 }

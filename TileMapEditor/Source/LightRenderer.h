@@ -10,7 +10,7 @@ public:
     LightRenderer();
     ~LightRenderer() {};
 
-    void renderLights(sf::RenderTarget& target, sf::RenderStates states = sf::RenderStates::Default);
+    void renderLights(sf::RenderTarget& target, float zoomLevel, sf::RenderStates states = sf::RenderStates::Default);
 
 private:
     ShaderHandler shaders;

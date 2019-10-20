@@ -11,13 +11,13 @@
 
 
 TileMenuHandler::TileMenuHandler() :
-    tileBox(TILEMENU_BORDER_SIZE, TILEMENU_BORDER_SIZE + TOTAL_BAR_HEIGHT, DEFAULT_TILE_SIZE* TILEMENU_X_AREA, DEFAULT_TILE_SIZE* TILEMENU_Y_AREA, TILEMENU_BORDER_SIZE)
+    tileBox(TILEMENU_BORDER_SIZE, TILEMENU_BORDER_SIZE + MENU_BAR_HEIGHT, DEFAULT_TILE_SIZE* TILEMENU_X_AREA, DEFAULT_TILE_SIZE* TILEMENU_Y_AREA, TILEMENU_BORDER_SIZE)
 {
     tileBox.setColor(sf::Color(0, 100, 200));
     tileBox.setBorderColor(sf::Color(100, 100, 100));
     activeTileTexture = 0;
     offset.x = TILEMENU_BORDER_SIZE;
-    offset.y = TILEMENU_BORDER_SIZE + TOTAL_BAR_HEIGHT;
+    offset.y = TILEMENU_BORDER_SIZE + MENU_BAR_HEIGHT;
 
     selectingBlocks = false;
     rightClicking = false;

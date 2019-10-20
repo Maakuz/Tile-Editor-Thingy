@@ -14,9 +14,10 @@ LightRenderer::LightRenderer()
     }
 }
 
-void LightRenderer::renderLights(sf::RenderTarget& target, sf::RenderStates states)
+void LightRenderer::renderLights(sf::RenderTarget& target, float zoomLevel, sf::RenderStates states)
 {
     this->fullscreenboi.setPosition(target.getView().getCenter() - (target.getView().getSize() / 2.f));
+    this->fullscreenboi.setSize(target.getView().getSize());
     sf::Vector2f offset = target.getView().getCenter() - (target.getView().getSize() / 2.f);
     
     this->renderTargets[0].clear(sf::Color::Black);
@@ -24,8 +25,8 @@ void LightRenderer::renderLights(sf::RenderTarget& target, sf::RenderStates stat
     for (size_t i = 0; i < LightQueue::get().getQueue().size(); i++)
     {
         Light* light = LightQueue::get().getQueue()[i];
-        ShaderHandler::getShader(SHADER::lightingNoShadow).setUniform("pos", light->pos - offset);
-        ShaderHandler::getShader(SHADER::lightingNoShadow).setUniform("radius", light->radius);
+        ShaderHandler::getShader(SHADER::lightingNoShadow).setUniform("pos", (light->pos - offset) / zoomLevel);
+        ShaderHandler::getShader(SHADER::lightingNoShadow).setUniform("radius", light->radius / zoomLevel);
         ShaderHandler::getShader(SHADER::lightingNoShadow).setUniform("color", light->color);
 
         sf::RenderStates state;

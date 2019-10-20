@@ -76,8 +76,8 @@ void LayerManager::queueTiles(sf::View viewArea)
     int visibleX = int((WIN_WIDTH - workAreaStart.x + (DEFAULT_TILE_SIZE * 0.5f)) / DEFAULT_TILE_SIZE);
     
     //accounting for view hopefully TODO: fix slowdown if too big map is used
-    visibleY += (viewArea.getCenter().y - (WIN_HEIGHT / 2)) / DEFAULT_TILE_SIZE;
-    visibleX += (viewArea.getCenter().x - (WIN_WIDTH / 2)) / DEFAULT_TILE_SIZE;
+    visibleY += (viewArea.getSize().y) / DEFAULT_TILE_SIZE;
+    visibleX += (viewArea.getSize().x) / DEFAULT_TILE_SIZE;
 
     visibleY = std::min(visibleY, (int)layers[0].size());
     visibleX = std::min(visibleX, (int)layers[0][0].size());
@@ -210,7 +210,7 @@ void LayerManager::startOver(int width, int height)
     currentState = 0;
     prevStates.clear();
 
-    workAreaStart = sf::Vector2i(TILEMENU_WIDTH, TOTAL_BAR_HEIGHT);
+    workAreaStart = sf::Vector2i(TILEMENU_WIDTH, MENU_BAR_HEIGHT);
 
     layers.resize(LAYER_AMOUNT);
 

@@ -21,5 +21,5 @@ private:
     sf::View workView;
     sf::View toolView;
     sf::Clock deltaTimer;
-
+    float zoom;
 };

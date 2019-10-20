@@ -25,7 +25,7 @@ bool LoadWindow::update()
 {
     if (open)
     {
-        ImGui::Begin("Save", &open);
+        ImGui::Begin("Open", &open);
         if (ImGui::BeginChild("Files", sf::Vector2f(200, 200)))
         {
             for (auto& p : fs::directory_iterator(currentDir))
