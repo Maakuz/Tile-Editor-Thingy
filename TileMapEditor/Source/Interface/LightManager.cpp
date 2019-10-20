@@ -78,6 +78,14 @@ void LightManager::updateMenu()
 
             ImGui::SameLine();
 
+            if (ImGui::Button("Copy") && !placingLight)
+            {
+                lightToBePlaced = new Light(lights[currentLight]->pos, lights[currentLight]->radius, lights[currentLight]->color);
+                placingLight = true;
+            }
+
+            ImGui::SameLine();
+
             if (ImGui::Button("Delete") && !placingLight)
             {
                 delete lights[currentLight];
@@ -109,4 +117,48 @@ void LightManager::queueLights()
 
     if (lightToBePlaced)
         LightQueue::get().queue(lightToBePlaced);
+}
+
+std::ostream& operator<<(std::ostream& out, const LightManager& obj)
+{
+    out << obj.lights.size() << " ";
+
+    for (Light* light : obj.lights)
+    {
+        out << light->pos.x << " " << light->pos.y << " ";
+        out << light->radius << " ";
+        out << light->color.x << " " << light->color.y << " " << light->color.z << "\n";
+    }
+
+
+    return out;
+}
+
+std::istream& operator>>(std::istream& in, LightManager& obj)
+{
+    for (Light* light : obj.lights)
+        delete light;
+
+    obj.lights.clear();
+
+    int size = 0;
+    in >> size;
+
+    for (int i = 0; i < size; i++)
+    {
+        sf::Vector3f col;
+        float rad;
+        sf::Vector2f pos;
+
+        in >> pos.x >> pos.y;
+        in >> rad;
+        in >> col.x >> col.y >> col.z;
+
+
+        Light* light = new Light(pos, rad, col);
+        obj.lights.push_back(light);
+    }
+    obj.currentLight = size - 1;
+
+    return in;
 }

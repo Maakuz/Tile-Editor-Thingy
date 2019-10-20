@@ -126,7 +126,7 @@ void TileMenuHandler::handleKeyboardEvents(sf::Event event)
         }
 
         if (event.key.code == sf::Keyboard::F5)
-            fileManager.quickSave(this->layerManager);
+            fileManager.quickSave(this->layerManager, this->lightManager);
 
         break;
     }
@@ -657,7 +657,7 @@ void TileMenuHandler::saveFile()
         name = "defaultSaveName";
     }
 
-    fileManager.save(layerManager, dir / name);
+    fileManager.save(layerManager, lightManager, dir / name);
 
     saveWindow.closeWindow();
 }
@@ -668,7 +668,7 @@ void TileMenuHandler::loadFile()
 
     fs::path dir = loadWindow.getPath();
 
-    fileManager.load(layerManager, dir / name);
+    fileManager.load(layerManager, lightManager, dir / name);
 
     activeTiles.clear();
     activeTileTexture = TileMaps::get().getTexureCount() - 1;
@@ -678,5 +678,5 @@ void TileMenuHandler::loadFile()
 
 void TileMenuHandler::autosave()
 {
-    fileManager.save(layerManager,fs::current_path() / DEFAULT_SAVE_PATH / "autoSave");
+    fileManager.save(layerManager, lightManager, fs::current_path() / DEFAULT_SAVE_PATH / "autoSave");
 }

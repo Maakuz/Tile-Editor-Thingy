@@ -95,6 +95,8 @@ namespace fs = std::filesystem;
          out << tileMaps.sheetSize[i].x << " " << tileMaps.sheetSize[i].y << " ";
      }
 
+     out << "\n";
+
      return out;
  }
 

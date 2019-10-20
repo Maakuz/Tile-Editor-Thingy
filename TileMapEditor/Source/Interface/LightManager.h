@@ -1,5 +1,7 @@
 #pragma once
 #include "Lighting/Light.h"
+#include <ostream>
+#include <istream>
 
 class LightManager
 {
@@ -7,6 +9,9 @@ public:
     LightManager();
     ~LightManager();
     LightManager(LightManager&) = delete;
+
+    friend std::ostream& operator<<(std::ostream& out, const LightManager& obj);
+    friend std::istream& operator>>(std::istream& in, LightManager& obj);
 
     void update(sf::Vector2i workMousePos, bool guiActive);
     void updateMenu();

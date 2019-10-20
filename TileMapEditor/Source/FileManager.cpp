@@ -10,7 +10,7 @@ FileManager::FileManager()
     this->quickSavePath = fs::current_path() / "Saves/";
 }
 
-void FileManager::save(const LayerManager & layerManager, fs::path path) const
+void FileManager::save(const LayerManager & layerManager, const LightManager& lightManager, fs::path path) const
 {
     path.replace_extension(FILE_EXTENSION);
 
@@ -19,6 +19,7 @@ void FileManager::save(const LayerManager & layerManager, fs::path path) const
     {
         file << layerManager << "\n";
         file << TileMaps::get() << "\n";
+        file << lightManager << "\n";
 
         file.close();
 
@@ -30,7 +31,7 @@ void FileManager::save(const LayerManager & layerManager, fs::path path) const
 
 }
 
-void FileManager::quickSave(const LayerManager & layerManager) const
+void FileManager::quickSave(const LayerManager & layerManager, const LightManager& lightManager) const
 {
     
     fs::path fullPath = this->quickSavePath;
@@ -42,6 +43,7 @@ void FileManager::quickSave(const LayerManager & layerManager) const
     {
         file << layerManager << "\n";
         file << TileMaps::get() << "\n";
+        file << lightManager << "\n";
 
         file.close();
 
@@ -52,13 +54,14 @@ void FileManager::quickSave(const LayerManager & layerManager) const
         printf("NOT quacksaved!\n");
 }
 
-void FileManager::load(LayerManager & layerManager, fs::path path)
+void FileManager::load(LayerManager & layerManager, LightManager& lightManager, fs::path path)
 {
     std::ifstream file(path);
     if (file.is_open())
     {
         file >> layerManager;
         file >> TileMaps::get();
+        file >> lightManager;
         file.close();
 
         printf("Loaded?!\n");
