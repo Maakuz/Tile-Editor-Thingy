@@ -22,6 +22,7 @@ TileMenuHandler::TileMenuHandler() :
     selectingBlocks = false;
     rightClicking = false;
     isImportingTexture = false;
+    renderingLights = false;
     activeTileTexture = -1;
 
     createTileButtons();
@@ -40,7 +41,7 @@ void TileMenuHandler::handleMouseEvents(sf::Event event, bool guiBlock, sf::Vect
     switch (event.type)
     {
     case sf::Event::MouseButtonPressed:
-        if (event.mouseButton.button == sf::Mouse::Left && !rightClicking && !guiBlock)
+        if (event.mouseButton.button == sf::Mouse::Left && !rightClicking && !guiBlock && !lightManager.isPlacingLight())
         {
             pressedPos = { event.mouseButton.x, event.mouseButton.y };
 
@@ -48,7 +49,7 @@ void TileMenuHandler::handleMouseEvents(sf::Event event, bool guiBlock, sf::Vect
                 selectingBlocks = true;
         }
 
-        if (event.mouseButton.button == sf::Mouse::Right && !selectingBlocks && !guiBlock)
+        if (event.mouseButton.button == sf::Mouse::Right && !selectingBlocks && !guiBlock && !lightManager.isPlacingLight())
         {
             if (!tileBox.contains(event.mouseButton.x, event.mouseButton.y))
             {
@@ -141,7 +142,14 @@ void TileMenuHandler::update(sf::Vector2i mousePos, sf::Vector2i viewPortOffset,
     if (loadWindow.update())
         loadFile();
 
-    if (guiActive)
+    lightManager.update(viewPortOffset, guiActive);
+    lightManager.setDefaultLightPos((sf::Vector2f)viewPortOffset);
+    lightManager.queueLights();
+
+    if (lightManager.isPlacingLight())
+        activeTiles.clear();
+
+    if (guiActive || lightManager.isPlacingLight())
         return;
 
     if (!selectingBlocks)
@@ -396,6 +404,17 @@ void TileMenuHandler::handleHelpWindow()
             if (ImGui::Button("Resize"))
                 layerManager.resize(workArea[0], workArea[1]);
 
+
+            ImGui::EndTabItem();
+        }
+
+        if (ImGui::BeginTabItem("Lighting"))
+        {
+            ImGui::Checkbox("Render lights", &renderingLights);
+
+            lightManager.updateMenu();
+          
+
             ImGui::EndTabItem();
         }
 
@@ -493,7 +512,7 @@ void TileMenuHandler::handleLayerSelection(sf::Vector2i start, sf::Vector2i stop
     swapStartAndStopPosition(start, stop);
 
     this->activeTiles = layerManager.getActiveTilesAt(start, stop);
-
+    
     createActiveBounds(activeTiles);
 
 }

@@ -161,12 +161,15 @@
     <ClCompile Include="Source\Interactables\BoxyBox.cpp" />
     <ClCompile Include="Source\Interactables\Button.cpp" />
     <ClCompile Include="Source\Interface\LayerManager.cpp" />
+    <ClCompile Include="Source\Interface\LightManager.cpp" />
     <ClCompile Include="Source\Interface\Windows\LoadWindow.cpp" />
     <ClCompile Include="Source\Interface\Windows\SaveWindow.cpp" />
+    <ClCompile Include="Source\LightRenderer.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Renderer.cpp" />
     <ClCompile Include="Source\Interface\TileManager.cpp" />
     <ClCompile Include="Source\Interface\TileMenuHandler.cpp" />
+    <ClCompile Include="Source\ShaderHandler.cpp" />
     <ClCompile Include="Source\TileMaps.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -176,12 +179,17 @@
     <ClInclude Include="Source\Interactables\BoxyBox.h" />
     <ClInclude Include="Source\Interactables\Button.h" />
     <ClInclude Include="Source\Interface\LayerManager.h" />
+    <ClInclude Include="Source\Interface\LightManager.h" />
     <ClInclude Include="Source\Interface\Windows\LoadWindow.h" />
     <ClInclude Include="Source\Interface\Windows\SaveWindow.h" />
+    <ClInclude Include="Source\Lighting\Light.h" />
+    <ClInclude Include="Source\Lighting\LightQueue.h" />
+    <ClInclude Include="Source\LightRenderer.h" />
     <ClInclude Include="Source\Misc\MissingTexture.h" />
     <ClInclude Include="Source\Queues\BackgroundQueue.h" />
     <ClInclude Include="Source\Queues\OverlayQueue.h" />
     <ClInclude Include="Source\Renderer.h" />
+    <ClInclude Include="Source\ShaderHandler.h" />
     <ClInclude Include="Source\TileMaps.h" />
     <ClInclude Include="Source\Structs.h" />
     <ClInclude Include="Source\Interface\TileManager.h" />

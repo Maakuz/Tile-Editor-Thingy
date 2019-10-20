@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "TileMenuHandler.h"
 #include "Renderer.h"
+#include "LightRenderer.h"
 
 
 class Editor
@@ -16,6 +17,7 @@ private:
 
     TileMenuHandler tileMenuHandler;
     Renderer renderer;
+    LightRenderer lightRenderer;
     sf::View workView;
     sf::View toolView;
     sf::Clock deltaTimer;

@@ -2,6 +2,7 @@
 #include "Imgui/SFML-imgui/imgui-SFML.h"
 #include "Imgui/imgui.h"
 #include "Constants.h"
+#include "Lighting/LightQueue.h"
 
 #define SCROLL_SPEED 2
 
@@ -48,7 +49,7 @@ int Editor::run(sf::RenderWindow & window)
             
             ImGui::SFML::ProcessEvent(event);
 
-            printf("%d\n", guiActive);
+            //printf("%d\n", guiActive);
             tileMenuHandler.handleEvent(event, guiActive, workSpaceMousePos);
         }
 
@@ -58,7 +59,7 @@ int Editor::run(sf::RenderWindow & window)
 
 
             tileMenuHandler.update(mousePos, workSpaceMousePos, guiActive);
-            //printf("%f, %f\n", window.mapPixelToCoords(mousePos).x, window.mapPixelToCoords(mousePos).y);
+            //printf("%d, %d\n", workSpaceMousePos.x, workSpaceMousePos.y);
 
         tileMenuHandler.queueItems(this->workView);
         renderer.update();
@@ -67,6 +68,9 @@ int Editor::run(sf::RenderWindow & window)
         //draw
         window.setView(this->workView);
         window.draw(renderer);
+
+        if (tileMenuHandler.isRenderingLights())
+            lightRenderer.renderLights(window, sf::BlendMultiply);
 
         window.setView(this->toolView);
         window.draw(renderer);

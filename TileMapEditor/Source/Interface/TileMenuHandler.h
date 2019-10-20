@@ -5,6 +5,7 @@
 #include "FileManager.h"
 #include "Windows/SaveWindow.h"
 #include "Windows/LoadWindow.h"
+#include "LightManager.h"
 #include <vector>
 
 class TileMenuHandler
@@ -20,6 +21,8 @@ public:
 
     std::vector<ActiveTile> getActiveTile() { return activeTiles; };
     int getActiveTexture() { return activeTileTexture; };
+
+    bool isRenderingLights() const { return renderingLights; };
 
     void autosave();
 
@@ -47,6 +50,7 @@ private:
     LayerManager layerManager;
     SaveWindow saveWindow;
     LoadWindow loadWindow;
+    LightManager lightManager;
     BoxyBox tileBox;
     int activeTileTexture;
     std::vector<ActiveTile> activeTiles;
@@ -62,4 +66,5 @@ private:
     bool rightClicking;
     bool erasing;
     bool isImportingTexture;
+    bool renderingLights;
 };
