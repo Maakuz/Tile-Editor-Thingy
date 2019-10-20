@@ -5,7 +5,6 @@
 #include "Structs.h"
 #include "Constants.h"
 #include "SFML\Window\Mouse.hpp"
-#include "GUI.h"
 #include "Imgui/imgui.h"
 #include "TileMaps.h"
 
@@ -22,15 +21,10 @@ TileMenuHandler::TileMenuHandler() :
 
     selectingBlocks = false;
     rightClicking = false;
+    isImportingTexture = false;
     activeTileTexture = -1;
 
     createTileButtons();
-
-    Global::gui->get<tgui::Panel>(Global::Elements::infoBox::panel)->get(Global::Elements::infoBox::textureBox)->connect("itemselected", &TileMenuHandler::setActiveTexture, this);
-
-    Global::gui->get(Global::Elements::textureImporter::textureList)->connect("DoubleClicked", &TileMenuHandler::importTexture, this);
-
-    Global::gui->get<tgui::Panel>(Global::Elements::resizeMenu::panel)->get(Global::Elements::resizeMenu::confirm)->connect("clicked", &TileMenuHandler::resize, this);
 
 }
 
@@ -122,12 +116,11 @@ void TileMenuHandler::handleKeyboardEvents(sf::Event event)
             equipEraser();
 
         //Overcomplicated but saved three lines
-        for (int i = 0; i < TILE_LAYER_AMOUNT; i++)
+        for (int i = 0; i < LAYER_AMOUNT; i++)
         {
             if (event.key.code == i + sf::Keyboard::Num1)
             {
                 layerManager.setActiveLayer(i);
-                this->updateInfoBox();
             }
         }
 
@@ -275,12 +268,7 @@ void TileMenuHandler::handleMenuBar()
 
             if (ImGui::MenuItem("Import"))
             {
-                fileManager.importTexure();
-            }
-
-            if (ImGui::MenuItem("Resize"))
-            {
-                resizeWindow.openWindow();
+                isImportingTexture = true;
             }
 
             ImGui::EndMenu();
@@ -291,25 +279,21 @@ void TileMenuHandler::handleMenuBar()
             if (ImGui::MenuItem("Layer1"))
             {
                 layerManager.setActiveLayer(0);
-                this->updateInfoBox();
             }
 
             if (ImGui::MenuItem("Layer2"))
             {
                 layerManager.setActiveLayer(1);
-                this->updateInfoBox();
             }
 
             if (ImGui::MenuItem("Layer3"))
             {
                 layerManager.setActiveLayer(2);
-                this->updateInfoBox();
             }
 
             if (ImGui::MenuItem("Hitbox layer"))
             {
                 layerManager.setActiveLayer(HITBOX_LAYER);
-                this->updateInfoBox();
             }
 
 
@@ -319,16 +303,6 @@ void TileMenuHandler::handleMenuBar()
 
         if (ImGui::BeginMenu("View"))
         {
-            if (ImGui::MenuItem("Info box"))
-            {
-                tgui::Panel::Ptr panel = Global::gui->get<tgui::Panel>(Global::Elements::infoBox::panel);
-
-                if (panel->isVisible())
-                    panel->setVisible(false);
-
-                else
-                    panel->setVisible(true);
-            }
 
             if (ImGui::MenuItem("Layer diff"))
             {
@@ -340,7 +314,7 @@ void TileMenuHandler::handleMenuBar()
 
         if (ImGui::BeginMenu("Tools"))
         {
-            if (ImGui::MenuItem("Layer diff"))
+            if (ImGui::MenuItem("Export"))
                 fileManager.exportTextures(layerManager);
 
             ImGui::EndMenu();
@@ -355,24 +329,104 @@ void TileMenuHandler::handleMenuBar()
 
 void TileMenuHandler::handleHelpWindow()
 {
-    static bool importTexture = false;
+    static const sf::Color ACTIVE_COLOR = sf::Color(100, 200, 200);
+    static const sf::Color INACTIVE_COLOR = ImGui::GetStyleColorVec4(ImGuiCol_Button);
+    static float workArea[2] = {DEFAULT_WORK_AREA_X, DEFAULT_WORK_AREA_Y};
     ImGui::Begin("Halp");
     if (ImGui::BeginTabBar("tabbu"))
     {
         if (ImGui::BeginTabItem("Textures"))
         {
             if (ImGui::Button("Import tilemap"))
-                importTexture = true;
+            {
+                isImportingTexture = true;
+            }
+
+
+            std::string previewText = "None selected";
+            if (activeTileTexture != -1)
+                previewText = TileMaps::get().getTextureNameList()[activeTileTexture];
+
+            if (ImGui::BeginCombo("Active texture", previewText.c_str()))
+            {
+                for (const std::string& name : TileMaps::get().getTextureNameList())
+                {
+                    if (ImGui::Selectable(name.c_str()))
+                        activeTileTexture = TileMaps::get().getTextureIndex(name);
+                }
+            
+                ImGui::EndCombo();
+            }
+
 
             ImGui::EndTabItem();
         }
 
+        if (ImGui::BeginTabItem("Layers"))
+        {
+            for (int i = 0; i < LAYER_AMOUNT; i++)
+            {
+                if (i == layerManager.getActiveLayer())
+                    ImGui::PushStyleColor(ImGuiCol_Button, ACTIVE_COLOR);
 
+                else
+                    ImGui::PushStyleColor(ImGuiCol_Button, INACTIVE_COLOR);
+
+                if (ImGui::Button(LAYER_BUTTON_LABELS[i]))
+                {
+                    layerManager.setActiveLayer(i);
+                }
+
+                ImGui::PopStyleColor();
+            }
+
+            bool layerDiffCheck = layerManager.getHighlightLayers();
+            if (ImGui::Checkbox("Differentiate layers", &layerDiffCheck))
+                layerManager.setHighlightLayers(layerDiffCheck);
+
+            ImGui::EndTabItem();
+        }
+
+        if (ImGui::BeginTabItem("Workspace"))
+        {
+            ImGui::Text("Current size: %d, %d", layerManager.getWorkAreaX(), layerManager.getWorkAreaY());
+
+            ImGui::DragFloat2("New size", workArea, 1, 1, MAXIMUM_WORKSPACE);
+
+            if (ImGui::Button("Resize"))
+                layerManager.resize(workArea[0], workArea[1]);
+
+            ImGui::EndTabItem();
+        }
+
+        if (ImGui::BeginTabItem("Help"))
+        {
+            ImGui::Text("Commands\nUndo: CTRL + Z\nRedo: CTRL + Y\nCopy: CTRL + C\nCut: CTRL +X\nPaste: CTRL + V\nSelect eraser: E\nQuicksave: F5\nNumber buttons is used to change layers.");
+
+            
+            ImGui::EndTabItem();
+        }
         ImGui::EndTabBar();
     }
 
 
     ImGui::End();
+
+    if (isImportingTexture)
+    {
+        ImGui::Begin("Texture importer", &isImportingTexture);
+
+        std::vector<fs::path> paths = fileManager.getTexturePaths();
+        for (auto& p : paths)
+        {
+            if (ImGui::Selectable(p.filename().string().c_str()))
+            {
+                importTexture(p.filename().string(), p.string());
+            }
+        }
+
+        ImGui::End();
+    }
 }
 
 void TileMenuHandler::handleBlockSelection(sf::Vector2i start, sf::Vector2i stop)
@@ -545,7 +599,7 @@ void TileMenuHandler::setActiveTexture(sf::String name, sf::String path)
     activeTileTexture = TileMaps::get().getTextureIndex(name);
 }
 
-void TileMenuHandler::importTexture(sf::String name, sf::String path)
+void TileMenuHandler::importTexture(std::string name, std::string path)
 {
     activeTileTexture = fileManager.addTexture(name, path);
 }
@@ -570,41 +624,7 @@ bool TileMenuHandler::anyWindowsOpen()
     if (saveWindow.isOpen())
         return true;
 
-    if (resizeWindow.isOpen())
-        return true;
-
     return false;
-}
-
-void TileMenuHandler::updateInfoBox()
-{
-    tgui::Panel::Ptr panel = Global::gui->get<tgui::Panel>(Global::Elements::infoBox::panel);
-    tgui::Label::Ptr label = panel->get<tgui::Label>(Global::Elements::infoBox::layerInfo);
-
-    label->setText("Active layer: " + std::to_string(layerManager.getActiveLayer() + 1));
-}
-
-void TileMenuHandler::resize()
-{
-    auto panel = Global::gui->get<tgui::Panel>(Global::Elements::resizeMenu::panel);
-    std::string width = panel->get<tgui::TextBox>(Global::Elements::resizeMenu::width)->getText();
-    std::string height = panel->get<tgui::TextBox>(Global::Elements::resizeMenu::height)->getText();
-
-    //Some sort of telling what went wrong would be a TODO
-    if (width.empty() || width.size() > 6 || width.find_first_not_of("0123456789") != std::string::npos)
-        return;
-
-    //Some sort of telling what went wrong would be a TODO
-    if (height.empty() || height.size() > 6 || height.find_first_not_of("0123456789") != std::string::npos)
-        return;
-
-    int x, y;
-    x = std::stoi(width);
-    y = std::stoi(height);
-
-    layerManager.resize(x, y);
-    resizeWindow.closeWindow();
-    
 }
 
 void TileMenuHandler::saveFile()
@@ -632,6 +652,7 @@ void TileMenuHandler::loadFile()
     fileManager.load(layerManager, dir / name);
 
     activeTiles.clear();
+    activeTileTexture = TileMaps::get().getTexureCount() - 1;
 
     loadWindow.closeWindow();
 }

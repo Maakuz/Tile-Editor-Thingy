@@ -1,7 +1,6 @@
 #include "TileMaps.h"
 #include "Misc\MissingTexture.h"
 #include <filesystem>
-#include "GUI.h"
 
 namespace fs = std::filesystem;
 
@@ -109,9 +108,6 @@ namespace fs = std::filesystem;
      tileMaps.sheetSize.clear();
      tileMaps.textureRects.clear();
 
-     auto textureInfo = Global::gui->get<tgui::Panel>(Global::Elements::infoBox::panel)->get<tgui::ComboBox>(Global::Elements::infoBox::textureBox);
-     textureInfo->removeAllItems();
-
      for (int i = 0; i < textureCount; i++)
      {
          std::string name;
@@ -125,8 +121,6 @@ namespace fs = std::filesystem;
 
          fs::path currentDir = fs::current_path();
          currentDir /= TILE_MAP_PATH(+name);
-
-         textureInfo->addItem(name, currentDir.string());
      }
 
      return in;

@@ -3,6 +3,8 @@
 #define WIN_HEIGHT 1080
 
 #define DEFAULT_TILE_SIZE 64
+#define DEFAULT_WORK_AREA_X 20
+#define DEFAULT_WORK_AREA_Y 20
 
 #define RESOURCE_FOLDER "Resources"
 
@@ -20,6 +22,7 @@
 
 #define TILE_LAYER_AMOUNT 3
 #define LAYER_AMOUNT 4
+static const char* LAYER_BUTTON_LABELS[LAYER_AMOUNT] = { "Layer 1", "Layer 2", "Layer 3", "Hitbox layer" };
 
 #define HITBOX_ID_START 500
 #define NR_OF_HITBOXES 3

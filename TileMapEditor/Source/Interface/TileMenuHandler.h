@@ -3,7 +3,6 @@
 #include <Interactables\Button.h>
 #include <Interactables\BoxyBox.h>
 #include "FileManager.h"
-#include "Windows/ResizeWindow.h"
 #include "Windows/SaveWindow.h"
 #include "Windows/LoadWindow.h"
 #include <vector>
@@ -36,14 +35,10 @@ private:
     void createActiveBounds(std::vector<ActiveTile>& tiles);
     void swapStartAndStopPosition(sf::Vector2i & start, sf::Vector2i & stop);
     void setActiveTexture(sf::String name, sf::String path);
-    void importTexture(sf::String name, sf::String path);
+    void importTexture(std::string name, std::string path);
     void equipEraser();
     bool anyWindowsOpen();
 
-    void updateInfoBox();
-
-
-    void resize();
     void saveFile();
     void loadFile();
 
@@ -52,7 +47,6 @@ private:
     LayerManager layerManager;
     SaveWindow saveWindow;
     LoadWindow loadWindow;
-    ResizeWindow resizeWindow;
     BoxyBox tileBox;
     int activeTileTexture;
     std::vector<ActiveTile> activeTiles;
@@ -67,4 +61,5 @@ private:
     bool selectingBlocks;
     bool rightClicking;
     bool erasing;
+    bool isImportingTexture;
 };

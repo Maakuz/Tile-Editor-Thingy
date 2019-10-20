@@ -3,9 +3,9 @@
 #include "SFML\Graphics.hpp"
 #include "Structs.h"
 #include <fstream>
+#include "Constants.h"
 #define STATE_AMOUNTS 50
-#define DEFAULT_WORK_AREA_X 20
-#define DEFAULT_WORK_AREA_Y 20
+
 
 class LayerManager
 {
@@ -24,6 +24,8 @@ public:
     std::vector<ActiveTile> getActiveTilesAt(sf::Vector2i start, sf::Vector2i stop);
 
     sf::Vector2i getWorkAreaStart() { return workAreaStart; };
+    int getWorkAreaX() const { return layers[0][0].size(); };
+    int getWorkAreaY() const { return layers[0].size(); };
 
     sf::Image getLayerAsImage(int layer) const;
 

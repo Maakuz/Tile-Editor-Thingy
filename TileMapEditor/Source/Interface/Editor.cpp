@@ -1,13 +1,11 @@
 #include "Editor.h"
 #include "Imgui/SFML-imgui/imgui-SFML.h"
 #include "Imgui/imgui.h"
-#include "GUI.h"
 #include "Constants.h"
 
 #define SCROLL_SPEED 2
 
 Editor::Editor(sf::RenderWindow & window) :
-    gui(window),
     tileMenuHandler()
 {
     this->workView = sf::View(sf::FloatRect(0, 0, WIN_WIDTH, WIN_HEIGHT));
@@ -47,8 +45,6 @@ int Editor::run(sf::RenderWindow & window)
         {
             if (event.type == sf::Event::Closed)
                 window.close();
-
-            gui.handleEvents(event);
             
             ImGui::SFML::ProcessEvent(event);
 
@@ -59,7 +55,6 @@ int Editor::run(sf::RenderWindow & window)
         scrollScreen(dt);
 
         ImGui::SFML::Update(window, deltaTime);
-        gui.update();
 
 
             tileMenuHandler.update(mousePos, workSpaceMousePos, guiActive);
@@ -75,7 +70,6 @@ int Editor::run(sf::RenderWindow & window)
 
         window.setView(this->toolView);
         window.draw(renderer);
-        gui.drawGui();
         ImGui::SFML::Render(window);
        
         window.display();

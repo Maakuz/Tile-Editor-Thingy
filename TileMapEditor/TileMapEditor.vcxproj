@@ -110,8 +110,8 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>$(solutionDir)Externals\SFML-2.5.1\lib;$(solutionDir)Externals\TGUI\lib;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Opengl32.lib;sfml-audio-d.lib;sfml-graphics-d.lib;sfml-system-d.lib;sfml-window-d.lib;tgui-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(solutionDir)Externals\SFML-2.5.1\lib;C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Opengl32.lib;sfml-audio-d.lib;sfml-graphics-d.lib;sfml-system-d.lib;sfml-window-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -157,14 +157,11 @@
     <ClCompile Include="..\Externals\Include\Imgui\misc\cpp\imgui_stdlib.cpp" />
     <ClCompile Include="..\Externals\Include\Imgui\SFML-imgui\imgui-SFML.cpp" />
     <ClCompile Include="Source\FileManager.cpp" />
-    <ClCompile Include="Source\GUI.cpp" />
     <ClCompile Include="Source\Interface\Editor.cpp" />
     <ClCompile Include="Source\Interactables\BoxyBox.cpp" />
     <ClCompile Include="Source\Interactables\Button.cpp" />
-    <ClCompile Include="Source\Interface\GUIHandler.cpp" />
     <ClCompile Include="Source\Interface\LayerManager.cpp" />
     <ClCompile Include="Source\Interface\Windows\LoadWindow.cpp" />
-    <ClCompile Include="Source\Interface\Windows\ResizeWindow.cpp" />
     <ClCompile Include="Source\Interface\Windows\SaveWindow.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Renderer.cpp" />
@@ -175,14 +172,11 @@
   <ItemGroup>
     <ClInclude Include="Source\Constants.h" />
     <ClInclude Include="Source\FileManager.h" />
-    <ClInclude Include="Source\GUI.h" />
     <ClInclude Include="Source\Interface\Editor.h" />
     <ClInclude Include="Source\Interactables\BoxyBox.h" />
     <ClInclude Include="Source\Interactables\Button.h" />
-    <ClInclude Include="Source\Interface\GUIHandler.h" />
     <ClInclude Include="Source\Interface\LayerManager.h" />
     <ClInclude Include="Source\Interface\Windows\LoadWindow.h" />
-    <ClInclude Include="Source\Interface\Windows\ResizeWindow.h" />
     <ClInclude Include="Source\Interface\Windows\SaveWindow.h" />
     <ClInclude Include="Source\Misc\MissingTexture.h" />
     <ClInclude Include="Source\Queues\BackgroundQueue.h" />

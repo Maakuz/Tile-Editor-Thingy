@@ -3,7 +3,6 @@
 #include "Queues\TileQueue.h"
 #include "TileMaps.h"
 #include "SFML\Window\Mouse.hpp"
-#include "GUI.h"
 #include <algorithm>
 
 LayerManager::LayerManager()
@@ -405,12 +404,6 @@ std::istream & operator>>(std::istream & in, LayerManager & layerManager)
     }
 
     layerManager.prevStates.push_back(layerManager.layers);
-
-
-    tgui::Panel::Ptr panel = Global::gui->get<tgui::Panel>(Global::Elements::infoBox::panel);
-    tgui::Label::Ptr label = panel->get<tgui::Label>(Global::Elements::infoBox::layerInfo);
-
-    label->setText("Active layer: " + std::to_string(layerManager.activeLayer + 1));
 
     layerManager.differentiateLayers();
 

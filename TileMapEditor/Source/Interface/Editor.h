@@ -2,7 +2,6 @@
 #include <SFML/Graphics.hpp>
 #include "TileMenuHandler.h"
 #include "Renderer.h"
-#include "GUIHandler.h"
 
 
 class Editor
@@ -15,7 +14,6 @@ public:
 private:
     void scrollScreen(float dt);
 
-    GUIHandler gui;
     TileMenuHandler tileMenuHandler;
     Renderer renderer;
     sf::View workView;
