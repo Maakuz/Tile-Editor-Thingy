@@ -128,7 +128,7 @@ std::ostream& operator<<(std::ostream& out, const LightManager& obj)
 
     for (Light* light : obj.lights)
     {
-        out << light->pos.x + offset.x << " " << light->pos.y + offset.x << " ";
+        out << light->pos.x - offset.x << " " << light->pos.y - offset.y << " ";
         out << light->radius << " ";
         out << light->color.x << " " << light->color.y << " " << light->color.z << "\n";
     }
