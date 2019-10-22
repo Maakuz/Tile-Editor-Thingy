@@ -2,6 +2,9 @@
 #include "Imgui/imgui.h"
 #include "Lighting/LightQueue.h"
 #include "SFML/Window/Mouse.hpp"
+#include "Constants.h"
+
+const sf::Vector2f offset(TILEMENU_WIDTH, MENU_BAR_HEIGHT);
 
 LightManager::LightManager()
 {
@@ -125,7 +128,7 @@ std::ostream& operator<<(std::ostream& out, const LightManager& obj)
 
     for (Light* light : obj.lights)
     {
-        out << light->pos.x << " " << light->pos.y << " ";
+        out << light->pos.x + offset.x << " " << light->pos.y + offset.x << " ";
         out << light->radius << " ";
         out << light->color.x << " " << light->color.y << " " << light->color.z << "\n";
     }
@@ -155,7 +158,7 @@ std::istream& operator>>(std::istream& in, LightManager& obj)
         in >> col.x >> col.y >> col.z;
 
 
-        Light* light = new Light(pos, rad, col);
+        Light* light = new Light(pos + offset, rad, col);
         obj.lights.push_back(light);
     }
     obj.currentLight = size - 1;
