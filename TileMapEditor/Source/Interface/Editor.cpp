@@ -75,9 +75,13 @@ int Editor::run(sf::RenderWindow & window)
         window.setView(this->workView);
         window.draw(renderer);
 
+        if (tileMenuHandler.isGridVisible())
+            window.draw(tileMenuHandler.getGrid());
+
         if (tileMenuHandler.isRenderingLights())
             lightRenderer.renderLights(window, zoom, sf::BlendMultiply);
 
+        
         window.setView(this->toolView);
         window.draw(renderer);
         ImGui::SFML::Render(window);

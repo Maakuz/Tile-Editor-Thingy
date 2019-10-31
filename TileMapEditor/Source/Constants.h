@@ -25,7 +25,7 @@
 static const char* LAYER_BUTTON_LABELS[LAYER_AMOUNT] = { "Layer 1", "Layer 2", "Layer 3", "Hitbox layer" };
 
 #define HITBOX_ID_START 500
-#define NR_OF_HITBOXES 8
+#define NR_OF_HITBOXES 9
 #define HITBOX_LAYER 3
 
 #define MENU_BAR_HEIGHT 20

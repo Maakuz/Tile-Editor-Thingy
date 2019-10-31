@@ -23,7 +23,8 @@ public:
     int getActiveTexture() { return activeTileTexture; };
 
     bool isRenderingLights() const { return renderingLights; };
-
+    const sf::VertexArray& getGrid() const { return grid; };
+    bool isGridVisible() const { return gridVisible; };
     void autosave();
 
 private:
@@ -45,6 +46,7 @@ private:
     void saveFile();
     void loadFile();
 
+    void generateGrid(sf::Color color);
 
     FileManager fileManager;
     LayerManager layerManager;
@@ -62,9 +64,12 @@ private:
 
     std::vector<Button> buttons;
 
+    sf::VertexArray grid;
+
     bool selectingBlocks;
     bool rightClicking;
     bool erasing;
     bool isImportingTexture;
     bool renderingLights;
+    bool gridVisible;
 };

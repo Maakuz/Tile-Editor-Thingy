@@ -23,6 +23,7 @@ TileMenuHandler::TileMenuHandler() :
     rightClicking = false;
     isImportingTexture = false;
     renderingLights = false;
+    gridVisible = false;
     activeTileTexture = -1;
 
     createTileButtons();
@@ -392,6 +393,9 @@ void TileMenuHandler::handleHelpWindow()
             if (ImGui::Checkbox("Differentiate layers", &layerDiffCheck))
                 layerManager.setHighlightLayers(layerDiffCheck);
 
+            if (ImGui::Checkbox("Show grid", &gridVisible))
+                generateGrid(sf::Color::Red);
+
             ImGui::EndTabItem();
         }
 
@@ -402,8 +406,10 @@ void TileMenuHandler::handleHelpWindow()
             ImGui::DragFloat2("New size", workArea, 1, 1, MAXIMUM_WORKSPACE);
 
             if (ImGui::Button("Resize"))
+            {
                 layerManager.resize(workArea[0], workArea[1]);
-
+                generateGrid(sf::Color::Red);
+            }
 
             ImGui::EndTabItem();
         }
@@ -674,6 +680,28 @@ void TileMenuHandler::loadFile()
     activeTileTexture = TileMaps::get().getTexureCount() - 1;
 
     loadWindow.closeWindow();
+}
+
+void TileMenuHandler::generateGrid(sf::Color color)
+{
+    grid.clear();
+    grid.setPrimitiveType(sf::Lines);
+
+    for (int i = 0; i < layerManager.getWorkAreaX(); i++)
+    {
+        sf::Vertex vertex(sf::Vector2f(layerManager.getWorkAreaStart().x + (i * DEFAULT_TILE_SIZE), 0), color);
+        grid.append(vertex);
+        vertex.position.y = layerManager.getWorkAreaStart().y + (layerManager.getWorkAreaY() * DEFAULT_TILE_SIZE);
+        grid.append(vertex);
+    }
+
+    for (int i = 0; i < layerManager.getWorkAreaY(); i++)
+    {
+        sf::Vertex vertex(sf::Vector2f(0, layerManager.getWorkAreaStart().y + (i * DEFAULT_TILE_SIZE)), color);
+        grid.append(vertex);
+        vertex.position.x = layerManager.getWorkAreaStart().x + (layerManager.getWorkAreaX() * DEFAULT_TILE_SIZE);
+        grid.append(vertex);
+    }
 }
 
 void TileMenuHandler::autosave()
