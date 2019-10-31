@@ -180,8 +180,8 @@ void TileMenuHandler::queueItems(sf::View viewArea)
             Tile activeTile;
             activeTile.textureID = -1;
             activeTile.tileID = HITBOX_ID_START + i;
-            activeTile.x = i * DEFAULT_TILE_SIZE + offset.x;
-            activeTile.y = offset.y;
+            activeTile.x = (i % TILEMENU_X_AREA) * DEFAULT_TILE_SIZE + offset.x;
+            activeTile.y = (i / TILEMENU_X_AREA) * DEFAULT_TILE_SIZE + offset.y;
             TileQueue::get().queue(activeTile);
         }
     }
