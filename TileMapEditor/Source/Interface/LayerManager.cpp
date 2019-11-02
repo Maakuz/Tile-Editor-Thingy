@@ -72,21 +72,19 @@ void LayerManager::insertTiles(const std::vector<ActiveTile>& activeTiles, sf::V
 void LayerManager::queueTiles(sf::View viewArea)
 {
     //Rounded up
-    int visibleY = int((WIN_HEIGHT - workAreaStart.y + (DEFAULT_TILE_SIZE * 0.5f)) / DEFAULT_TILE_SIZE);
-    int visibleX = int((WIN_WIDTH - workAreaStart.x + (DEFAULT_TILE_SIZE * 0.5f)) / DEFAULT_TILE_SIZE);
+    sf::Vector2i min(sf::Vector2i(viewArea.getCenter() - (viewArea.getSize() / 2.f)) / DEFAULT_TILE_SIZE);
+    sf::Vector2i max(min + (sf::Vector2i(viewArea.getSize()) / DEFAULT_TILE_SIZE));
+    min.x = std::max(min.x, 0);
+    min.y = std::max(min.y, 0);
     
-    //accounting for view hopefully TODO: fix slowdown if too big map is used
-    visibleY += (viewArea.getSize().y) / DEFAULT_TILE_SIZE;
-    visibleX += (viewArea.getSize().x) / DEFAULT_TILE_SIZE;
-
-    visibleY = std::min(visibleY, (int)layers[0].size());
-    visibleX = std::min(visibleX, (int)layers[0][0].size());
+    max.y = std::min(max.y, (int)layers[0].size());
+    max.x = std::min(max.x, (int)layers[0][0].size());
 
     for (size_t i = 0; i < TILE_LAYER_AMOUNT; i++)
     {
-        for (size_t j = 0; j < visibleY; j++)
+        for (int j = min.y; j < max.y; j++)
         {
-            for (size_t k = 0; k < visibleX; k++)
+            for (int k = min.x; k < max.x; k++)
             {
                 if (layers[i][j][k].tileID != -1)
                     TileQueue::get().queue(layers[i][j][k]);
@@ -96,9 +94,9 @@ void LayerManager::queueTiles(sf::View viewArea)
 
     if (showHitboxes)
     {
-        for (size_t j = 0; j < visibleY; j++)
+        for (int j = min.y; j < max.y; j++)
         {
-            for (size_t k = 0; k < visibleX; k++)
+            for (int k = min.x; k < max.x; k++)
             {
                 if (layers[LAYER_AMOUNT - 1][j][k].tileID != -1)
                 {
@@ -116,6 +114,11 @@ std::vector<ActiveTile> LayerManager::getActiveTilesAt(sf::Vector2i start, sf::V
 
     start -= workAreaStart;
     stop -= workAreaStart;
+
+    start.x = std::max(start.x, 0);
+    start.y = std::max(start.y, 0);
+    stop.x = std::max(stop.x, 0);
+    stop.y = std::max(stop.y, 0);
 
     start /= DEFAULT_TILE_SIZE;
     stop  /= DEFAULT_TILE_SIZE;

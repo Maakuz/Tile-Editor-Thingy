@@ -6,6 +6,7 @@
 #include "Constants.h"
 #include "SFML\Window\Mouse.hpp"
 #include "Imgui/imgui.h"
+#include "Imgui/misc/cpp/imgui_stdlib.h"
 #include "TileMaps.h"
 
 
@@ -24,6 +25,7 @@ TileMenuHandler::TileMenuHandler() :
     isImportingTexture = false;
     renderingLights = false;
     gridVisible = false;
+    turboHitboxOverride = false;
     activeTileTexture = -1;
 
     createTileButtons();
@@ -42,7 +44,8 @@ void TileMenuHandler::handleMouseEvents(sf::Event event, bool guiBlock, sf::Vect
     switch (event.type)
     {
     case sf::Event::MouseButtonPressed:
-        if (event.mouseButton.button == sf::Mouse::Left && !rightClicking && !guiBlock && !lightManager.isPlacingLight())
+        if (event.mouseButton.button == sf::Mouse::Left && !rightClicking && 
+            !guiBlock && !lightManager.isPlacingLight() && !turboHitboxOverride)
         {
             pressedPos = { event.mouseButton.x, event.mouseButton.y };
 
@@ -50,7 +53,8 @@ void TileMenuHandler::handleMouseEvents(sf::Event event, bool guiBlock, sf::Vect
                 selectingBlocks = true;
         }
 
-        if (event.mouseButton.button == sf::Mouse::Right && !selectingBlocks && !guiBlock && !lightManager.isPlacingLight())
+        if (event.mouseButton.button == sf::Mouse::Right && !selectingBlocks && 
+            !guiBlock && !lightManager.isPlacingLight())
         {
             if (!tileBox.contains(event.mouseButton.x, event.mouseButton.y))
             {
@@ -74,6 +78,9 @@ void TileMenuHandler::handleMouseEvents(sf::Event event, bool guiBlock, sf::Vect
 
         if (event.mouseButton.button == sf::Mouse::Right)
         {
+            if (!selectingBlocks && turboHitboxOverride)
+                releasedPos = viewPortMousePos;
+
             if (rightClicking)
                 rightClicking = false;
         }
@@ -83,6 +90,9 @@ void TileMenuHandler::handleMouseEvents(sf::Event event, bool guiBlock, sf::Vect
 
 void TileMenuHandler::handleKeyboardEvents(sf::Event event)
 {
+    if (turboHitboxOverride)
+        return;
+
     switch (event.type)
     {
     case sf::Event::KeyPressed:
@@ -127,7 +137,7 @@ void TileMenuHandler::handleKeyboardEvents(sf::Event event)
         }
 
         if (event.key.code == sf::Keyboard::F5)
-            fileManager.quickSave(this->layerManager, this->lightManager);
+            fileManager.quickSave(this->layerManager, this->lightManager, hitbaxes);
 
         break;
     }
@@ -153,6 +163,7 @@ void TileMenuHandler::update(sf::Vector2i mousePos, sf::Vector2i viewPortOffset,
     if (guiActive || lightManager.isPlacingLight())
         return;
 
+
     if (!selectingBlocks)
     {
         if (rightClicking)
@@ -160,7 +171,7 @@ void TileMenuHandler::update(sf::Vector2i mousePos, sf::Vector2i viewPortOffset,
             handleLayerSelection(pressedPos, viewPortOffset);
         }
 
-        else
+        else if (!turboHitboxOverride)
             layerManager.update(activeTiles, viewPortOffset);
     }
 
@@ -395,6 +406,78 @@ void TileMenuHandler::handleHelpWindow()
 
             if (ImGui::Checkbox("Show grid", &gridVisible))
                 generateGrid(sf::Color::Red);
+
+            ImGui::EndTabItem();
+        }
+
+        if (ImGui::BeginTabItem("Custom hitbox"))
+        {
+            if (turboHitboxOverride)
+            {
+                layerManager.setActiveLayer(HITBOX_LAYER);
+
+                sf::Vector2i press = pressedPos;
+                sf::Vector2i release = releasedPos;
+                swapStartAndStopPosition(press, release);
+                static std::string input;
+                sf::Vector2i start = (press - layerManager.getWorkAreaStart()) / DEFAULT_TILE_SIZE;
+                sf::Vector2i stop = (release - layerManager.getWorkAreaStart()) / DEFAULT_TILE_SIZE;
+
+                ImGui::Text("Selected area %d, %d -  %d, %d", start.x, start.y, stop.x, stop.y);
+                handleLayerSelection(press, release);
+
+                std::vector<CustomHitbox*> conflictingBoxes;
+                for (CustomHitbox& box : hitbaxes)
+                    if (sf::IntRect(start, stop - start + sf::Vector2i(1, 1)).intersects(sf::IntRect(box.min, box.max - box.min)))
+                        conflictingBoxes.push_back(&box);
+
+                if (!conflictingBoxes.empty())
+                {
+                    if (ImGui::BeginCombo("Conflicting boxes", conflictingBoxes[0]->flag.c_str()))
+                    {
+                        for (int i = 0; i < conflictingBoxes.size(); i++)
+                        {
+                            if (ImGui::Selectable(conflictingBoxes[i]->flag.c_str()))
+                            {
+                                pressedPos = conflictingBoxes[i]->min * DEFAULT_TILE_SIZE + layerManager.getWorkAreaStart();
+                                releasedPos = (conflictingBoxes[i]->max - sf::Vector2i(1, 1)) * DEFAULT_TILE_SIZE + layerManager.getWorkAreaStart();
+                                input = conflictingBoxes[i]->flag;
+                            }
+
+                            if (ImGui::IsItemHovered())
+                            {
+                                sf::Vector2i min = conflictingBoxes[i]->min * DEFAULT_TILE_SIZE + layerManager.getWorkAreaStart();
+                                sf::Vector2i max = (conflictingBoxes[i]->max - sf::Vector2i(1, 1)) * DEFAULT_TILE_SIZE + layerManager.getWorkAreaStart();
+                                handleLayerSelection(min, max);
+                            }
+                        }
+
+                        ImGui::EndCombo();
+                    }
+                }
+
+                ImGui::InputText("Collider flag", &input);
+
+
+
+                if (ImGui::Button("Insert bax"))
+                {
+                    for (ActiveTile& tile : activeTiles)
+                        tile.tileID = SPECIAL_HITBOX;
+
+                    layerManager.insertTiles(activeTiles, press);
+
+                    CustomHitbox hitbox;
+                    hitbox.min = start;
+                    hitbox.max = stop + sf::Vector2i(1, 1);
+                    hitbox.flag = input;
+                    hitbaxes.push_back(hitbox);
+                }
+            }
+            ImGui::Checkbox("Override!!!", &turboHitboxOverride);
+            ImGui::Text("When overriding all blocks placed will have hitbox ID 999\n"
+                "and left clicking is disabled. Right click to select \n"
+                "an area to place the box in. All keyboard commands are also disabled");
 
             ImGui::EndTabItem();
         }
@@ -663,7 +746,7 @@ void TileMenuHandler::saveFile()
         name = "defaultSaveName";
     }
 
-    fileManager.save(layerManager, lightManager, dir / name);
+    fileManager.save(layerManager, lightManager, hitbaxes, dir / name);
 
     saveWindow.closeWindow();
 }
@@ -674,7 +757,7 @@ void TileMenuHandler::loadFile()
 
     fs::path dir = loadWindow.getPath();
 
-    fileManager.load(layerManager, lightManager, dir / name);
+    fileManager.load(layerManager, lightManager, hitbaxes, dir / name);
 
     activeTiles.clear();
     activeTileTexture = TileMaps::get().getTexureCount() - 1;
@@ -706,5 +789,5 @@ void TileMenuHandler::generateGrid(sf::Color color)
 
 void TileMenuHandler::autosave()
 {
-    fileManager.save(layerManager, lightManager, fs::current_path() / DEFAULT_SAVE_PATH / "autoSave");
+    fileManager.save(layerManager, lightManager, hitbaxes, fs::current_path() / DEFAULT_SAVE_PATH / "autoSave");
 }

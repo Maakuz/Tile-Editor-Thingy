@@ -10,7 +10,8 @@ FileManager::FileManager()
     this->quickSavePath = fs::current_path() / "Saves/";
 }
 
-void FileManager::save(const LayerManager & layerManager, const LightManager& lightManager, fs::path path) const
+void FileManager::save(const LayerManager & layerManager, const LightManager& lightManager, 
+    const std::vector<CustomHitbox>& hitboxes, fs::path path) const
 {
     path.replace_extension(FILE_EXTENSION);
 
@@ -20,6 +21,10 @@ void FileManager::save(const LayerManager & layerManager, const LightManager& li
         file << layerManager << "\n";
         file << TileMaps::get() << "\n";
         file << lightManager << "\n";
+
+        file << hitboxes.size() << " ";
+        for (const CustomHitbox box : hitboxes)
+            file << box;
 
         file.close();
 
@@ -31,7 +36,8 @@ void FileManager::save(const LayerManager & layerManager, const LightManager& li
 
 }
 
-void FileManager::quickSave(const LayerManager & layerManager, const LightManager& lightManager) const
+void FileManager::quickSave(const LayerManager & layerManager, const LightManager& lightManager,
+    const std::vector<CustomHitbox>& hitboxes) const
 {
     
     fs::path fullPath = this->quickSavePath;
@@ -45,6 +51,10 @@ void FileManager::quickSave(const LayerManager & layerManager, const LightManage
         file << TileMaps::get() << "\n";
         file << lightManager << "\n";
 
+        file << hitboxes.size() << " ";
+        for (const CustomHitbox box : hitboxes)
+            file << box;
+
         file.close();
 
         printf("Quacksaved!\n");
@@ -54,7 +64,8 @@ void FileManager::quickSave(const LayerManager & layerManager, const LightManage
         printf("NOT quacksaved!\n");
 }
 
-void FileManager::load(LayerManager & layerManager, LightManager& lightManager, fs::path path)
+void FileManager::load(LayerManager & layerManager, LightManager& lightManager,
+    std::vector<CustomHitbox>& hitboxes, fs::path path)
 {
     std::ifstream file(path);
     if (file.is_open())
@@ -62,6 +73,16 @@ void FileManager::load(LayerManager & layerManager, LightManager& lightManager, 
         file >> layerManager;
         file >> TileMaps::get();
         file >> lightManager;
+
+        int count;
+        file >> count;
+        hitboxes.clear();
+        for (int i = 0; i < count; i++)
+        {
+            CustomHitbox box;
+            file >> box;
+            hitboxes.push_back(box);
+        }
         file.close();
 
         printf("Loaded?!\n");

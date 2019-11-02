@@ -4,7 +4,7 @@
 #include "Queues\TileQueue.h"
 #include "TileMaps.h"
 
-sf::Color HITBOX_COLORS[NR_OF_HITBOXES] = { 
+const sf::Color HITBOX_COLORS[NR_OF_HITBOXES] = { 
     sf::Color(0, 0, 0, 150),
     sf::Color(100, 100, 100, 150),
     sf::Color(255, 0, 0, 150),
@@ -14,6 +14,8 @@ sf::Color HITBOX_COLORS[NR_OF_HITBOXES] = {
     sf::Color(0, 255, 255, 150),
     sf::Color(0, 0, 255, 150),
     sf::Color(255, 0, 255, 150) };
+
+const sf::Color SPECIAL_HITBOX_COLOR(255,255,255, 150);
     
 TileManager::TileManager()
 {
@@ -44,7 +46,7 @@ void TileManager::prepareTiles()
             spriteQueue.push_back(sprite);
         }
 
-        else if (tile.tileID > HITBOX_ID_START)
+        else if (tile.tileID > HITBOX_ID_START && tile.tileID < SPECIAL_HITBOX)
         {
             sf::RectangleShape* rect = new sf::RectangleShape;
             rect->setPosition((float)tile.x, (float)tile.y);
@@ -53,6 +55,14 @@ void TileManager::prepareTiles()
             spriteQueue.push_back(rect);
         }
 
+        else if (tile.tileID == SPECIAL_HITBOX)
+        {
+            sf::RectangleShape* rect = new sf::RectangleShape;
+            rect->setPosition((float)tile.x, (float)tile.y);
+            rect->setSize(sf::Vector2f(DEFAULT_TILE_SIZE, DEFAULT_TILE_SIZE));
+            rect->setFillColor(SPECIAL_HITBOX_COLOR);
+            spriteQueue.push_back(rect);
+        }
     }
 }
 

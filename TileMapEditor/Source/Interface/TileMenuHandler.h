@@ -48,6 +48,9 @@ private:
 
     void generateGrid(sf::Color color);
 
+
+    std::vector<CustomHitbox> hitbaxes;
+
     FileManager fileManager;
     LayerManager layerManager;
     SaveWindow saveWindow;
@@ -61,6 +64,7 @@ private:
     sf::Vector2i offset;
 
     sf::Vector2i pressedPos;
+    sf::Vector2i releasedPos;
 
     std::vector<Button> buttons;
 
@@ -72,4 +76,5 @@ private:
     bool isImportingTexture;
     bool renderingLights;
     bool gridVisible;
+    bool turboHitboxOverride;
 };
